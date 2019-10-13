@@ -12,8 +12,14 @@
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+  <link href="../styles.css" rel="stylesheet">
 </head>
+
+<style> 
+p{
+  text-align: center
+}
+</style>
 
 <body>
 
@@ -26,19 +32,20 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="https://docs.google.com/document/d/1Ne2fHrhV6Kmsc_beMAU1ofzcmOPDE9s-Z6QHcnQakPk/edit?usp=sharing">MIT</a> 
+              <a class="dropdown-item" href="https://docs.google.com/document/d/1044QMFVKFPOE2YU13Xm8p-n0-fnmLKYV_XAbuPSAqK0/edit?usp=sharing-">Edinburg</a>
+            </div>
+          </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home
+            <a class="nav-link" href="../../index.html">Home
               <span class="sr-only">(current)</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
           </li>
         </ul>
       </div>
@@ -53,18 +60,19 @@
   
   <!-- Page Content -->
   <div class="container">
-    <div class="row">
-      <div class="col-lg-12 text-center">
-        <!-- Content goes here-->
-        <h1 class="ht-5">Massachusuetts Insitute of Technology</h1> <!-- -->
-        <p><a class="btn btn-secondary" href="https://docs.google.com/document/d/1Ne2fHrhV6Kmsc_beMAU1ofzcmOPDE9s-Z6QHcnQakPk/edit?usp=sharing" role="button">View details &raquo;</a></p>
-        <br>
-        <h1 class="ht-5">University of Edinburg</h1>
-        <p><a class="btn btn-secondary" href="https://docs.google.com/document/d/1044QMFVKFPOE2YU13Xm8p-n0-fnmLKYV_XAbuPSAqK0/edit?usp=sharing-" role="button">View details &raquo;</a></p>
-        </ul>
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col">
+          <h3 class="ht-5">MIT</h3>
+          <p><a class="btn btn-secondary" href="https://docs.google.com/document/d/1Ne2fHrhV6Kmsc_beMAU1ofzcmOPDE9s-Z6QHcnQakPk/edit?usp=sharing" role="button" >View details &raquo;</a></p>
+        </div>
+        <div class="col">
+          <h3 class="ht-5">University of Edinburg</h3>
+          <p><a class="btn btn-secondary" href="https://docs.google.com/document/d/1044QMFVKFPOE2YU13Xm8p-n0-fnmLKYV_XAbuPSAqK0/edit?usp=sharing-" role="button">View details &raquo;</a></p>
+        </div>
       </div>
     </div>
-  </div>
+  </div>    
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.slim.min.js"></script>
