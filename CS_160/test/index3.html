@@ -1,137 +1,14 @@
-<!doctype html>
-<!-- Thank you to Yong Bakos - Oregon State Cascades -->
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Marvyn's Portfolio</title>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    
-    <!-- Your custom styles for this template -->
-    <link href="./CS_160/styles.css" rel="stylesheet">
-  </head>
-
-  <style> 
-    h1{
-      margin-top: 50px;
-    }
-  
-    .navbar {
-      padding: .5rem 20px;
-      padding-right: 1rem;
-    }
-  </style>
-  
-  <body>
-
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">Navbar</a>
-      
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./CS_160/bookAnswers/index.html">Reading Answers</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="./CS_160/Scratch/index.html">Scratch Projects</a>
-              <a class="dropdown-item" href="./CS_160/collegeInfo/index.html">College Info</a>
-              <a class="dropdown-item" href="./CS_160/Python/index.html">Python</a>
-            </div>
-          </li>
-        </ul>
-        
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-    </nav>
-
-    <main role="main">
-
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <div class="container">
-          <h1 class="display-3">Marvyn's Portfolio</h1>
-          <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
-        </div>
-      </div>
-
-      <div style="margin: auto;" class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-          <div class="col">
-            <h2>Scratch Projects</h2>
-            <p>Here are my Scratch projects. I currently have week one's assigment complete, the Frictionless Ball. I am working on recreating the game Snake</p>
-            <p><a class="btn btn-secondary" href="./CS_160/Scratch/index.html" role="button">View details &raquo;</a></p>
-          </div>
-          
-          <div class="col">
-            <h2>Reading Answers</h2>
-            <p>Here are the answers to the reading</p>
-            <p><a class="btn btn-secondary" href="./CS_160/bookAnswers/index.html" role="button">View details &raquo;</a></p>
-          </div>
-          
-          <div class="col">
-            <h2>College info</h2> 
-            <p>The start of my colleg info</p>
-            <p><a class="btn btn-secondary" href="./CS_160/collegeInfo/index.html" role="button">View details &raquo;</a></p>
-        </div>
-      </div>
-        
-      <div class="row">
-        <div class="col">
-          <h2>App Inventor</h2> 
-          <p>Some of my first apps</p>
-          <p><a class="btn btn-secondary" href="./CS_160/appInventor/index.html" role="button">View details &raquo;</a></p>
-        </div>
-
-        <div class="col">
-          <h2>Python</h2> 
-          <p>Python Programs</p>
-          <p><a class="btn btn-secondary" href="./CS_160/Python/index.html" role="button">View details &raquo;</a></p>
-        </div>
-
-        <div class="col">
-          <h2>CodeHS</h2> 
-          <p>CodeHS status</p>
-          <p><a class="btn btn-secondary" href="./CS_160/CodeHS/index.html" role="button">View details &raquo;</a></p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <h2>P5 - JavaScipt</h2> 
-          <p>Javescript sketches using P5</p>
-          <p><a class="btn btn-secondary" href="./CS_160/P5/index.html" role="button">View details &raquo;</a></p>
-        </div>
-      </div>
-
-        <hr>
-
-        <!-- Extra stuff can go here-->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 * {box-sizing: border-box}
+body {font-family: Verdana, sans-serif; margin:0}
 .mySlides {display: none}
 img {vertical-align: middle;}
 
-/* Slideshow co ntainer */
+/* Slideshow container */
 .slideshow-container {
   max-width: 1000px;
   position: relative;
@@ -195,6 +72,10 @@ img {vertical-align: middle;}
   border-radius: 50%;
   display: inline-block;
   transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
 }
 
 /* Fading animation */
@@ -284,15 +165,5 @@ function showSlides(n) {
 }
 </script>
 
-      </div> <!-- /container -->
-      
-    </main>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  </body>
-</html>
+</body>
+</html> 
