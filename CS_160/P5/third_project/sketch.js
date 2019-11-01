@@ -3,7 +3,7 @@ let d = 71;
 //let dSlider;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
   //dSlider = createSlider(1,170,1);
 }
