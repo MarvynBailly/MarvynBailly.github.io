@@ -1,0 +1,16 @@
+https://en.wikipedia.org/wiki/Attractor
+https://www.youtube.com/watch?v=OAcXnzRNiCY
+Both used to further my understanding on how to set up this project. But I will create my own code for this project. 
+
+If you click somewhere x amount of particles are created.
+They move around a little.
+
+When you double click an Attractor is created.
+Attractor have a random amount of force indecated by their color.
+
+Particles contrails mirror the attractor color. 
+If multiple attractors, a mix of colors.
+When over come by one force the color changes
+
+
+404 checkers
