@@ -12,7 +12,7 @@ var particles = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
+  background(51);
 }
 
 function mousePressed() {
@@ -20,7 +20,7 @@ function mousePressed() {
 }
 
 function draw() {
-  background(51);
+  
   stroke(255);
   strokeWeight(4);
   //particles.push(new Particle(point(200,200)));
