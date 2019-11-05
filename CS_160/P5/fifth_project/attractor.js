@@ -1,9 +1,21 @@
+var mass;
+
 function Attractor(x, y) {
-    this.pos = createVector(x,y);
-    
+    //mass.unshift(random(25,80));
+    mass = random(25,80)
+    this.pos = circle(x, y, mass);
+
     this.show  = function(){
-        stroke(255,0,255);
+        stroke(255,0,0);
         strokeWeight(4);
-        point(this.pos.x, this.pos.y);
+    }
+
+    this.get_mass = function(){
+        return mass
+    } 
+
+    this.get_cords = function(){
+        cords = createVector(this.pos.x, this.pos.y);
+        return cords 
     }
 }
