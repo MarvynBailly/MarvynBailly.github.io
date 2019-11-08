@@ -1,3 +1,4 @@
+
 function Particle(x, y) {
     this.pos = createVector(x,y);
     this.vel = createVector();
@@ -15,11 +16,13 @@ function Particle(x, y) {
     }
 
     this.attracted = function(target, mass){
+        mass = 2 * mass
         var force = p5.Vector.sub(target, this.pos);
         var D = force.magSq();
+        D = constrain(D,20,100);
         var G = 8;
         var magnitude = (G * mass) / (D);
         force.setMag(magnitude);
-        acc = force; 
+        this.acc = force; 
     }
 }

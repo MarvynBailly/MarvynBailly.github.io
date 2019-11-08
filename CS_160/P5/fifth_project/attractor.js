@@ -1,13 +1,14 @@
 var mass;
 
 function Attractor(x, y) {
-    //mass.unshift(random(25,80));
+    this.pos = createVector(x,y);
     mass = random(25,80)
-    this.pos = circle(x, y, mass);
-
+  
     this.show  = function(){
-        stroke(255,0,0);
-        strokeWeight(4);
+      
+        stroke(255);
+        strokeWeight(mass);
+        point(this.pos.x, this.pos.y);
     }
 
     this.get_mass = function(){
