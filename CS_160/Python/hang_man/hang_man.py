@@ -3,8 +3,31 @@
   Auther: Marvyn Bailly
   Version: 0.01
   Play Hangman
-"""
+""" 
+from os import system, name 
+import random
 
+def loadWords():
+  words = []
+  with open('words.txt','r') as f:
+    for line in f:
+        for word in line.split():
+          words.append(word)
+  return words
+
+def chooseWord(words):
+  """
+  words (list): list of words (strings)
+  Returns a word from words at random
+  """
+  return random.choice(words)
+
+def clear(): 
+    if name == 'nt': 
+        _ = system('cls') 
+    else: 
+        _ = system('clear') 
+   
 def welcome():
   """
   Welcomes the player to the game
@@ -33,34 +56,26 @@ def user_opponent():
   opponent = input("Please enter H for human and C for computer:" )
   return opponent
 
-def pc_difficulty():
-  """
-  Lets the user choice the difficulty of the pc
-  input: nothing
-  output: difficulty level
-  """
-  print("What difficulty would you like to play on?")
-  difficulty = input("E for easy, M for medium, and H for hard: " )
-  return difficulty
-
 def human_create_puzzle():
   """
   Friend creates puzzle
   """
   puzzle = input("Friend, please enter the puzzle: " )
+  clear()
   return puzzle
 
 def user_progress(puzzle):
   progress = "_ " * len(puzzle)
   return progress
 
-def pc_create_puzzle(difficulty):
+def pc_create_puzzle():
   """
   Creates a puzzle for the user to guess
-  picks out of random words based on difficulty
 
   """
-  return "puzzle"
+  words = loadWords()
+  puzzle = chooseWord (words).lower()
+  return puzzle
 
 def get_user_guess():
   """
@@ -79,52 +94,49 @@ def evaluate_user_guess(puzzle, guess, progress):
   Input: puzzle and user's guess
   Output: Evaluation
   """
-  evaluation = []
-  progress = progress.replace(" ","")
-  
-  for i in evaluation:
-    progress = progress.replace([i],guess)
+  progress = list(progress.replace(" ",""))
 
   for i in range(len(puzzle)):
     if guess == puzzle[i]:
-      evaluation.append(i)
+      del progress[i]
+      progress.insert(i,guess)
 
-  
   progress = " ".join(progress)
-  print(progress)
+  return progress
 
-#def show_guess_results(evaluation,progress,guess):
-#  """
-#  expressses the results
-#  input: evaluation
-#  output: results
-#  """
-#  progress = progress.replace(" ","")
-#  
-#  for i in evaluation:
-#    progress = progress.replace([i],guess)
-#
-#  progress = " ".join(progress)
-#  print(progress)
+def missed_guesses(progress_old,progress,missed_guess):
+  if progress == progress_old:
+    missed_guess += 1
+  return missed_guess
 
-def one_round(opponent, difficulty):
+def one_round(opponent):
   """
   Play one round
   Ends after 6 rounds or user wins
-  input: opponent, difficulty
+  input: opponent
   output: win xor lose
   """
+  correct_answer = False
+  missed_guess = 1
+
   if opponent in ["C", "c","computer"]:
-    puzzle = pc_create_puzzle(difficulty)
+    puzzle = pc_create_puzzle()
   else:
     puzzle = human_create_puzzle()
-  
   progress = user_progress(puzzle)
-  guess = get_user_guess()
-  evaluation = evaluate_user_guess(puzzle, guess,progress)
-  #show_guess_results(evaluation,progress,guess)
 
-#https://repl.it/@marvynb/Hang-Man
+  while missed_guess != 6:
+    if correct_answer == False:
+      progress_old = progress
+      guess = get_user_guess()
+      progress = evaluate_user_guess(puzzle, guess,progress)
+      print(progress)
+      correct_answer = (progress.replace(" ","") == puzzle)
+      missed_guess = missed_guesses(progress_old, progress,missed_guess)    
+    else:
+      return "Word was guessed, You Win!"
+  return "Word was not guessed, You Lose!"
+
 def game_loop():
   """
   calls the welcome
@@ -135,12 +147,10 @@ def game_loop():
   wants_to_play = input("What to play? (y/n) ")
 
   while wants_to_play in ['y','Y','Yes','yes',"YES","YES!"]:
-    difficulty = ""
 
     opponent = user_opponent()
-    if opponent in ["C", "c","computer"]:
-      difficulty = pc_difficulty()
-    one_round(opponent, difficulty)
+    round_results = one_round(opponent)
+    print(round_results)
 
     wants_to_play = input("What to play again? (y/n) ")
 
