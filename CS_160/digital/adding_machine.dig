@@ -7,12 +7,12 @@
       <elementName>eight_bit_adder.dig</elementName>
       <elementAttributes>
         <entry>
-          <string>Label</string>
-          <string>8-Bit Adder</string>
-        </entry>
-        <entry>
           <string>rotation</string>
           <rotation rotation="3"/>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>8-Bit Adder</string>
         </entry>
       </elementAttributes>
       <pos x="-120" y="360"/>
@@ -21,16 +21,16 @@
       <elementName>In</elementName>
       <elementAttributes>
         <entry>
+          <string>rotation</string>
+          <rotation rotation="3"/>
+        </entry>
+        <entry>
           <string>Label</string>
           <string>A</string>
         </entry>
         <entry>
           <string>Bits</string>
           <int>8</int>
-        </entry>
-        <entry>
-          <string>rotation</string>
-          <rotation rotation="3"/>
         </entry>
       </elementAttributes>
       <pos x="20" y="-200"/>
@@ -39,16 +39,16 @@
       <elementName>In</elementName>
       <elementAttributes>
         <entry>
+          <string>rotation</string>
+          <rotation rotation="3"/>
+        </entry>
+        <entry>
           <string>Label</string>
           <string>B</string>
         </entry>
         <entry>
           <string>Bits</string>
           <int>8</int>
-        </entry>
-        <entry>
-          <string>rotation</string>
-          <rotation rotation="3"/>
         </entry>
       </elementAttributes>
       <pos x="-120" y="-200"/>
@@ -62,12 +62,12 @@
       <elementName>LED</elementName>
       <elementAttributes>
         <entry>
-          <string>Label</string>
-          <string>Co</string>
-        </entry>
-        <entry>
           <string>rotation</string>
           <rotation rotation="3"/>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>Co</string>
         </entry>
       </elementAttributes>
       <pos x="80" y="540"/>
@@ -76,12 +76,12 @@
       <elementName>Out</elementName>
       <elementAttributes>
         <entry>
-          <string>Bits</string>
-          <int>8</int>
-        </entry>
-        <entry>
           <string>rotation</string>
           <rotation rotation="3"/>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
         </entry>
       </elementAttributes>
       <pos x="-140" y="540"/>
@@ -92,6 +92,10 @@
         <entry>
           <string>rotation</string>
           <rotation rotation="3"/>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>8-Bit 2-to1 Selector</string>
         </entry>
       </elementAttributes>
       <pos x="-120" y="160"/>
@@ -112,6 +116,10 @@
         <entry>
           <string>rotation</string>
           <rotation rotation="3"/>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>8-Bit Latch</string>
         </entry>
       </elementAttributes>
       <pos x="-280" y="-80"/>
