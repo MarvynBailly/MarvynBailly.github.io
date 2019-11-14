@@ -1,7 +1,7 @@
 """
   Hangman Game
   Auther: Marvyn Bailly
-  Version: 0.01
+  Version: 0.02
   Play Hangman
 """ 
 from os import system, name 
@@ -21,6 +21,15 @@ def chooseWord(words):
   Returns a word from words at random
   """
   return random.choice(words)
+
+def load_hangman(number):
+  with open("hangman.txt", "r") as f:
+    searchlines = f.readlines()
+  for i, line in enumerate(searchlines):
+    if number in line: 
+      for l in searchlines[i+1:i+11]: 
+        print(l,end = '')
+
 
 def clear(): 
     if name == 'nt': 
@@ -75,6 +84,7 @@ def pc_create_puzzle():
   """
   words = loadWords()
   puzzle = chooseWord (words).lower()
+  clear()
   return puzzle
 
 def get_user_guess():
@@ -104,10 +114,27 @@ def evaluate_user_guess(puzzle, guess, progress):
   progress = " ".join(progress)
   return progress
 
-def missed_guesses(progress_old,progress,missed_guess):
-  if progress == progress_old:
-    missed_guess += 1
-  return missed_guess
+def create_puzzle(opponent):
+  if opponent in ["C", "c","computer"]:
+    puzzle = pc_create_puzzle()
+  else:
+    puzzle = human_create_puzzle()
+  return puzzle
+
+def check_guess(guess,puzzle):
+  if guess in puzzle:
+    return True
+  else:
+    return False
+
+def print_results(number,puzzle,result):
+  load_hangman(number)
+  if result == "win":
+    print("\n"+"You guessed the word! The word was:", puzzle)
+    print("You Win!") 
+  else:
+    print("\n"+"You didn't guess the word. The word was:",puzzle)
+    print("You Lose!")
 
 def one_round(opponent):
   """
@@ -117,25 +144,33 @@ def one_round(opponent):
   output: win xor lose
   """
   correct_answer = False
-  missed_guess = 1
+  missed_rounds = 0
+  letters_guessed = []
 
-  if opponent in ["C", "c","computer"]:
-    puzzle = pc_create_puzzle()
-  else:
-    puzzle = human_create_puzzle()
+  puzzle = create_puzzle(opponent)
   progress = user_progress(puzzle)
 
-  while missed_guess != 6:
+  while missed_rounds != 6:
     if correct_answer == False:
-      progress_old = progress
+      load_hangman(str(missed_rounds))
+      print("\n",progress)
+      print("Letters guessed:", " ".join(letters_guessed))
       guess = get_user_guess()
-      progress = evaluate_user_guess(puzzle, guess,progress)
-      print(progress)
+      if check_guess(guess,puzzle) == True:
+        progress = evaluate_user_guess(puzzle, guess,progress)
+      else:
+        letters_guessed.append(guess)
+        print(guess, "is not in the word")
+        missed_rounds += 1
+
       correct_answer = (progress.replace(" ","") == puzzle)
-      missed_guess = missed_guesses(progress_old, progress,missed_guess)    
+      input("press enter to continue",)
+      clear()
     else:
-      return "Word was guessed, You Win!"
-  return "Word was not guessed, You Lose!"
+      print_results(str(missed_rounds),puzzle,result="win")
+      return
+  print_results(str(missed_rounds),puzzle,result="lose")
+  return 
 
 def game_loop():
   """
@@ -149,9 +184,8 @@ def game_loop():
   while wants_to_play in ['y','Y','Yes','yes',"YES","YES!"]:
 
     opponent = user_opponent()
-    round_results = one_round(opponent)
-    print(round_results)
-
+    one_round(opponent)
+    
     wants_to_play = input("What to play again? (y/n) ")
 
 game_loop()
