@@ -4,14 +4,9 @@
   <attributes/>
   <visualElements>
     <visualElement>
-      <elementName>And</elementName>
-      <elementAttributes>
-        <entry>
-          <string>wideShape</string>
-          <boolean>true</boolean>
-        </entry>
-      </elementAttributes>
-      <pos x="420" y="200"/>
+      <elementName>Out</elementName>
+      <elementAttributes/>
+      <pos x="160" y="80"/>
     </visualElement>
   </visualElements>
   <wires/>
