@@ -25,7 +25,7 @@
 }
 
 .container3 {
-  position: relative;
+  position: center;
   text-align: center;
   padding: 40px 180px;
   top: 28%;
@@ -98,6 +98,8 @@ textarea {
   border-image: initial;
   padding: 2px;
 }
+
+
 
 /* 
 .navbar {
