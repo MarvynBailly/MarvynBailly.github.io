@@ -8,24 +8,30 @@
 //Repulsion
 //Same idea as attraction but F*-1
  
-var attractors;
+var attractors = [];
 var particles;
 var attractors_cords = [];
+var x_cord;
 
 function setup() {
+  stroke(255,3);
+  strokeWeight(4);
   createCanvas(windowWidth, windowHeight);
   background(51);
-  attractors = new Attractor (200, 300);
-  particles = new Particle (600,100);
+}
+
+function mousePressed() {
+  attractors.push(createVector(100,100));
 }
 
 function draw() {
-  stroke(255);
-  strokeWeight(4);
-  mass = attractors.get_mass();
-  attractors_cords = attractors.get_cords();
-  attractors.show();
-  particles.attracted(attractors_cords, mass);
-  particles.update();
-  particles.show();
+  for (var i = 0; i < attractors.length; i++); {
+    particles = new Particle (600,100);
+    mass = attractors.get_mass();
+    attractors_cords = attractors.get_cords();
+    attractors.show();
+    particles.attracted(attractors_cords, mass);
+    particles.update();
+    particles.show();
+  }
 }
