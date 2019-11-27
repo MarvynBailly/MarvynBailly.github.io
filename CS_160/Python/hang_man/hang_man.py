@@ -19,7 +19,7 @@ def chooseWord(words):
   """
   words (list): list of words (strings)
   Returns a word from words at random
-  """
+  """   
   return random.choice(words)
 
 def load_hangman(number):

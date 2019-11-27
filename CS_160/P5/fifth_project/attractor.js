@@ -2,7 +2,7 @@ var mass;
 
 function Attractor(x, y) {
     this.pos = createVector(x,y);
-    mass = random(1,80,10)
+    mass = random(1,80)
   
     this.show  = function(){
         stroke(255);
