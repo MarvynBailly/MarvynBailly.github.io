@@ -1,7 +1,7 @@
 function Particle(x, y) {
     this.pos = createVector(x, y);
     this.prev = createVector(x, y);
-    this.vel = p5.Vector.random2D(); 
+    this.vel = p5.Vector.random2D(10,100); 
     this.acc = createVector();
   
     this.update = function() {
