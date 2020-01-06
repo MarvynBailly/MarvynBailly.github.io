@@ -130,7 +130,8 @@ textarea {
 /* Caption text */
 .container {
   position: relative;
-  width: 50%;
+  
+  margin-left: 125px;
 }
 
 .image {
