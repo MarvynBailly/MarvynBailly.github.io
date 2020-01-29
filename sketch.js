@@ -18,6 +18,7 @@ function setup() {
 
 function drawTree(x1,y1,direction,length) {
   if (length !== 0){
+
     var x2 = x1 + (length*10*cos(direction));
     var y2 = y1 + (length*10*sin(direction));
     window.x3 = x2;
@@ -29,7 +30,8 @@ function drawTree(x1,y1,direction,length) {
     drawTree(x2,y2,direction-random(10,40),length-1);
     drawTree(x2,y2,direction+random(10,40),length-1);
   }  else {
-    //strokeWeight(10);
-    //point(x3,y3);
+    stroke(255,0,0);
+    translate(580, 200);
+    ellipse(0, 10, 20, 80);
   }
 }
