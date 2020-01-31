@@ -29,9 +29,9 @@ function drawTree(x1,y1,direction,length) {
     
     drawTree(x2,y2,direction-random(10,40),length-1);
     drawTree(x2,y2,direction+random(10,40),length-1);
-  }  else {
-    stroke(255,0,0);
-    translate(580, 200);
-    ellipse(0, 10, 20, 80);
-  }
+  }  //else {
+    //stroke(255,0,0);
+    //translate(580, 200);
+    //ellipse(0, 10, 20, 80);
+  //}
 }
