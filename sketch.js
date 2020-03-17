@@ -8,11 +8,9 @@ function setup() {
   canvas.position(0,0);
   canvas.style('z-index','-1');
   background(255,255,255);
-
   stroke(0,0,0);
   translate(windowWidth/2,windowHeight);
-  scale(1,-1);
-
+  scale(1,-1)
   angleMode(DEGREES);
 
   drawTree(0,0,90,11);
