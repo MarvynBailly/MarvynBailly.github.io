@@ -4,12 +4,14 @@ var x3;
 var y3;
 
 function setup() {
-  canvas = createCanvas(windowWidth, windowHeight);
+  var Width = 400;
+  var Height = 400;
+  canvas = createCanvas(Width,Height);
   canvas.position(0,0);
   canvas.style('z-index','-1');
-  background(255,255,255);
+  background(220,220,220);
   stroke(0,0,0);
-  translate(windowWidth/2,windowHeight);
+  translate(Width/2,Height);
   scale(1,-1)
   angleMode(DEGREES);
 
@@ -23,8 +25,8 @@ function setup() {
     //background(255,255,255);
   //}
 function windowResized(){
-  resizeCanvas(windowWidth, windowHeight)
-  translate(windowWidth/2,windowHeight);
+  resizeCanvas(Width, Height)
+  translate(Width/2,Height);
   scale(1,-1)
   drawTree(0,0,90,11);
 }
@@ -57,3 +59,4 @@ function drawTree(x1,y1,direction,length) {
 
   }
 }
+var myp5 = new p5(s, 'tree2');

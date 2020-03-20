@@ -29,13 +29,11 @@ function windowResized(){
 
 function drawTree(x1,y1,direction,length) {
   if (length !== 0){
-    if(length < 4){}
-    strokeWeight(length)
 
     var x2 = x1 + (.0000007 * windowHeight * windowWidth * length * random(5,10) * cos(direction));
     var y2 = y1 + (.0000007 * windowHeight * windowWidth * length * random(5,10) * sin(direction));
-    window.x3 = x2;
-    window.y3 = y2;
+    //window.x3 = x2;
+    //window.y3 = y2;
     
     stroke(0,0,0);
     strokeWeight(.0000001 * windowHeight * windowWidth * length);
