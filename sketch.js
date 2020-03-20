@@ -16,13 +16,14 @@ function setup() {
 
 function drawTree(x1,y1,direction,length) {
   if (length !== 0){
+    if(length < 4){}
+    strokeWeight(length)
 
     var x2 = x1 + (length*10*cos(direction));
     var y2 = y1 + (length*10*sin(direction));
     window.x3 = x2;
     window.y3 = y2;
     
-    strokeWeight(length)
     line(x1,y1,x2,y2);
     
     drawTree(x2,y2,direction-random(10,40),length-1);
