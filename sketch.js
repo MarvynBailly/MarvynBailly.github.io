@@ -29,7 +29,7 @@ function windowResized(){
 
 function drawTree(x1,y1,direction,length) {
   if (length !== 0){
-
+    print(cos(direction),sin(direction));
     var x2 = x1 + (.0000007 * windowHeight * windowWidth * length * random(5,10) * cos(direction));
     var y2 = y1 + (.0000007 * windowHeight * windowWidth * length * random(5,10) * sin(direction));
     //window.x3 = x2;

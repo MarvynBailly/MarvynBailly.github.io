@@ -35,6 +35,8 @@ window.onload = function(){
     }
   };
 var first_tree = new p5(t, 'first-tree-sketch');
+<<<<<<< HEAD
+=======
 }
 
 /// test stuff 
@@ -53,14 +55,14 @@ window.onload = function(){
       tree.stroke(0,0,0);
       tree.translate(width/2,height);
       tree.scale(1,-1)
-      tree.drawTree(0,0,90,8);
+      tree.drawTree(0,0,90,11);
       tree.angleMode(tree.DEGREES);
     }  
  
     tree.drawTree = function(x1,y1,direction,length)  {
       if (length !== 0){
-        var x2 = x1 + (length * 5 * tree.cos(direction));
-        var y2 = y1 + (length * 5 * tree.sin(direction));
+        var x2 = x1 + (length * 5 * tree.cos(direction-.46));
+        var y2 = y1 + (length * 5 * tree.sin(direction-.46));
         
         tree.stroke(0,0,0);
         tree.strokeWeight(length);
@@ -70,10 +72,11 @@ window.onload = function(){
         x3 = x2;
         y3 = y2;
         
-        tree.drawTree(x2,y2,direction-20,length-1);
-               tree.drawTree(x2,y2,direction+20,length-1);
+        tree.drawTree(x2,y2,direction+25,length-1);
+        tree.drawTree(x2,y2,direction-25,length-1);
       }
     }
   };
 var first_tree = new p5(t, 'first-tree-sketch');
+>>>>>>> 10ac905815ee42d9690d5ca4014d19634acf4226
 }
