@@ -11,5 +11,4 @@ function draw(){
   fill(255);
   stroke(255);
   text('4 0 4',200,200);
-
 }
