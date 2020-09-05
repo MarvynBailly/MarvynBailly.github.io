@@ -19,7 +19,7 @@ function windowResized(){
     wid = windowWidth - 16.9;
     hit = windowHeight;
     resizeCanvas(wid, hit)
-  }
+}
 
 function draw() {
   background(255);

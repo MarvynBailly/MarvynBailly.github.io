@@ -131,15 +131,33 @@ body{
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.frontpage > div[target=third]{
+  text-align: center;
+  padding-bottom: 0;
+  height: 14.8vh;
+}
+
+.frontpage > div[target=third] h1{
+  display: inline-block;
+  padding-top: 5vh;
+  margin-bottom: 11vh;
+  font-weight: 300;
+  font-size: 80px;
+}
+
+.frontpage > div[target=third] a{
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .frontpage p{
   padding-left: 1vw;
   margin-top: 0px;
   font-size: 20px;
-}
-
-.sketchholder{
-  margin-left: 130%;
-  height: 200px;
 }
 
 .lowertext{
@@ -150,7 +168,7 @@ body{
   padding-bottom: 20px;
 }
 
-/* content pages */
+/* gallery pages */
 
 .wrapper{
   padding: 9vh 11vw 11vh 11vw;
@@ -164,7 +182,7 @@ body{
 
 .row {
  margin: 0;
- background: black;
+ background: white;
 }
 
 .row,
@@ -185,10 +203,108 @@ body{
 
 .content {
   background-color: white;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px rgb(200,200,200);
+  transition: all 250ms ease-in-out;
+  position: relative;
+}
+
+.content:hover{
+  top: -2px;
+}
+
+.content img{
+  border-radius: 10px 10px 0px 0px;
+}
+
+.content h1{
+  font-size: 15pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 15px;
+}
+
+.content p{
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.content button{
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  text-align: center;
+  cursor: pointer;  
+}
+
+.content button a{
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+
+.content button a:hover{
+  color: orange;
+}
+
+.buttonholder{
+  text-align: center;
+  padding-bottom: 50px;
 }
 
 @media screen and (max-width: 900px) {
   .column {
     width: 50%;
   }
+}
+
+.description{
+  height: 150px;
+}
+
+/* Sketch Pages*/
+.sketchholder{
+  text-align: center;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 38vh;
+}
+
+.sketchholder a{
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-bottom: 20px;
+}
+
+.sketchholder button{
+  background-color: transparent;
+  padding: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: none;
+  text-align: center;
+  cursor: pointer;  
+}
+
+.sketchholder button a{
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+
+.sketchholder button a:hover{
+  color: orange;
+}
+
+#sketchholder{
+  height: 60vh;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
