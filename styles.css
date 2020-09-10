@@ -182,7 +182,8 @@ body{
 
 .row {
  margin: 0;
- background: white;
+ background: transparent;
+ /*background: rgba(255,255,255,.5);*/
 }
 
 .row,
@@ -307,4 +308,9 @@ body{
   height: 60vh;
   margin-bottom: 20px;
   margin-top: 20px;
+}
+
+.scratchholder{
+  padding-top: 20px;
+  padding-bottom: 20px;
 }

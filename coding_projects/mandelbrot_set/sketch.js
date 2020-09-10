@@ -12,7 +12,7 @@ function setup() {
   canvas.parent("sketchholder");
   
   pixelDensity(1);
-  
+  drawSet();
 }
 
 function windowResized(){
@@ -20,9 +20,10 @@ function windowResized(){
   var width = canvasDiv.offsetWidth;
   var height = canvasDiv.offsetHeight;
   resizeCanvas(width, height);
+  drawSet();
 }
 
-function draw() {
+function drawSet() {
   var maxiterations = 100;
 
   
