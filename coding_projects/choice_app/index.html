@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Choice App</title>
+        <link href="../../styles.css" rel="stylesheet">
+        <script  src="sketch.js"></script>
+        <script src="../../imports/p5/p5.js"></script>
+    </head>
+
+    <body>
+        <div class="pagesec">
+            
+            <div class=navbar-overlay-outer>
+                <div class=navbar-overlay-inner>
+                    <div target="left">
+                        <a href="../../index.html"><img src="../../images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+                    <div target="center" >
+                        <a href="../../school/index.html">School</a>
+                        <a href="../index.html">Coding Projects</a>
+                        <a href="../../art/index.html">Art</a>
+                        <a href="../../games/index.html">Games</a>
+                    </div>
+                    <div target="right">
+                        <a href="../../contact/index.html">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="frontpage">
+                <div target="third">
+                    <h1>Choice App</h1>
+                </div>
+            </div>   
+            <div class="wrapper">
+            <div class="sketchholder">
+                <a>An app I created using MIT's "App Inventor" to help my indecisiveness. The app will choice on option out of a list given to it.</a>
+                <div id="sketchholder">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/Glz6NDiLql4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button><a href="ai2.appinventor.mit.edu/?galleryId=6511339822776320" target="_blank">View Project</a></button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+            filterSelection("all")
+            function filterSelection(c) {
+              var x, i;
+              x = document.getElementsByClassName("column");
+              if (c == "all") c = "";
+              for (i = 0; i < x.length; i++) {
+                RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) AddClass(x[i], "show");
+              }
+            }
+            
+            function AddClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+              }
+            }
+            
+            function RemoveClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                  arr1.splice(arr1.indexOf(arr2[i]), 1);     
+                }
+              }
+              element.className = arr1.join(" ");
+            }
+            
+            var btnContainer = document.getElementById("myBtnContainer");
+            var btns = btnContainer.getElementsByClassName("btn");
+            for (var i = 0; i < btns.length; i++) {
+              btns[i].addEventListener("click", function(){
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+              });
+            }
+        </script>
+    </body>
+</html> 
