@@ -204,7 +204,13 @@ body{
   clear: both;
 }
 
+.imageholder{
+  height: 245px;
+}
+
 .content {
+  width: 301px;
+  height: 500px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 5px 5px 10px rgb(200,200,200);
