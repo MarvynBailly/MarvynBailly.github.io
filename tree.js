@@ -11,12 +11,28 @@ function setup() {
   canvas.style('z-index', -1);
   background(255);
   stroke(0);
-  drawTree(width/2 * 1.25,height,270,11);
+  if(windowWidth >= 1100){
+    drawTree(width/2 * 1.25,height,270,11);
+  } else if(windowWidth < 1100 && windowWidth >= 800){
+    drawTree(width/2 * 1.25,height,270,9);
+  } else if(windowWidth < 800 && windowWidth >= 500){
+    drawTree(width/2 * 1.25,height,270,7);
+  } else{
+    drawTree(width/2 * 1.25,height,270,4);
+  }
 }
 
 function windowResized(){
   resizeCanvas(windowWidth, windowHeight)
-  drawTree(width/2 * 1.4,height,270,11);
+  if(windowWidth >= 1100 || windowHeight >= 600){
+    drawTree(width/2 * 1.25,height,270,11);
+  } else if((windowWidth < 1100 && windowWidth >= 800)){
+    drawTree(width/2 * 1.25,height,270,9);
+  } else if(windowWidth < 800 && windowWidth >= 500){
+    drawTree(width/2 * 1.25,height,270,7);
+  } else{
+  drawTree(width/2 * 1.25,height,270,4);
+  }
 }
 
 function drawTree(x1,y1,direction,length) {
