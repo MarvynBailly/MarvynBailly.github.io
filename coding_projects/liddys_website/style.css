@@ -198,10 +198,10 @@ body {
   margin-top: 40px;
   margin-bottom: 20px;
   width:66.667%;
-  text-align: center;
 }
 
 .content-title {
+  text-align: center;
   margin-bottom: 30px;
   padding-bottom: 30px;
   border-bottom-width: 2px;
@@ -225,7 +225,7 @@ body {
   display: flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  padding: 0 4px;
+  padding: 0 4px 8px;
 }
 
 .column {
@@ -246,5 +246,38 @@ body {
     -ms-flex: 100%;
     flex: 100%;
     max-width: 100%;
+  }
+}
+
+/* Biography */
+
+.biography-content img{
+  padding: 8px 0 10px 8px;
+}
+
+.biography-writing{
+  padding-top: 30px;
+  padding-left: 30px;
+  padding-bottom: 10px;
+  color: black;
+}
+
+.biography-writing a{
+  width: 50px;
+  font-size: 20px;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-bottom-color: black;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+.biography-writing p{
+  margin-top:15px;
+}
+
+@media screen and (max-width: 1080px) {
+  .biography-writing{
+    padding-left: 10px
   }
 }
