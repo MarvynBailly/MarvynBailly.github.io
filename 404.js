@@ -6,6 +6,8 @@ var location = 0;
 var amountParticles = 0;
 
 let text1 = "404"
+let text2 = "404"
+let text3 = "404"
 
 let x1 = 100;
 let y1 = 160;
@@ -18,6 +20,10 @@ function preload(){
   font = loadFont('HELVETICALTSTD-BLK.OTF');
 }
 
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight)
+  background(255);
+}
 
 function setup() {
   var win = windowWidth;
