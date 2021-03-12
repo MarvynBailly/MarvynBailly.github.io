@@ -32,23 +32,118 @@
             </div>
             <div class="frontpage">
                 <div target="secondary">
-                    <h1>Games</h1>
-                </div>
-                <!-- <p class=custom-button>test</p>                 <div class="column">
-                    <div class="content">
-                        <a href="./snake/index.html" ><img src="../images/snake.png" alt="test" width="100%"></a>
-                        <div class="description">
-                            <h1>Snake</h1>
-                            <p>The Snake game recreated in Scratch.</p>
-                        </div>
-                        <div class="buttonholder">
-                            <button><a href="./snake/index.html">View Project </a></button>
-                        </div>
-                    </div>
-                </div>--> 
+                    <h1>Games</h1>    
+                    <div class="lowertext">
+                        <a>Games that I have made in different langauges.</a>
+                    </div>             
+                </div> 
             </div>
         </div>
+        <div class="wrapper">
+            <div class="selector">
+                <div id="selectorcontainer">
+                    <button class="selector active" onclick="filterSelection('all')"><a>Show all</a></button>
+                    <button class="selector" onclick="filterSelection('js')"><a>Javascript</a></button>
+                    <button class="selector" onclick="filterSelection('java')"><a>Java</a></button>
+                    <button class="selector" onclick="filterSelection('python')"><a>Python</a></button>
+                    <button class="selector" onclick="filterSelection('other')"><a>Other</a></button>
+                </div> 
+            </div>
+            <div class="row">
+                <div class="column python">
+                    <div class="content">
+                        <a href="https://marvyn.com/games/hangman/"><img src="../images/hangman.PNG" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Hangman</h1>
+                            <p>Hangman made in python using Repl.it</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/games/hangman/">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="https://marvyn.com/games/mastermind/"><img src="../images/mastermind.PNG" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Mastermind</h1>
+                            <p>Mastermind made in python using Repl.it</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/games/mastermind/">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="https://marvyn.com/games/rock_paper_scissors/"><img src="../images/rock_paper_scissors.PNG" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Rock Paper Scissors</h1>
+                            <p>Rock Paper Scissors made in python using Repl.it</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/games/rock_paper_scissors/">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column other">
+                    <div class="content">
+                        <a href="https://marvyn.com/games/snake_scratch/"><img src="../images/snake_scratch.PNG" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Snake</h1>
+                            <p>The game Snake made using Scratch</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/games/snake_scratch/">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
         <!-- Nav Bar-->
+        <script>            
+            filterSelection("all")
+            function filterSelection(c) {
+              var x, i;
+              x = document.getElementsByClassName("column");
+              if (c == "all") c = "";
+              for (i = 0; i < x.length; i++) {
+                RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) AddClass(x[i], "show");
+              }
+            }
+            
+            function AddClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+              }
+            }
+            
+            function RemoveClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                  arr1.splice(arr1.indexOf(arr2[i]), 1);     
+                }
+              }
+              element.className = arr1.join(" ");
+            }
+            
+            var btnContainer = document.getElementById("selectorcontainer");
+            var btns = btnContainer.getElementsByClassName("selector");
+            for (var i = 0; i < btns.length; i++) { 
+              btns[i].addEventListener("click", function(){
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+              });
+            }
+        </script>
         <script>
             function myFunction() {
                 var x = document.getElementById("my-nav-bar");
@@ -65,4 +160,5 @@
                 }
             }
         </script>
+    </body>
 </html>

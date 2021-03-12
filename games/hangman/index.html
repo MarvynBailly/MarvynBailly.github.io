@@ -2,16 +2,16 @@
 <html lang="en">
 
     <head>
-        <title>Smart Rockets</title>
+        <title>Hangman</title>
         <link href="../../styles.css" rel="stylesheet">
         <link rel="icon" href="../../images/simple_logo.png">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script  src="sketch.js"></script>
-        <script  src="dna.js"></script>
-        <script  src="obstacle.js"></script>
         <script  src="particle.js"></script>
-        <script  src="population.js"></script>
         <script src="../../imports/p5/p5.js"></script>
+        <script>
+            document.addEventListener('contextmenu', event => event.preventDefault());
+        </script>
     </head>
 
         <body>
@@ -38,15 +38,17 @@
             </div>
             <div class="frontpage">
                 <div target="third">
-                    <h1>Smart Rockets</h1>
+                    <h1>Hangman</h1>
                 </div>
             </div>   
-            <div class="wrapper">
+            <div class="wrapper">   
             <div class="sketchholder">
-                <a>Rockets use evolution to avoid the wall and reach the target. This project was based off the book "the Nature of Code."</a>
-                <div id="sketchholder"></div>
-                <button><a href="https://editor.p5js.org/Nostrada/present/YCPipihQ4" target="_blank">Fullscreen</a></button>
-                <button><a href="https://editor.p5js.org/Nostrada/sketches/YCPipihQ4" target="_blank">View Code</a></button>
+                <a>Rules are explained within the game.</a>
+                <div id="sketchholder">
+                  <iframe height="400px" width="100%" src="https://repl.it/@marvynb/Hangman?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+                </div>
+                <button><a href="https://Hangman.marvynb.repl.run/" target="_blank">Fullscreen</a></button>
+                <button><a href="https://repl.it/@marvynb/Hangman" target="_blank">View Code</a></button>
             </div>
           </div>
         </div>
