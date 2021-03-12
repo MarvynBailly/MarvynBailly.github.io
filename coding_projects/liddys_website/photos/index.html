@@ -3,6 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="../style.css" rel="stylesheet">
+<link rel="icon" href="https://lidianatodoroff.com/icons/LidianaLogo.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <title>Photos</title>
 </head>
@@ -38,15 +39,18 @@
             <div class="content">
                 <div class="row">
                     <div class="column">
-                        <img src="./images/LidianaHeadshots-1.jpg">
-                        <img src="./images/LidianaHeadshots-5.jpg">
-                        <img src="./images/LidianaHeadshots-9.jpg">
-                        <img src="./images/LidianaHeadshots-13.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/SahalieFalls-1.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/SahalieFalls-3.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-1.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-5.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-9.jpg">
                     </div>
                     <div class="column">
-                        <img src="./images/LidianaHeadshots-3.jpg">
-                        <img src="./images/LidianaHeadshots-7.jpg">
-                        <img src="./images/LidianaHeadshots-11.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/SahalieFalls-2.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-3.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-7.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-11.jpg">
+                        <img class="lozad" data-placeholder-background="white" data-src="https://lidianatodoroff.com/photos/images/LidianaHeadshots-13.jpg">
                     </div>
                 </div>
             </div>
@@ -71,7 +75,15 @@
                 x.className = "nav-bar";
             }
         }
-        </script>
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+
+    <script>
+        const observer = lozad();
+        observer.observe();
+    </script>
+
     </div>
     
 </body>
