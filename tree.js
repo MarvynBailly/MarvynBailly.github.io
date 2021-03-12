@@ -1,8 +1,8 @@
 var direction = 0;
 var length = 0;
 var x3, y3, x4, y4;
-var count = 0;
-var graphics;
+var offset = 1.1;
+var lengthOffset = 0;
 
 function setup() {
   angleMode(DEGREES);
@@ -10,37 +10,32 @@ function setup() {
   canvas.position(0,0);
   canvas.style('z-index', -1);
   background(255);
-  stroke(0);
-  if(windowWidth >= 1100){
-    drawTree(width/2 * 1.25,height,270,11);
-  } else if(windowWidth < 1100 && windowWidth >= 800){
-    drawTree(width/2 * 1.25,height,270,9);
-  } else if(windowWidth < 800 && windowWidth >= 500){
-    drawTree(width/2 * 1.25,height,270,7);
-  } else{
-    drawTree(width/2 * 1.25,height,270,4);
-  }
+  initTree();
 }
 
 function windowResized(){
   resizeCanvas(windowWidth, windowHeight)
-  if(windowWidth >= 1100 || windowHeight >= 600){
-    drawTree(width/2 * 1.25,height,270,11);
-  } else if((windowWidth < 1100 && windowWidth >= 800)){
-    drawTree(width/2 * 1.25,height,270,9);
-  } else if(windowWidth < 800 && windowWidth >= 500){
-    drawTree(width/2 * 1.25,height,270,7);
-  } else{
-  drawTree(width/2 * 1.25,height,270,4);
+  background(255);
+  initTree();
+}
+
+function initTree(){
+  lengthOffset = (2*windowWidth + windowHeight)/2800;
+  if(windowWidth < 700){
+    drawTree(width/2 * (offset + .2),height,270,9);
+  }else if(windowWidth < 950){
+    drawTree(width/2 * offset,height,270,10);
+  }else{
+    drawTree(width/2 * offset,height,270,11);
   }
 }
 
 function drawTree(x1,y1,direction,length) {
   if (length !== 0){
-    var x2 = x1 + (length * random(5,10) * cos(direction));
-    var y2 = y1 + (length * random(5,10) * sin(direction));
-    
-    stroke(0,0,0,length*random(40,50));
+    var x2 = x1 + (length * lengthOffset * random(5,8) * cos(direction));
+    var y2 = y1 + (length * lengthOffset * random(5,8) * sin(direction));
+
+    stroke(0,0,0,length * lengthOffset * random(40,50));
     strokeWeight(length/2);
     line(x1,y1,x2,y2);  
     
@@ -50,7 +45,6 @@ function drawTree(x1,y1,direction,length) {
     y4 = y2;
     
     drawTree(x2,y2,direction-random(10,40),length-1);
-    drawTree(x2,y2,direction+random(10,40),length-1);
-    
+    drawTree(x2,y2,direction+random(10,40),length-1);   
   }
 }

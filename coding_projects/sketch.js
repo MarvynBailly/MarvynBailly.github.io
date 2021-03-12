@@ -1,5 +1,13 @@
 var particles = [];
 
+function pause(){
+  noLoop();
+}
+
+function unpause(){
+  loop(); 
+}
+
 function setup() {
   wid = windowWidth - 16.9;
   hit = windowHeight;

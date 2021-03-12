@@ -50,6 +50,7 @@ body {
   top: 0;
   height: 75px;
   width: 100%;
+  position: absolute; 
 }
 
 .nav-bar-inner {
@@ -124,6 +125,7 @@ body {
     top: 0;
     height: 75px;
     width: 100%;
+    position: absolute;
   } 
   .nav-bar-responsive a{
     float: none;
@@ -147,6 +149,7 @@ body {
 
 @media screen and (max-width: 530px) {
   .nav-bar-responsive{
+    height: 270px;
     background-color: rgb(50,50,50,0.75);
   }
 }
@@ -179,7 +182,7 @@ body {
 }
 
 .backstage {
-  content: url("./icons/backstage-icon.png");
+  content: url("https://lidianatodoroff.com/icons/backstage-icon.png");
   height: 21.44px;
   width: 21.44px;
   margin-bottom: -2.2px;
@@ -195,7 +198,7 @@ body {
 
 .content-holder{
   margin: 0 auto;
-  margin-top: 40px;
+  margin-top: 135px;
   margin-bottom: 20px;
   width:66.667%;
 }
@@ -258,26 +261,116 @@ body {
 .biography-writing{
   padding-top: 30px;
   padding-left: 30px;
+  padding-right: 30px;
   padding-bottom: 10px;
   color: black;
 }
 
 .biography-writing a{
-  width: 50px;
   font-size: 20px;
   padding-bottom: 5px;
   margin-bottom: 10px;
   border-bottom-color: black;
   border-bottom-width: 2px;
   border-bottom-style: solid;
+
 }
 
 .biography-writing p{
-  margin-top:15px;
+  margin-top:10px;
 }
 
-@media screen and (max-width: 1080px) {
+.biography-column {
+  -ms-flex: 50%;
+  flex: 50%;
+  max-width: 50%;
+  padding: 0 4px;
+}
+
+.biography-column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%
+}
+
+@media screen and (max-width: 1221px) {
   .biography-writing{
-    padding-left: 10px
+    padding-left: 10px;
+    padding-right: 10px;
   }
+  .biography-column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Resume */
+.resume-content img{
+  padding: 8px 0 10px 8px;
+}
+
+.resume-writing{
+  padding-left: 10px;
+  padding-top: 30px;
+  padding-right: 30px;
+  padding-bottom: 10px;
+  color: black;
+}
+
+.resume-writing a{
+  font-size: 20px;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-bottom-color: black;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+
+}
+
+.resume-writing p{
+  margin-top:0;
+}
+
+.resume-column {
+  -ms-flex: 50%;
+  flex: 50%;
+  max-width: 50%;
+  padding: 0 4px;
+}
+
+.resume-column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%
+}
+
+@media screen and (max-width: 950px) {
+  .resume-writing{
+    padding-right: 10px;
+  }
+  .resume-column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+.resume-button{
+  text-align: center;
+  padding-top: 100px;
+}
+
+.resume-button a:hover{
+  background-color: black;
+  color: #dddd;
+}
+
+.resume-button a{
+  text-decoration: none;
+  color: black;
+  border-color: black;
+  padding: 10px;
+  border-style: solid;
+  border-width: 2px;
 }

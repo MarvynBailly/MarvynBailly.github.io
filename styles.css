@@ -3,62 +3,123 @@ body{
   padding: 0;
 }
 
-/* Header */
-.navbar-overlay-outer{
-  box-sizing: border-box;
-  position: absolute;
+
+/* NAV BAR */
+
+.nav-bar { 
   top: 0;
   left: 0;
-  background: transparent;
   width: 100%;    
   height: 10%;
 }
 
-.navbar-overlay-inner{
+.nav-bar-inner {
+  position: relative;
   max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
   margin: 0 5vw;
   padding: 2vh 6vw;
-  display: flex;
-  align-items: center;
 }
 
-.navbar-overlay-inner a{
+.nav-bar-inner-left{
+  position: relative;
+  float: left;
+  line-height: 40px;
+  font-weight: bold;
+}
+
+.nav-bar-inner-right{
+  position: relative;
+  float:right;
+  line-height: 40px;
+  height: 100px;
+  padding-top: 33px;
+}
+
+.nav-bar-inner-right a{
   font-size: 16pt;
   color: black;
   text-decoration: none;
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0px 20px 0px 20px;
 }
 
-.navbar-overlay-inner a:hover{
+.nav-bar-inner-right a:hover {
   color:orange;
 }
 
-.navbar-overlay-inner > div[target=left]{
-  background-color: transparent;
-  width: 20%;
-  text-align: left;
+/* Nav bar when width is less than 950px */
+
+.icon{
+  display: none;
+  color: black;
+  font-size: 30px;
+  position: relative;
+  float:right;
+  margin-right: 0;
+  line-height: 40px;
 }
 
-.navbar-overlay-inner > div[target=center]{
-  background-color: transparent;
-  text-align: center;
-  width: 60%;
+.icon:hover{
+  color: orange;
 }
 
-.navbar-overlay-inner > div[target=center] a{
-  display: inline-block;
-  padding: 0 30px;
+@media screen and (max-width: 950px) {
+  .nav-bar-inner-right a {
+    display: none;
+  }
+
+  .icon {
+    display: block;
+    position: absolute;
+    right: 6vw;
+    top: 45px;
+  }
+  .nav-bar-responsive{
+    top: 0;
+    height: 75px;
+    width: 100%;
+    position: absolute;
+  } 
+
+  .nav-bar-responsive a{
+    float: none;
+    display: block;
+  }
+  .nav-bar-inner-left {
+    display: block;
+    width: 100%;
+  }
+
+  .nav-bar-inner-right{
+    padding-top: 0;
+  }
+
+  .nav-bar-inner-right a{
+    margin: 10px 0px 10px 0px;
+    text-align: right;
+  }
+
+  .nav-bar-inner-right a:hover{
+    color: orange;
+  }
 }
 
-.navbar-overlay-inner > div[target=right]{
-  background-color: transparent;
-  width: 20%;
-  text-align: right;
+/* Gray out */
+.overlay-hidden{
+  display: none;
 }
 
-
+.overlay-show{
+  background: gray;      
+  position: absolute;   
+  top: 0;               
+  right: 0;             
+  bottom: 0;
+  left: 0;
+  opacity: 0.5;
+}
 
 /* Custom Button */
 
@@ -127,8 +188,8 @@ body{
 }
 
 .frontpage > div[target=secondary] a{
-  overflow: hidden;
-  white-space: nowrap;
+  overflow: auto;
+  white-space: inherit;
   text-align: center;
   text-decoration: none;
   font-size: 13pt;
