@@ -15,7 +15,7 @@ function setup() {
 }
 
 function windowResized(){
-  resizeCanvas(windowWidth, windowHeight)
+  resizeCanvas(windowWidth, windowHeight);
   background(255);
   initTree();
 }

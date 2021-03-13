@@ -2,96 +2,55 @@ let size = 160;
 let font;
 var points = [];
 var particles = [];
-var location = 0;
-var amountParticles = 0;
 
-let text1 = "404"
-let text2 = "404"
-let text3 = "404"
+let text2 = '404';
+let text3 = 'Error';
 
-let x1 = 100;
-let y1 = 160;
 let x2 = 100;
 let y2 = 300;
 let x3 = 100;
 let y3 = 440;
 
 function preload(){
-  font = loadFont('HELVETICALTSTD-BLK.OTF');
+  font = loadFont('https://marvyn.com/imports/fonts/Helvetica.ttf');
 }
 
 function windowResized(){
-  resizeCanvas(windowWidth, windowHeight)
-  background(255);
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function setup() {
-  var win = windowWidth;
-  var hit = windowHeight;
-  createCanvas(win, hit);
-
-  append(points, font.textToPoints(text1,x1,y1,size));
+  var canvas = createCanvas(windowWidth, windowHeight);
+  canvas.position(0,0);
+  canvas.style('z-index', -1);
+  canvas.style('position','fixed');
+  
   append(points,font.textToPoints(text2,x2,y2,size));
   append(points, font.textToPoints(text3,x3,y3,size));
-  //console.log(points);
-  
-}
 
-function createTarget(s){
-  return points[s];
-}
-
-function findDifference(a,t){
-  return (t-a);
-}
-
-function splitApart(d){
-  for(var i = 0; i < d; i++){
-    if (particles.length == 0){
-      let particle = new Particle(random(wid),random(hit));
-      particles.push(particle);
-    } else{ 
-      let point = particles[random(particles.length)];
-      let particle = new Particle(point.pos.x,point.pos.y);
+  for (var i = 0; i < points.length; i++){
+    for (var j = 0; j < points[i].length; j++){
+      var pts = points[i][j];
+      var particle = new Particle(pts.x,pts.y);
       particles.push(particle);
     }
   }
 }
 
-function merge(d){
-  for(var i = 0; i < d; i++){
-    var particle = particles[i];
-    var randomParticle = particles[random(i+1,particles.length)];
-    particle.findTarget(randomParticle);
-    while (particle.pos != particle.target){
-      particle.behaviors();
-      particle.update();
-      particle.show();
-    }
-    particles.splice(0,1);
-  }
-}
-
-function mouseClicked(){
-  var target = createTarget(location);
-  var difference = findDifference(amountParticles, target);
-  
-  if (difference > 0){
-    splitApart(difference);
-  } else if (difference == 0){
-    return;
-  } else {
-    merge(abs(difference));
-  }
-  
-  
-  location += 1;
-  location = location % 3;
+function mouseClicked(event){
+ // if(event.botton === 2){
+    for(var i = 0; i<particles.length; i++){
+      var particle = particles[i];
+      particle.reset();
+      particle.reset();
+   // }
+ }
 }
 
 function draw() {
-  background(0);
-  //background(230);
+  //background(0);
+  background(255);
+  
   for(var i = 0; i < particles.length; i++){
     var particle = particles[i];
     particle.behaviors();
@@ -101,17 +60,14 @@ function draw() {
 }
 
 function Particle(x,y){
-  //this.pos = createVector(random(windowWidth),random(windowHeight));
-  this.pos = createVector(x,y);
+  this.pos = createVector(random(windowWidth),random(windowHeight));
+  //this.pos = createVector(x,y);
   this.vel = createVector(random(-5,5),random(-5,5));
   this.acc = createVector();
+  this.target = createVector(x,y);
   this.size = 7;
   this.maxSpeed = 5;
   this.maxForce = 0.3;
-}
-
-Particle.prototype.findTarget = function(x,y){
-  this.target = createVector(x,y);
 }
 
 Particle.prototype.behaviors = function(){
@@ -169,8 +125,9 @@ Particle.prototype.update = function(){
 }
 
 Particle.prototype.show = function(){
-  var col = map(this.vel.mag(),0,4,255,0);
-  stroke(255,255,col);
+  var colR = map(this.vel.mag(),0,4,0,255);
+  var colG = map(this.vel.mag(),0,4,0,165);
+  stroke(colR,0,0);
   strokeWeight(this.size);
   point(this.pos.x,this.pos.y); 
   
