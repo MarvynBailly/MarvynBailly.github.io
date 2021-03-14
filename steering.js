@@ -6,17 +6,13 @@ var particles = [];
 let text2 = '404';
 let text3 = 'Error';
 
-let x2 = 100;
-let y2 = 300;
-let x3 = 100;
-let y3 = 440;
+let x2;
+let y2;
+let x3;
+let y3;
 
 function preload(){
   font = loadFont('https://marvyn.com/imports/fonts/Helvetica.ttf');
-}
-
-function windowResized(){
-  resizeCanvas(windowWidth, windowHeight);
 }
 
 function setup() {
@@ -25,6 +21,11 @@ function setup() {
   canvas.style('z-index', -1);
   canvas.style('position','fixed');
   
+  x2 = width/2 - 100;
+  y2 = 300;
+  x3 = width/2 - 140;
+  y3 = 500; 
+
   append(points,font.textToPoints(text2,x2,y2,size));
   append(points, font.textToPoints(text3,x3,y3,size));
 
