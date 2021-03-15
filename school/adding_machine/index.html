@@ -4,6 +4,7 @@
     <head>
         <title>Adding Machine</title>
         <link href="../../styles.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="icon" href="../../images/simple_logo.png">
         <script  src="sketch.js"></script>
         <script src="../../imports/p5/p5.js"></script>
@@ -13,20 +14,22 @@
         <div class="overlay-hidden" id="overlay"></div>
         <div class="pagesec">
             
-            <div class=navbar-overlay-outer>
-                <div class=navbar-overlay-inner>
-                    <div target="left">
-                        <a href="../../index.html"><img src="../../images/simple_logo.png"; width="100px"; height="100px"></a>
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
                     </div>
-                    <div target="center" >
-                        <a href="../../school/index.html">School</a>
-                        <a href="../../coding_projects/index.html">Coding Projects</a>
-                        <a href="../../art/index.html">Art</a>
-                        <a href="../../games/index.html">Games</a>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                        <a href="https://marvyn.com/games/">Games</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/contact/">Contact</a>
                     </div>
-                    <div target="right">
-                        <a href="../../contact/index.html">Contact</a>
-                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
                 </div>
             </div>
             <div class="frontpage">
@@ -40,6 +43,24 @@
     style="overflow:hidden;" src="https://www.screencast.com/users/Marvyn_/folders/Default/media/1f6b104a-206c-4734-ae87-f71156aa9e60/embed" height="500px" width="500px" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                 </div>
           </div>
-        </div>
+        </div>        
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                    pause();  
+                } else {
+                    x.className = "nav-bar";
+                    unpause();
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>    
     </body>
 </html> 
