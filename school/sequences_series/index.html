@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Sequences and Series</title>
+        <link href="../../styles.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="icon" href="../../images/simple_logo.png">
+        <script src="../../imports/p5/p5.js"></script>
+    </head>
+
+        <body>
+        <div class="overlay-hidden" id="overlay"></div>
+        <div class="pagesec">
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                        <a href="https://marvyn.com/games/">Games</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/contact/">Contact</a>
+                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="frontpage">
+                <div target="third">
+                    <h1>Sequences and Series</h1>
+                </div>
+            </div>   
+            <div class="wrapper">
+                <div class="sketchholder">
+                    <a>Series and Sequences made in Desmos to help visual convergence.</a>   
+                    <iframe src="https://www.desmos.com/calculator/r7qz57gtty?embed" width="900px" height="500px" style="border: 1px solid #ccc" frameborder=0></iframe>
+                    <button><a href="https://www.desmos.com/calculator/r7qz57gtty" target="_blank">View in Desmos</a></button>
+                </div>
+          </div>
+        </div>        
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                    pause();  
+                } else {
+                    x.className = "nav-bar";
+                    unpause();
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>    
+    </body>
+</html> 
