@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>About</title>
+      <link href="../styles.css" rel="stylesheet">
+      <link rel="icon" href="https://marvyn.com/images/simple_logo.png">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+
+  <body>
+    <div class="overlay-hidden" id="overlay"></div>
+    <div class="pagesec">
+        <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+            <div class="nav-bar-inner">
+                <div class="nav-bar-inner-left">
+                    <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                </div>
+
+                <div class="nav-bar-inner-right">
+                    <a href="https://marvyn.com/school/">School</a>
+                    <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                    <a href="https://marvyn.com/art/">Art</a>
+                    <a href="https://marvyn.com/games/">Games</a>
+                    <a style="margin-right: 0px;" href="https://marvyn.com/about/">About</a>
+                </div>
+                <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        </div>
+        <div class="frontpage">
+            <div target="secondary">
+                <h1>About</h1>    
+                <div class="lowertext">
+                    <div class="contact-content">
+                      <p>I am currently a senior student at Oregon State University. I am in the undergraduate program majoring in mathematics with a focus on applied and computational. I hope to use my math and programming skills to conduct research in academia.</p>
+                      <a href="https://www.instagram.com/miamoonphoto/" target="null"><img src="../images/self_photo.jpg"></a>
+                      <br>
+                      <a href="https://editor.p5js.org/Nostrada/sketches" target="null">P5.js</a>
+                      <a href="https://github.com/MarvynBailly" target="null">Github</a>
+                      <a href="https://www.reddit.com/user/Nostrada_" target="null">Reddit</a>
+                    </div>
+                </div>             
+            </div> 
+        </div>
+    </div>
+    <script>
+      function myFunction() {
+          var x = document.getElementById("my-nav-bar");
+          var y = document.getElementById("overlay");
+          if (x.className === "nav-bar") {
+              x.className += "-responsive";
+          } else {
+              x.className = "nav-bar";
+          }
+          if(y.className === "overlay-hidden"){
+              y.className = "overlay-show";
+          }else{
+              y.className = "overlay-hidden";
+          }
+      }
+    </script>
+  </body>
+</html>
