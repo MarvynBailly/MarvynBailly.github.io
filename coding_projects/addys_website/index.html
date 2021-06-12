@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="style.css" rel="stylesheet">
+<title>Adelyn Bailly</title>
+</head>
+
+<body>
+    <div class="main-page">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-text">
+                <a>Adelyn Bailly</a>
+            </div>
+        </div>
+        
+        <!-- Contents -->
+        <div class="content-holder">
+            <div class="content">
+                <div class="row">
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                    <div class="column">
+                        <img src="/images/test.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Back to Top
+        <button class="scrollToTopBtn">&uarr;</button>
+
+        <footer></footer>
+        -->
+    </div>
+        
+
+    <!-- Nav Bar-->
+    <script>
+        function myFunction() {
+            var x = document.getElementById("my-nav-bar");
+            if (x.className === "nav-bar") {
+                x.className += "-responsive";
+            } else {
+                x.className = "nav-bar";
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+
+    <script>
+        const observer = lozad();
+        observer.observe();
+    </script>
+
+    <script>
+        var target = document.querySelector("footer");
+
+        var scrollToTopBtn = document.querySelector(".scrollToTopBtn")
+        var rootElement = document.documentElement
+
+        function callback(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+            scrollToTopBtn.classList.add("showBtn")
+            } else {
+            scrollToTopBtn.classList.remove("showBtn")
+            }
+        });
+        }
+
+        function scrollToTop() {
+        rootElement.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+        }
+        scrollToTopBtn.addEventListener("click", scrollToTop);
+            
+        let observer2 = new IntersectionObserver(callback);
+        observer2.observe(target);
+    </script>
+
+</body>
+</html>
