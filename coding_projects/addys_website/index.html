@@ -3,6 +3,11 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="style.css" rel="stylesheet">
+<!-- light box https://lokeshdhakar.com/projects/lightbox2/ -->
+<link href="./imports/css/lightbox.css" rel="stylesheet">
+<!-- Lazy loader https://github.com/craigbuckler/progressive-image.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.css">
+
 <title>Adelyn Bailly</title>
 </head>
 
@@ -20,52 +25,52 @@
             <div class="content">
                 <div class="row">
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                     <div class="column">
-                        <img src="/images/test.png">
+                        <a href="/images/test-full.png" data-lightbox="image-1" data-title="Test" class="progressive replace"><img src="/images/test-tiny.png" class="preview"></a>
                     </div>
                 </div>
             </div>
@@ -79,25 +84,13 @@
     </div>
         
 
-    <!-- Nav Bar-->
-    <script>
-        function myFunction() {
-            var x = document.getElementById("my-nav-bar");
-            if (x.className === "nav-bar") {
-                x.className += "-responsive";
-            } else {
-                x.className = "nav-bar";
-            }
-        }
-    </script>
+    <!-- Light Box -->
+    <script src="./imports/js/lightbox-plus-jquery.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+    <!-- Lazy Loader -->
+    <script src="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.js"></script>
 
-    <script>
-        const observer = lozad();
-        observer.observe();
-    </script>
-
+    <!-- Scroll back to top function -->
     <script>
         var target = document.querySelector("footer");
 
