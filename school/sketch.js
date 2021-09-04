@@ -61,8 +61,8 @@ class Star{
     let alpha = map(this.pos.z,0,width,100,0);
     noStroke();
     fill(0,0,0,alpha);
-    //circle(x,y,r);
-    textSize(r);
-    text("MATHY",x,y);
+    circle(x,y,r);
+    //textSize(r);
+    //text("MATHY",x,y);
   }
 }
