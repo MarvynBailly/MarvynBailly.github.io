@@ -2,6 +2,13 @@ let speed = 3;
 let stars = [];
 let population = 300;
 
+let equation;
+
+function preload() {
+  //equation = loadImage("test.png");
+  //console.log(equation);
+}
+
 function setup() {
     wid = windowWidth - 16.9;
     hit = windowHeight;
@@ -62,7 +69,7 @@ class Star{
     noStroke();
     fill(0,0,0,alpha);
     circle(x,y,r);
-    //textSize(r);
+    //  textSize(r);
     //text("MATHY",x,y);
   }
 }
