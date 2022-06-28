@@ -1,16 +1,16 @@
 float moveSpeed = 1;
 float dt = 1;
 float diffuseSpeed = 0.05;
-float evapSpeed = 0.8;
+float evapSpeed = 0.5;
 float turnSpeed = 0.5;
-float sensorAngle = 6;//20;//6;
-float sensorDst = 10;//25;//10;
+float sensorAngle = 30;//20;//6;
+float sensorDst = 35;//25;//10;
 int sensorSize = 1;
 
-int colonySize = 5000;
+int colonySize = 900;
 
 Agent[] agents;
-float[] displayArray;
+float[][] displayArray;
 
 int getIndex(PVector pos){
   return (floor(pos.x) + floor(pos.y) * width);
@@ -24,10 +24,11 @@ void setup(){
   size(600,600,P2D);
   pixelDensity(1);
   
-  displayArray = new float[width*height];
+  displayArray = new float[width*height][2];
   
   for(int i = 0; i <width*height; i++){
-    displayArray[i] = 0;
+    displayArray[i][0] = 0;
+    displayArray[i][1] = 0;
   }
   
   //init ants
@@ -37,8 +38,19 @@ void setup(){
     float y = random(200)*sin(random(2*PI))+height/2;
     PVector aVec = new PVector(width/2-x,height/2-y);
     float a = aVec.normalize().heading();
-    agents[i] = new Agent(x,y,a);
+    int m = round(random(1,3));
+    agents[i] = new Agent(x,y,a,m);
   }
+  
+  //for(int i = 0; i < colonySize/3; i++){
+  //  agents[i] = new Agent(200,200,random(2*PI),1);
+  //}
+  //for(int i = colonySize/3; i < 2*colonySize/3; i++){
+  //  agents[i] = new Agent(200,200,random(2*PI),2);
+  //}
+  //for(int i = 2*colonySize/3; i < colonySize; i++){
+  //    agents[i] = new Agent(200,200,random(2*PI),3);
+  //}
   
   //noLoop();
 }
@@ -51,7 +63,8 @@ void draw(){
   for(Agent a : agents){
     steer(a);
     int index = a.update();
-    displayArray[index] = 255;
+    displayArray[index][0] = 255;
+    displayArray[index][1] = a.agentMask;
   }
   
   processDisplay();
@@ -103,7 +116,11 @@ float sense(Agent a, float sensorAngleOff){
       PVector sample = new PVector(sensorCenter.x + xOff, sensorCenter.y + yOff);
       if(sample.x >= 0 && sample.x < width  && sample.y >= 0 && sample.y < height){
         int sampleIndex = getIndex(sample);
-        sum += displayArray[sampleIndex];
+        int maskType = -1;
+        if(a.agentMask == displayArray[sampleIndex][1]){
+           maskType = 1;
+        }
+        sum += maskType * displayArray[sampleIndex][0];
       }
     }  
   }
@@ -118,7 +135,7 @@ void processDisplay(){
         return;
       }
       
-      float orginalValue = displayArray[index];
+      float orginalValue = displayArray[index][0];
       float sum = 0;
       for(int xOff = -1; xOff <= 1; xOff++){
         for(int yOff = -1; yOff <= 1; yOff++){
@@ -126,7 +143,7 @@ void processDisplay(){
           
           if(sample.x >= 0 && sample.x < width  && sample.y >= 0 && sample.y < height){
             int sampleIndex = getIndex(sample);
-            sum += displayArray[sampleIndex];
+            sum += displayArray[sampleIndex][0];
           }
         }
       }
@@ -134,14 +151,24 @@ void processDisplay(){
       float diffuse = lerp(orginalValue, blur, diffuseSpeed * dt);
       float evap = max(0, diffuse - evapSpeed * dt);
       
-      displayArray[index] = evap;
+      displayArray[index][0] = evap;
    }
 }
 
 void updateDisplay(){
   loadPixels();
   for(int i = 0; i <width*height; i++){
-    pixels[i] = color(displayArray[i]);
+    color clr = color(0);
+    if (displayArray[i][1] == 0){
+      clr = color(0,0,0);
+    }else if(displayArray[i][1] == 1){
+      clr = color(displayArray[i][0],0,0);
+    }else if(displayArray[i][1] == 2){
+      clr = color(0,displayArray[i][0],0);
+    }else if(displayArray[i][1] == 3){
+      clr = color(0,0,displayArray[i][0]);
+    }
+    pixels[i] = clr;
   }
   updatePixels();
 }

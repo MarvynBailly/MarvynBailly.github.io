@@ -1,10 +1,12 @@
 class Agent{
   PVector position;
   float angle;
+  int agentMask;
   
-  Agent(float x,float y,float a){
+  Agent(float x,float y,float a, int m){
     position = new PVector(x,y);
     angle = a;
+    agentMask = m;
   }
   
   int update(){    
