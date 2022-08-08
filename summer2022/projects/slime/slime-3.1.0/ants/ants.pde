@@ -7,7 +7,7 @@ float sensorAngle = 6;//20;//6;
 float sensorDst = 10;//25;//10;
 int sensorSize = 1;
 
-int colonySize = 900;
+int colonySize = 2000;
 
 Agent[] agents;
 float[][] displayArray;
@@ -21,7 +21,7 @@ PVector get2D(int index){
 } 
 
 void setup(){
-  size(600,600,P2D);
+  size(800,800,P2D);
   pixelDensity(1);
   
   displayArray = new float[width*height][2];
@@ -55,9 +55,18 @@ void setup(){
   //noLoop();
 }
 
+void mousePressed(){
+  println("Sensor Angle: ",sensorAngle,"Sensor Distance:", sensorDst);
+}
+
 void draw(){
   background(0);
 
+  
+  sensorAngle += random(0.001,0.0001);//20;//6;
+  if(sensorAngle >  40){sensorAngle = 6;}
+  sensorDst += random(0.001,0.0001);//20;//6;
+  if(sensorDst >  45){sensorDst = 10;}
   
   //ant loop
   for(Agent a : agents){
