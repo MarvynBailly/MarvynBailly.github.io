@@ -4,7 +4,7 @@ import controlP5.*;
 ControlP5 cp5;
 
 int species = 4;
-int size = 600;
+int size = 1500;
 
 int minRule = -100;
 int maxRule = 100;
@@ -15,45 +15,40 @@ float force = 0.1;
 float mapMag = 2;
 
 
-float gxg = 4.9;//0;//random(minRule,maxRule);
-float gxr = 0;//random(minRule,maxRule);
-float gxb = -80;//0;//random(minRule,maxRule);
-float gxw = 0;//random(minRule,maxRule);
+float gxg = 25.275253;
+float gxr = -96.47011;
+float gxb = -54.38968;
+float gxw = 59.15956;
+float gxgR = 236.18758;
+float gxrR = 371.8824;
+float gxbR = 93.449905;
+float gxwR = 366.26135;
+float rxr = 23.65667;
+float rxg = -95.35878;
+float rxb = 30.006607;
+float rxw = 58.03842;
+float rxrR = 249.3458;
+float rxgR = 404.74185;
+float rxbR = 454.4596;
+float rxwR = 175.71054;
+float bxb = -23.945618;
+float bxg = 64.22238;
+float bxr = 87.25615;
+float bxw = -11.152733;
+float bxbR = 321.25845;
+float bxgR = 171.63522;
+float bxrR = 485.40906;
+float bxwR = 274.48297;
+float wxw = -48.354362;
+float wxg = 31.441559;
+float wxb = -71.4497;
+float wxr = -9.54763;
+float wxwR = 214.65413;
+float wxgR = 324.13675;
+float wxbR = 316.06558;
+float wxrR = 468.47192;
 
-float gxgR = 411;
-float gxrR = 58;
-float gxbR = 103;
-float gxwR = 290;
 
-float rxr = 10;//random(minRule,maxRule);
-float rxg = -20;//random(minRule,maxRule);
-float rxb = 31;//random(minRule,maxRule);
-float rxw = 0;//random(minRule,maxRule);
-
-float rxrR = 100;
-float rxgR = 181;
-float rxbR = 150;
-float rxwR = 94;
-
-float bxb = -20;//random(minRule,maxRule);
-float bxg = 15;//random(minRule,maxRule);
-float bxr = 1;//random(minRule,maxRule);
-float bxw = 2;//random(minRule,maxRule);
-
-float bxbR = 60;
-float bxgR = 143;
-float bxrR = 50;
-float bxwR = 475;
-
-float wxw = -23;//random(minRule,maxRule);
-float wxg = 14;//random(minRule,maxRule);
-float wxb = 0;//random(minRule,maxRule);
-float wxr = 26;//random(minRule,maxRule);
-
-float wxwR = 114;
-float wxgR = 200;
-float wxbR = 119;
-float wxrR = 255;
 
 Atom[] atoms = new Atom[species * size];
 
@@ -117,7 +112,7 @@ Atom[] create(int number, color clr, int spot){
 }
 
 void setup(){
-  fullScreen();
+  fullScreen(P2D);
   atoms = new Atom[species * size];
   
   red = create(size,color(255,0,0),0);
@@ -313,6 +308,7 @@ public void randomize(){
 void draw(){
   background(0);
   
+  for(int i = 0; i < 1; i++){
   rule(green, green, map(gxg,-100,100,-mapMag,mapMag), gxgR);
   rule(green, red, map(gxr,-100,100,-mapMag,mapMag), gxrR);
   rule(green, blue, map(gxb,-100,100,-mapMag,mapMag), gxbR);
@@ -332,10 +328,11 @@ void draw(){
   rule(white, green, map(wxg,-100,100,-mapMag,mapMag), wxgR);
   rule(white, blue, map(wxb,-100,100,-mapMag,mapMag), wxbR);
   rule(white, red, map(wxr,-100,100,-mapMag,mapMag), wxrR);
+  }
   
   for(int i = 0; i < atoms.length; i++){
     noStroke();
     fill(atoms[i].c);
-    circle(atoms[i].x,atoms[i].y,10);
+    circle(atoms[i].x,atoms[i].y,5);
   }
 }
