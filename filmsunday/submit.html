@@ -1,0 +1,32 @@
+<!-- HTML for the film submission page -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Sunday - Submit a Film Idea</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Include the Firebase library and the Realtime Database module in the HTML file -->
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Submit a Film Idea</h1>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#" class="active">Submit a Film Idea</a></li>
+      <li><a href="vote.html">Vote for Your Top Films</a></li>
+      <li><a href="results.html">View Results</a></li>
+    </ul>
+  </nav>
+  <form id="film-form">
+    <h2>Submissions:</h2>
+    <p>Submit your film ideas. No movies. </p>
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" placeholder="Title (year)"><br>
+    <button type="submit">Submit</button>
+  </form>
+  <script src="./scripts/main.js"></script>
+  <script src="./scripts/submit.js"></script>
+</body>
+</html>

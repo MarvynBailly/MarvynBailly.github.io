@@ -1,0 +1,51 @@
+<!-- HTML for the home page -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Sunday</title>
+  <link rel="stylesheet" href="style.css">
+    <!-- Include the Firebase library and the Realtime Database module in the HTML file -->
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Film Sunday</h1>
+  <nav>
+    <ul>
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="submit.html">Submit a Film Idea</a></li>
+      <li><a href="vote.html">Vote for Your Top Films</a></li>
+      <li><a href="results.html">View Results</a></li>
+    </ul>
+  </nav>
+  <p>Welcome to Film Sunday! Here you can submit your film ideas and vote for your favorites.</p>
+  <p>Address is 5249 17th Ave NE. Film starts at 8:30</p>
+
+  <form id="admin-form" style="display: none">
+    <label for="admin-code">Admin Code:</label>
+    <input type="password" id="admin-code" name="admin-code">
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Create the admin menu, which is initially hidden -->
+  <div id="admin-menu" style="display: none;">
+    <h1>Admin Controls</h1>
+    <!-- Create a button to reset the votes -->
+    <button id="reset-votes-button">Reset Votes</button>
+    <button id="vote-page-on-button">Voting Page On</button>
+    <button id="vote-page-off-button">Voting Page Off</button>
+
+    <!-- Create a drop-down list in the admin menu -->
+    <select id="film-list">
+      <!-- Add an option for each film -->
+    </select>
+
+    <!-- Create a button to delete the selected film -->
+    <button id="delete-film-button">Delete Film</button>
+
+
+  <script src="./scripts/main.js"></script>
+  <script src="./scripts/admin.js"></script>
+</body>
+</html>

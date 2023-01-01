@@ -1,0 +1,36 @@
+<!-- HTML for the voting page -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Sunday - Voting</title>
+  <link rel="stylesheet" href="./style.css">
+    <!-- Include the Firebase library and the Realtime Database module in the HTML file -->
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-database.js"></script>
+</head>
+<body>
+    <h1>Film Sunday - Voting</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="submit.html">Submit a Film Idea</a></li>
+            <li><a href="#" class="active">Vote for Your Top Films</a></li>
+            <li><a href="results.html">View Results</a></li>
+        </ul>
+    </nav>
+    <form id="vote-form-on">
+        <h2>Select Your Top Films:</h2>
+        <p>Select your top 3 films from the list below:</p>
+        <div id="film-list"></div>
+    <label for="name"><p>Enter your name:</p></label><br>
+    <input type="text" id="name" name="name"><br>
+    <button type="submit">Submit</button>
+  </form>
+  <form id="vote-form-off">
+    <p>Voting is currently closed.</p>
+  </form>
+  <script src="./scripts/main.js"></script>
+  <script src="./scripts/vote.js"></script>
+</body>
+</html>

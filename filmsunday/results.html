@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Sunday - Results</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Film Sunday - Results</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="submit.html">Submit a Film Idea</a></li>
+            <li><a href="vote.html" >Vote for Your Top Films</a></li>
+            <li><a href="#" class="active">View Results</a></li>
+        </ul>
+    </nav>
+    <form id="result-form">
+      <div id="results">
+        <canvas id="chart"></canvas>
+          <!-- Chart will be displayed here -->
+      </div>
+        <hr>
+        <div id="votes">
+          <!-- Votes will be displayed here -->
+        </div>
+        <hr>
+        <!-- Create a container to hold the voter statistics -->
+        <div id="voter-statistics">
+          <!-- Display the total number of voters -->
+          <div>Total Voters: <span id="total-voters">0</span></div>
+          <!-- Display the total number of votes -->
+          <div>Total Votes: <span id="total-votes">0</span></div>
+        </div>
+        <hr>
+        <!-- Create a container to hold the list of voters and their votes -->
+        <div id="voter-list">
+          <!-- Add a list item for each voter -->
+        </div>
+      </div>
+    </form>
+    <script src="https://www.gstatic.com/firebasejs/7.21.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.21.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/results.js"></script>
+  </body>
+</html>
