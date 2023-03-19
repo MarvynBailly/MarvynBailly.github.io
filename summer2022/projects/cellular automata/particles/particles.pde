@@ -4,7 +4,7 @@ import controlP5.*;
 ControlP5 cp5;
 
 int species = 4;
-int size = 1500;
+int size = 1200;
 
 int minRule = -100;
 int maxRule = 100;
@@ -12,7 +12,7 @@ int minDistance = 50;
 int maxDistance = 500;
 
 float force = 0.1;
-float mapMag = 2;
+float mapMag = 1;
 
 
 float gxg = 25.275253;
