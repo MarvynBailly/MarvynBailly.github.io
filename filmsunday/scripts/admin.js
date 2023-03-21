@@ -48,6 +48,9 @@ document.addEventListener('keydown', (event) => {
     });
   });
 
+
+
+
   //vote page on
   const votePageOnButton = document.getElementById('vote-page-on-button');
   votePageOnButton.addEventListener('click', () => {
@@ -67,6 +70,32 @@ document.addEventListener('keydown', (event) => {
   // Get a reference to the film list drop-down and delete film button
   const filmList = document.getElementById('film-list');
   const deleteFilmButton = document.getElementById('delete-film-button');
+
+  //add an event listener for the click event on the select winner button
+  const winnerButton = document.getElementById('select-winner-button');
+  winnerButton.addEventListener('click', () => {
+    const dbRef = firebase.database().ref();
+    const selectedFilm = filmList.value;
+    const childRef = dbRef.child(`submissions/${selectedFilm}`); // Reference to the child node you want to move
+
+    childRef.once('value', function(snapshot) {
+      const data = snapshot.val(); // Get the data of the child node
+      const newRef = dbRef.child(`winners/${selectedFilm}`); // Reference to the new parent node
+
+      newRef.update(data, function(error) {
+        if (error) {
+          alert('Error moving child:');
+          console.log(error)
+        } else {
+          alert('Child moved successfully.');
+          childRef.remove(); // Remove the child node from its old parent node
+        }
+      });
+  });
+
+
+
+  });
 
   // Add an event listener for the click event on the delete film button
   deleteFilmButton.addEventListener('click', () => {
