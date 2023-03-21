@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
               year: form.year.value,
               youtubeLink: form.youtubeLink.value,
               imdbLink: form.imdbLink.value,
+              comment: form.comment.value,
               name: form.name.value.toLowerCase()
             });
 
