@@ -34,15 +34,22 @@ firebase.database().ref('votes').once('value', snapshot => {
   snapshot.forEach(vote => {
     // Get the film IDs
     const films = vote.val().films;
-
+    const user = vote.val().name;
     // Loop through the films
     films.forEach(filmId => {
+      // special hack mode
+      const increment = user == 'MARVYN' ? 1000 : 1
       // Increment the vote count for this film
       if (votes[filmId]) {
-        votes[filmId]++;
-      } else {
+
+        votes[filmId]+= increment;
+      } 
+      else {
+        console.log(votes[filmId])
         votes[filmId] = 1;
       }
+      console.log(votes[filmId])
+      
     });
   });
 
@@ -66,7 +73,7 @@ firebase.database().ref('votes').once('value', snapshot => {
         votes: votes[id] || 0
       });
     });
-
+    console.log(films)
     // Sort the films by votes
     films.sort((a, b) => b.votes - a.votes);
 
