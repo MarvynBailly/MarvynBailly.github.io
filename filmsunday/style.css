@@ -142,14 +142,14 @@ button[type="submit"] {
   margin: 1em auto 0;
   padding: 0.5em 1em;
   font-size: 1em;
-  background-color: lightgray;
+  background-color: green;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 button[type="submit"]:hover {
-  background-color: gray;
+  background-color: black;
   color: white;
 }
 

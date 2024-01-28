@@ -114,25 +114,87 @@ document.addEventListener('keydown', (event) => {
       });
   });
 
-  // Use the once() method to get a snapshot of the films in the database
-  firebase.database().ref('submissions').once('value')
-    .then((snapshot) => {
-      // Get the films from the snapshot
-      const films = snapshot.val();
+// Use the once() method to get a snapshot of the films in the database
+firebase.database().ref('submissions').once('value')
+.then((snapshot) => {
+  // Get the films from the snapshot
+  const films = snapshot.val();
 
-      // Iterate through the films and add an option for each film
-      for (const filmId in films) {
-        const film = films[filmId];
-        const option = document.createElement('option');
-        option.value = filmId;
-        option.innerHTML = film.title;
-        filmList.appendChild(option);
+  // Iterate through the films and add an option for each film
+  for (const filmId in films) {
+    const film = films[filmId];
+    const option = document.createElement('option');
+    option.value = filmId;
+    option.innerHTML = film.title;
+    filmList.appendChild(option);
+  }
+})
+.catch((error) => {
+  // If there was an error, display an error message
+  alert(`Error retrieving films: ${error.message}`);
+});
+
+
+
+
+// Reference to the new waitlist drop-down
+const waitlistFilmList = document.getElementById('waitlist');
+
+
+// Use the once() method to get a snapshot of the films in the database
+firebase.database().ref('waitlist').once('value')
+.then((snapshot) => {
+  // Get the films from the snapshot
+  const films = snapshot.val();
+
+  // Iterate through the films and add an option for each film
+  for (const filmId in films) {
+    const film = films[filmId];
+    const option = document.createElement('option');
+    option.value = filmId;
+    option.innerHTML = film.title;
+    filmList.appendChild(option);
+  }
+})
+.catch((error) => {
+  // If there was an error, display an error message
+  alert(`Error retrieving films: ${error.message}`);
+});
+
+// Reference to the 'Toggle Waitlist' button
+const toggleWaitlistButton = document.getElementById('toggle-waitlist-button');
+
+toggleWaitlistButton.addEventListener('click', () => {
+  // Get the value of the selected film
+  const selectedFilm = filmList.value;
+
+  // First, check if the film is in 'submissions' or 'waitlist'
+  firebase.database().ref(`submissions/${selectedFilm}`).once('value', submissionSnapshot => {
+    if (submissionSnapshot.exists()) {
+      // If the film is in 'submissions', move it to 'waitlist'
+      moveFilm(selectedFilm, 'submissions', 'waitlist');
+    } else {
+      // If the film is not in 'submissions', assume it's in 'waitlist' and move it to 'submissions'
+      moveFilm(selectedFilm, 'waitlist', 'submissions');
+    }
+  });
+});
+
+// Function to move a film between categories
+function moveFilm(filmId, fromCategory, toCategory) {
+  const fromRef = firebase.database().ref(`${fromCategory}/${filmId}`);
+  const toRef = firebase.database().ref(`${toCategory}/${filmId}`);
+
+  fromRef.once('value', snapshot => {
+    const data = snapshot.val();
+    toRef.set(data, error => {
+      if (!error) {
+        fromRef.remove()
+          .then(() => alert(`Film moved from ${fromCategory} to ${toCategory}`))
+          .catch(error => alert(`Error removing film: ${error.message}`));
+      } else {
+        alert(`Error moving film: ${error.message}`);
       }
-    })
-    .catch((error) => {
-      // If there was an error, display an error message
-      alert(`Error retrieving films: ${error.message}`);
     });
-
-
-
+  });
+}

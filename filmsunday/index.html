@@ -19,8 +19,9 @@
       <li><a href="results.html">View Results</a></li>
     </ul>
   </nav>
-  <p>Welcome to Film Sunday! Here you can submit your film ideas and vote for your favorites.</p>
-  <p>Address is 5249 17th Ave NE. Film starts at 8:30</p>
+  <p>Welcome to Film Sunday!</p>
+  <p>You can submit film ideas for "film-verification" at anytime.</p>
+  <p>Voting opens on Saturday and closes Sunday morning.</p>
 
   <form id="admin-form" style="display: none">
     <label for="admin-code">Admin Code:</label>
@@ -37,16 +38,16 @@
     <button id="vote-page-off-button">Voting Page Off</button>
     
     
-    
     <!-- Create a drop-down list in the admin menu -->
     <select id="film-list">
       <!-- Add an option for each film -->
     </select>
-    
+
+
     <!-- Create a button to delete the selected film -->
     <button id="delete-film-button">Delete Film</button>
     <button id="select-winner-button">Select Winner</button>
-
+    <button id="toggle-waitlist-button">Toggle Waitlist</button>
 
   <script src="./scripts/main.js"></script>
   <script src="./scripts/admin.js"></script>

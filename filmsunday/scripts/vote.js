@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
       // Show a success message to the user
       const successMessage = document.createElement('p');
-      successMessage.textContent = 'Your film idea has been submitted successfully!';
+      successMessage.textContent = 'Your votes have been recorded!';
       successMessage.style.color = 'green';
       form.appendChild(successMessage);
     
