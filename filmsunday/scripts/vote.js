@@ -123,22 +123,38 @@ document.addEventListener('DOMContentLoaded', () => {
         
         
 
-        filmList.innerHTML += `
-          <div class="film">
-            <label for="${id}">${submission.val().title}</label>
-            <button onclick="toggleDetails('${id}')"> Toggle Details</button>
-            <div class="film-item" id="film-item-${id}">
-              ${filmItem.outerHTML}
-            </div>
+        // filmList.innerHTML += `
+        //   <div class="film">
+        //     <label for="${id}">${submission.val().title}</label>
+        //     <button onclick="toggleDetails('${id}')"> See more</button>
+        //     <div class="film-item" id="film-item-${id}">
+        //       ${filmItem.outerHTML}
+        //     </div>
             
-            <p style="margin-bottom: 10px"> Click to select vote</p>
-            <input type="checkbox" id="${id}" name="films" value="${id}" class="film-checkbox">
-          </div>
-        `;
+        //     <p style="margin-bottom: 10px"> Click to select vote</p>
+        //     <input type="checkbox" id="${id}" name="films" value="${id}" class="film-checkbox">
+        //   </div>
+        // `;
+        
         //filmList.appendChild(filmItem);
-
+        filmList.innerHTML += `
+        <div class="film">
+          <label for="${id}">${submission.val().title}</label>
+          <button class="details-button" data-id="${id}"> See more</button>
+          <div class="film-item" id="film-item-${id}" style="display:none">
+            ${filmItem.outerHTML}
+          </div>
+          <p style="margin-bottom: 10px"> Click to select vote</p>
+          <input type="checkbox" id="${id}" name="films" value="${id}" class="film-checkbox">
+        </div>
+        `;
+        document.querySelectorAll('.details-button').forEach(button => {
+          button.addEventListener('click', function() {
+            toggleDetails(this.getAttribute('data-id'));
+          });
+        });
       });
-    
+      
 
     // Attach click event listener to each button
     const buttons = form.querySelectorAll('button');
@@ -197,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
       // Show a success message to the user
       const successMessage = document.createElement('p');
-      successMessage.textContent = 'Your film idea has been submitted successfully!';
+      successMessage.textContent = 'Your votes have been recorded!';
       successMessage.style.color = 'green';
       form.appendChild(successMessage);
     
