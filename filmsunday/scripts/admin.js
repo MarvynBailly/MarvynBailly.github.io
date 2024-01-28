@@ -198,3 +198,39 @@ function moveFilm(filmId, fromCategory, toCategory) {
     });
   });
 }
+
+
+// Reference to the 'Move All to Waitlist' button
+const moveAllToWaitlistButton = document.getElementById('move-all-to-waitlist');
+
+moveAllToWaitlistButton.addEventListener('click', () => {
+  // Fetch all films from 'submissions'
+  firebase.database().ref('submissions').once('value', snapshot => {
+    const submissions = snapshot.val();
+
+    if (submissions) {
+      // For each film in 'submissions', move it to 'waitlist'
+      Object.keys(submissions).forEach(filmId => {
+        const filmData = submissions[filmId];
+        moveFilmToWaitlist(filmId, filmData);
+      });
+    }
+  });
+});
+
+// Function to move a film to the waitlist
+function moveFilmToWaitlist(filmId, filmData) {
+  const submissionsRef = firebase.database().ref(`submissions/${filmId}`);
+  const waitlistRef = firebase.database().ref(`waitlist/${filmId}`);
+
+  // Add the film to 'waitlist' and then remove it from 'submissions'
+  waitlistRef.set(filmData, error => {
+    if (!error) {
+      submissionsRef.remove()
+        .then(() => console.log(`Film ${filmId} moved to waitlist`))
+        .catch(error => console.error(`Error removing film ${filmId} from submissions:`, error));
+    } else {
+      console.error(`Error moving film ${filmId} to waitlist:`, error);
+    }
+  });
+}
