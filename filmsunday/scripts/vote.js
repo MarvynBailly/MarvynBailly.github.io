@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="film">
           <label for="${id}">${submission.val().title}</label>
           <button class="details-button" data-id="${id}"> See more</button>
-          <div class="film-item" id="film-item-${id}" style="display:none">
+          <div class="film-item" id="film-item-${id}" style="display:block">
             ${filmItem.outerHTML}
           </div>
           <p style="margin-bottom: 10px"> Click to select vote</p>
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Extracts the video ID from a YouTube link
 function getYoutubeVideoId(url) {
   var videoId = "";
-  var regex = /[?&]v=([^&#]*)/;
+  var regex = /\/([a-zA-Z0-9_-]{11})/;
   var match = regex.exec(url);
   if (match) {
     videoId = match[1];
