@@ -226,13 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
 
-// Extracts the video ID from a YouTube link
+// Improved regex for YouTube video ID extraction
 function getYoutubeVideoId(url) {
-  var videoId = "";
-  var regex = /\/([a-zA-Z0-9_-]{11})/;
+  var regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu.be\/)([a-zA-Z0-9_-]{11})/;
   var match = regex.exec(url);
   if (match) {
-    videoId = match[1];
+    return match[1];
   }
-  return videoId;
+  return null;
 }
