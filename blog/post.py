@@ -29,6 +29,28 @@ post_div_template = '''
 </div>
 '''
 
+def extract_metadata(md_file):
+    metadata = {
+        'title': 'No Title',
+        'description': 'No Description',
+        'cover_image': 'https://marvyn.com/images/default_thumbnail.png'
+    }
+    with open(md_file, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            if line.startswith('[comment]: <> (Title:'):
+                metadata['title'] = line.split(':', 1)[1].strip().rstrip(')')[11:]
+            elif line.startswith('[comment]: <> (Description:'):
+                metadata['description'] = line.split(':', 1)[1].strip().rstrip(')')[16:]
+            elif line.startswith('[comment]: <> (Cover image path:'):
+                metadata['cover_image'] = line.split(':', 1)[1].strip().rstrip(')')[22:]
+            # Stop reading after the first three lines
+            if lines.index(line) >= 2:
+                break
+    return metadata
+
+
+
 def load_added_posts(added_posts_file):
     if os.path.exists(added_posts_file):
         with open(added_posts_file, 'r') as file:
@@ -55,11 +77,22 @@ def generate_post_divs_and_create_index(posts_dir, template_file, added_posts):
             if post_dir in added_posts:
                 continue
             
-            post_name = os.path.basename(root)
+            md_file_path = os.path.join(root, 'notes.md')
+            metadata = extract_metadata(md_file_path)
+
+            
+            
+            post_title = metadata['title']
             post_url = f'{base_url}{post_dir}/index.html'
-            post_title = post_name.replace('-', ' ').title()
-            post_excerpt = 'A brief description of the post.'
-            post_image = 'https://marvyn.com/images/default_thumbnail.png'  # Default image, update if needed
+            post_excerpt = metadata['description']
+            post_image = f'https://marvyn.com/blog/posts/{post_dir}/images/{metadata["cover_image"]}'
+            
+            
+            # post_name = os.path.basename(root)
+            # post_url = f'{base_url}{post_dir}/index.html'
+            # post_title = post_name.replace('-', ' ').title()
+            # post_excerpt = 'A brief description of the post.'
+            # post_image = 'https://marvyn.com/images/default_thumbnail.png'  # Default image, update if needed
 
             post_divs += post_div_template.format(
                 post_url=post_url,

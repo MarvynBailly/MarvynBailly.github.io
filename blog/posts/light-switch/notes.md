@@ -1,3 +1,7 @@
+[comment]: <> (Title: Automatic Light Switch)
+[comment]: <> (Description: I create an automatic light switch using an ESP8266, a Servo, and some python)
+[comment]: <> (Cover image path: cover.PNG)
+
 # Automatic Light Switch
 
 We will use NodeMCU's esp8266, a couple of wires, a power supply, and a mini servo to remotely turn on and off the light switch in my room.

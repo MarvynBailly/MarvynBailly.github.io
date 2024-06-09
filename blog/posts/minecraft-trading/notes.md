@@ -1,3 +1,7 @@
+[comment]: <> (Title: Automatic Villager Trading)
+[comment]: <> (Description: I use python to create automatic villager trading in Minecraft.)
+[comment]: <> (Cover image path: result.PNG)
+
 # Minecraft Automation
 The goal of this project is to use Python to automate trivial tasks in Minecraft using Python. To control the mouse and keyboards inputs we will use [PyAutoGui](https://pyautogui.readthedocs.io/en/latest/).
 
