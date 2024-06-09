@@ -295,6 +295,57 @@ Great, now the script will only add new entries.
 
 ### Automatic Title Generation
 
+To easily define the title, description, and cover image in the HTML, let's add the following comments to the beginning of the markdown files:
+
+```
+[comment]: <> (Title: Automatic Villager Trading)
+[comment]: <> (Description: I use python to create automatic villager trading in Minecraft.)
+[comment]: <> (Cover image path: result.PNG)
+```
+
+Now we can use the following Python script to find the data and add it to the html:
+```
+def extract_metadata(md_file):
+    metadata = {
+        'title': 'No Title',
+        'description': 'No Description',
+        'cover_image': 'https://marvyn.com/images/default_thumbnail.png'
+    }
+    with open(md_file, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            if line.startswith('[comment]: <> (Title:'):
+                metadata['title'] = line.split(':', 1)[1].strip().rstrip(')')[11:]
+            elif line.startswith('[comment]: <> (Description:'):
+                metadata['description'] = line.split(':', 1)[1].strip().rstrip(')')[16:]
+            elif line.startswith('[comment]: <> (Cover image path:'):
+                metadata['cover_image'] = line.split(':', 1)[1].strip().rstrip(')')[22:]
+            # Stop reading after the first three lines
+            if lines.index(line) >= 2:
+                break
+    return metadata
+```
+
+When running the python script now, the generated HTML has the desired information populated
+![alt text](./images/automatic.PNG)
 
 
 ### Markdown Template
+
+Finally, I'll save a copy of the `notes.md` file within the blog directory that looks like:
+```
+[comment]: <> (Title: title)
+[comment]: <> (Description: description)
+[comment]: <> (Cover image path: image name)
+
+
+# Title
+
+## Subtitle
+
+### and so on
+
+![alt text](./path_to_image) 
+``` 
+
+This allows me to easily copy and paste this file into my project and start writing notes.
