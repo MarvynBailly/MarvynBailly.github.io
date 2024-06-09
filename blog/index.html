@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Marvyn Bailly</title>
+        <link href="../styles.css" rel="stylesheet">
+        <link rel="icon" href="https://marvyn.com/images/simple_logo.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+
+        <body>
+        <div class="overlay-hidden" id="overlay"></div>
+        <div class="pagesec">
+            
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                        <a href="https://marvyn.com/games/">Games</a>
+                        <a href="https://marvyn.com/blog/">Blog</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/about/">About</a>
+                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="frontpage">
+                <div target="secondary">
+                    <h1>Blog</h1>    
+                    <div class="lowertext">
+                        <a>A collection of random thoughts</a>
+                    </div>             
+                </div> 
+            </div>
+        </div>
+        <div class="wrapper">
+            <!-- SELECTOR FOR GRID-->
+            <!-- <div class="selector">
+                <div id="selectorcontainer">
+                    <button class="selector active" onclick="filterSelection('all')"><a>Show all</a></button>
+                    <button class="selector" onclick="filterSelection('code')"><a>Code</a></button>
+                    <button class="selector" onclick="filterSelection('drawing')"><a>Drawing</a></button>
+                    <button class="selector" onclick="filterSelection('other')"><a>Other</a></button>
+                </div> 
+            </div> -->
+            <div class="row">
+
+<div class="column code">
+    <div class="content">
+        <a href="https://marvyn.com/blog/posts/minecraft-trading/index.html"><img src="https://marvyn.com/images/default_thumbnail.png" alt="Minecraft Trading" width="100%"></a>
+        <div class="description">
+            <h1>Minecraft Trading</h1>
+            <p>A brief description of the post.</p>
+        </div>
+        <div class="buttonholder">
+            <button><a href="https://marvyn.com/blog/posts/minecraft-trading/index.html">Read More</a></button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="column code">
+    <div class="content">
+        <a href="https://marvyn.com/blog/posts/light-switch/index.html"><img src="https://marvyn.com/images/default_thumbnail.png" alt="Light Switch" width="100%"></a>
+        <div class="description">
+            <h1>Light Switch</h1>
+            <p>A brief description of the post.</p>
+        </div>
+        <div class="buttonholder">
+            <button><a href="https://marvyn.com/blog/posts/light-switch/index.html">Read More</a></button>
+        </div>
+    </div>
+</div>
+
+
+                <div class="column code">
+                    <div class="content">
+                        <a href="https://marvyn.com/art/polygon/"><img src="https://marvyn.com/images/polygon.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Polygonal Flocking</h1>
+                            <p>Polygons made from flocking particles in processing and P5js.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/art/polygon/">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <!-- Nav Bar-->
+        <script>            
+            filterSelection("all")
+            function filterSelection(c) {
+              var x, i;
+              x = document.getElementsByClassName("column");
+              if (c == "all") c = "";
+              for (i = 0; i < x.length; i++) {
+                RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) AddClass(x[i], "show");
+              }
+            }
+            
+            function AddClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+              }
+            }
+            
+            function RemoveClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                  arr1.splice(arr1.indexOf(arr2[i]), 1);     
+                }
+              }
+              element.className = arr1.join(" ");
+            }
+            
+            var btnContainer = document.getElementById("selectorcontainer");
+            var btns = btnContainer.getElementsByClassName("selector");
+            for (var i = 0; i < btns.length; i++) { 
+              btns[i].addEventListener("click", function(){
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+              });
+            }
+        </script>
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                } else {
+                    x.className = "nav-bar";
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>
+    </body>
+</html>
