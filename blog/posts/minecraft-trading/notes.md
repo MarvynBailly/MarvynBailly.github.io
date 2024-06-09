@@ -45,7 +45,7 @@ While the absolute position method works, we wish to expand the code to trade st
 
 Let's begin by taking a screenshot of the players screen and a screen shot of the string stack.
 
-![Random String Positions](/images/random.PNG "Random String Positions")
+![Random String Positions](./images/random.PNG "Random String Positions")
 
 ![String](/images/string.PNG "String")
 
