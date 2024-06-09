@@ -47,7 +47,7 @@ Let's begin by taking a screenshot of the players screen and a screen shot of th
 
 ![Random String Positions](./images/random.PNG "Random String Positions")
 
-![String](/images/string.PNG "String")
+![String](./images/string.PNG "String")
 
 We will use cv2 to load the images as follows:
 ```
@@ -65,7 +65,7 @@ Note that `cv2.TM_CCOEFF_NORMED` is an image kernel provided by cv2. Running thi
 
 Original             |  matchTemplate
 :-------------------------:|:-------------------------:
-![](/images/random.PNG)  |  ![](/images/match.PNG)
+![](./images/random.PNG)  |  ![](./images/match.PNG)
 
 We can see that the strongest matches (look at the white dots) align with the positions of the string in the inventory. While the dots are not in the center of the grid, we can easily fix this later on. To extract the (x,y) positions, we can set a threshold value and use numpy as follows:
 ```
@@ -76,7 +76,7 @@ print(len(xloc))
 ```
 Running this code returns `9` as desired since there are nine stacks of string in the inventory. Now we need to slightly adjust the `(xloc,yloc)` position such that when the mouse clicks on the location, it will pick up the string. Noticing that the dots are in the upper left corner of the square, we can shift the position slightly to the right and up to get within the correct cell of the inventory. Putting this all together, gives the (x,y) positions of the points in red:
 
-![result](/images/result.PNG "result")
+![result](./images/result.PNG "result")
 
 Now rather than using a preset inventory image, we can use `pyautogui.screenshot()` to get an image of the player's current inventory. Using the same method described in the absolute positions to click the string stacks within the inventory, gives us our desired script!
 ```
@@ -117,7 +117,7 @@ Note that we required to turn both `inventory_img` and `string_img` into a gray 
 ### Modifications
 The first modification we would like to add, is to detect if the villager is maxed on trades. When this occurs, the user sees the following:
 
-![](/images/maxed.PNG "maxed")
+![](./images/maxed.PNG "maxed")
 
 So after each trade is completed, let's use the cv2's template match to see if the crossed out arrow is present. If the resulting (x,y) list is nonzero, we know that the villager is maxed.
 ```
