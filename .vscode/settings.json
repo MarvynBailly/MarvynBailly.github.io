@@ -2,5 +2,6 @@
     "python.terminal.executeInFileDir": true,
     "editor.autoClosingOvertype": "never",
     "editor.autoClosingQuotes": "never",
-    "editor.autoClosingBrackets": "never"
+    "editor.autoClosingBrackets": "never",
+    "liveServer.settings.port": 5501
 }

@@ -242,3 +242,24 @@ button[type="submit"]:hover {
   flex-grow: 1;
   text-align: center;
 }
+
+
+/* Container for the logo and the heading */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Styling for the logo */
+#site-logo {
+  position: absolute;
+  left: 10px; /* Adjust as needed for spacing */
+  height: 15%;
+}
+
+/* Styling for the heading */
+h1 {
+  flex-grow: 1;
+}
