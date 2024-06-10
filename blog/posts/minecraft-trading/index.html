@@ -1,28 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: auto;
-        padding: 20px;
-    }
-    zero-md {
-        display: block;
-        margin-top: 20px;
-    }
-    </style>      
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Markdown Blog</title>
-  <!-- Load polyfills only when necessary -->
-  <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
-  <!-- Load the element definition -->
-  <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
-</head>
-<body>
-  <!-- Simply set the `src` attribute to your MD file and win -->
-  <zero-md src="notes.md"></zero-md>
-</body>
-</html>
+
+    <head>
+        <title>Automatic Villager Trading</title>
+        <link href="../../../styles.css" rel="stylesheet">
+        <link rel="icon" href="../../../images/simple_logo.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Load polyfills only when necessary -->
+        <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+        <!-- Load the element definition -->
+        <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+        <script>
+            document.addEventListener('contextmenu', event => event.preventDefault());
+        </script>
+    </head>
+
+        <body>
+        <div class="overlay-hidden" id="overlay"></div>
+        <div class="pagesec">
+            
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                                                <a href="https://marvyn.com/games/">Games</a>
+                        <a href="https://marvyn.com/blog/">Blog</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/about/">About</a>
+                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="frontpage">
+                <div target="third">
+                    <h1>Automatic Villager Trading</h1>
+                </div>
+            </div>   
+            <div class="wrapper">   
+                <div class="sketchholder" style="text-align:left; margin-top:0vh; background-color:#e6e6e6; padding:20px; border-style: solid; border-radius: 10px;">
+                    <zero-md src="notes.md"></zero-md>
+                </div>
+          </div>
+        </div>
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                } else {
+                    x.className = "nav-bar";
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>
+</html> 
