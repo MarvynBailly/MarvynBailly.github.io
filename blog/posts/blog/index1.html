@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          max-width: 800px;
+          margin: auto;
+          padding: 20px;
+      }
+      zero-md {
+          display: block;
+          margin-top: 20px;
+      }
+  </style>      
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../../styles.css" rel="stylesheet">
+  <title>Markdown Blog</title>
+  <!-- Load polyfills only when necessary -->
+  <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+  <!-- Load the element definition -->
+  <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+</head>
+<body>
+  <!-- Simply set the `src` attribute to your MD file and win -->
+  <zero-md src="notes.md"></zero-md>
+</body>
+</html>
