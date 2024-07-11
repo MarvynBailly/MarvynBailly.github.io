@@ -19,8 +19,13 @@ public:
 
     Colony(float posX, float posY, int nAnts, int size);
 
+
+    void checkIfHome(Agent& ant);
+    void checkIfFeed(Agent& ant, std::vector<Food>& foods);
+    void steerAnt(Agent& ant, float sensorAngleSpacing, float turnSpeed, float sensorSize, std::vector<std::vector<Pheromone>>& grid, float dt, int target);
     void update(float moveSpeed, float deltaTime, int width, int height,  std::vector<std::vector<Pheromone>>& grid, std::vector<Food>& foods);
     void render(sf::RenderWindow& window, float cellWidth, float cellHeight);
+    void updateGrid(std::vector<std::vector<Pheromone>>& grid);
     void releaseWorkers(float angle);
 };
 
