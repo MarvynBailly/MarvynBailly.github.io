@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal Tree Background</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; background-color: #f0f0f0; }
+        h1 { font-family: sans-serif; text-align: center; color: #333; margin-top: 5vh; font-size: 3rem; }
+    </style>
+</head>
+<body>
+    <canvas id="fractal-canvas"></canvas>
+    <h1>Welcome</h1>
+    
+    <script>
+        const PerlinNoise = {
+            p: new Uint8Array(512),
+            init: function() {
+                const p = new Uint8Array(256);
+                for (let i = 0; i < 256; i++) p[i] = i;
+                for (let i = 255; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [p[i], p[j]] = [p[j], p[i]];
+                }
+                for (let i = 0; i < 256; i++) this.p[i] = this.p[i + 256] = p[i];
+            },
+            fade: t => t * t * t * (t * (t * 6 - 15) + 10),
+            lerp: (t, a, b) => a + t * (b - a),
+            grad: (hash, x) => ((hash & 1) === 0 ? x : -x),
+            noise: function(x) {
+                const X = Math.floor(x) & 255;
+                x -= Math.floor(x);
+                const u = this.fade(x);
+                const a = this.p[X], b = this.p[X + 1];
+                return this.lerp(u, this.grad(a, x), this.grad(b, x - 1)) * 2;
+            }
+        };
+        PerlinNoise.init();
+
+        const canvas = document.getElementById('fractal-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let animationFrameId;
+        const maxDepth = 13;
+        let growthProgress = 0;
+        let treeData = null;
+        
+        // --- MOUSE & WIND VARIABLES ---
+        let mouseX = window.innerWidth / 2;
+        let easedMouseX = window.innerWidth / 2; // Smoothed mouse position
+        let currentWind = 0;
+
+        function generateTree(parentLength, parentAngle, depth) {
+            if (depth >= maxDepth) return null;
+            const node = { children: [] };
+            const newLength = 0.925 * parentLength * (0.8 + Math.random() * 0.15);
+            if (Math.random() < 0.9 - 0.001 * depth || depth <= 4) {
+                const newAngle = parentAngle - (Math.PI / 6) - (Math.random() - 0.5) * 0.35;
+                const childNode = generateTree(newLength, newAngle, depth + 1);
+                if (childNode) node.children.push({ angle: newAngle, length: newLength, subTree: childNode });
+            }
+            if (Math.random() < 0.9 - 0.001 * depth || depth <= 4) { 
+                const newAngle = parentAngle + (Math.PI / 6) + (Math.random() - 0.5) * 0.4;
+                const childNode = generateTree(newLength, newAngle, depth + 1);
+                if (childNode) node.children.push({ angle: newAngle, length: newLength, subTree: childNode });
+            }
+            return node;
+        }
+
+        function renderTree(node, x, y, parentAngle, depth, wind) {
+            if (!node || depth >= growthProgress) return;
+            for (const branch of node.children) {
+                const windEffect = wind * (depth / maxDepth) * 0.5;
+                ctx.save();
+                ctx.strokeStyle = "#3a3a3a";
+                ctx.lineWidth = (maxDepth - depth) * 0.1;
+                ctx.beginPath();
+                ctx.translate(x, y);
+                ctx.rotate(branch.angle - parentAngle + windEffect);
+                let currentLength = branch.length;
+                if (depth > growthProgress - 1) currentLength *= (growthProgress - depth);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -currentLength);
+                ctx.stroke();
+                renderTree(branch.subTree, 0, -currentLength, branch.angle, depth + 1, wind);
+                ctx.restore();
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // --- NEW: Smoothly interpolate the mouse position ---
+            easedMouseX += (mouseX - easedMouseX) * 0.005;
+
+            const time = Date.now() * 0.0001;
+            const noiseValue = PerlinNoise.noise(time); 
+            const centerX = canvas.width / 2;
+            const mouseBias = (easedMouseX - centerX) / centerX; // Use the smoothed value!
+            const baseSway = 0.35;
+            const biasInfluence = 0.5;
+            const minWind = -baseSway + mouseBias * biasInfluence;
+            const maxWind = baseSway + mouseBias * biasInfluence;
+            const normalizedNoise = (noiseValue + 1) / 2;
+            const targetWind = minWind + normalizedNoise * (maxWind - minWind);
+            currentWind += (targetWind - currentWind) * 0.05;
+
+            if (growthProgress < maxDepth + 1) growthProgress += 0.1;
+            
+            const startX = canvas.width / 2;
+            const startY = canvas.height;
+            let trunkLength = canvas.height / 20;
+            if (growthProgress < 1) trunkLength *= growthProgress;
+            ctx.strokeStyle = "#3a3a3a";
+            ctx.lineWidth = maxDepth * 0.1;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX, startY - 2*trunkLength);
+            ctx.stroke();
+            
+            renderTree(treeData, startX, startY - 2*trunkLength, 0, 1, currentWind);
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        function setup() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            growthProgress = 0;
+            mouseX = window.innerWidth / 2;
+            easedMouseX = window.innerWidth / 2;
+            const initialLength = canvas.height / 6;
+            treeData = generateTree(initialLength, 0, 1);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animate();
+        }
+        
+        window.addEventListener('mousemove', (event) => { mouseX = event.clientX; });
+        window.addEventListener('resize', setup);
+        setup();
+
+    </script>
+</body>
+</html>
