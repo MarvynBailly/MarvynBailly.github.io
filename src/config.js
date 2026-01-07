@@ -59,6 +59,7 @@ export class Config {
         this.OBSTACLE_COLOR = { r: 0.0, g: 0.8, b: 1.0 };  // Bright cyan
 
         // Large "M" shape in center using axis-aligned rectangles
+        // Smoother diagonal approximation with more rectangles
         this.DEFAULT_OBSTACLES = [
             // Left vertical bar
             { type: 'rectangle', x: 0.33, y: 0.32, width: 0.05, height: 0.36 },
@@ -66,12 +67,22 @@ export class Config {
             { type: 'rectangle', x: 0.62, y: 0.32, width: 0.05, height: 0.36 },
             // Center vertical bar (middle peak)
             { type: 'rectangle', x: 0.475, y: 0.48, width: 0.05, height: 0.20 },
-            // Left diagonal approximation (stepped blocks)
-            { type: 'rectangle', x: 0.38, y: 0.58, width: 0.04, height: 0.06 },
-            { type: 'rectangle', x: 0.42, y: 0.62, width: 0.04, height: 0.06 },
-            // Right diagonal approximation (stepped blocks)
-            { type: 'rectangle', x: 0.54, y: 0.62, width: 0.04, height: 0.06 },
-            { type: 'rectangle', x: 0.58, y: 0.58, width: 0.04, height: 0.06 }
+
+            // Left diagonal (6 blocks for smooth transition)
+            { type: 'rectangle', x: 0.380, y: 0.650, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.395, y: 0.620, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.410, y: 0.590, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.425, y: 0.560, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.440, y: 0.530, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.455, y: 0.500, width: 0.035, height: 0.045 },
+
+            // Right diagonal (6 blocks for smooth transition, mirrored)
+            { type: 'rectangle', x: 0.585, y: 0.650, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.570, y: 0.620, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.555, y: 0.590, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.540, y: 0.560, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.525, y: 0.530, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: 0.510, y: 0.500, width: 0.035, height: 0.045 }
         ];
     }
 
