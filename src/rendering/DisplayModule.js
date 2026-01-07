@@ -28,8 +28,11 @@ export class DisplayModule {
      * @param {boolean} options.shading - Enable shading
      * @param {boolean} options.bloom - Enable bloom
      * @param {boolean} options.sunrays - Enable sunrays
+     * @param {boolean} options.showObstacles - Enable obstacle rendering
      * @param {Object} options.bloomTexture - Bloom texture (if bloom enabled)
      * @param {Object} options.sunraysTexture - Sunrays texture (if sunrays enabled)
+     * @param {Object} options.obstacleTexture - Obstacle texture (if obstacles enabled)
+     * @param {Object} options.obstacleColor - Obstacle color {r, g, b}
      * @param {Object} options.ditheringTexture - Dithering texture
      */
     render(dye, options = {}) {
@@ -40,6 +43,7 @@ export class DisplayModule {
         if (options.shading) keywords.push('SHADING');
         if (options.bloom && options.bloomTexture) keywords.push('BLOOM');
         if (options.sunrays && options.sunraysTexture) keywords.push('SUNRAYS');
+        if (options.showObstacles && options.obstacleTexture) keywords.push('SHOW_OBSTACLES');
 
         // Set material keywords (compiles variant if needed)
         this.displayMaterial.setKeywords(keywords);
@@ -64,6 +68,19 @@ export class DisplayModule {
                 gl.canvas.width / options.ditheringTexture.width,
                 gl.canvas.height / options.ditheringTexture.height
             );
+        }
+
+        // Bind obstacle texture and color if enabled
+        if (options.showObstacles && options.obstacleTexture) {
+            gl.uniform1i(this.displayMaterial.uniforms.uObstacles, options.obstacleTexture.attach(4));
+            if (options.obstacleColor) {
+                gl.uniform3f(
+                    this.displayMaterial.uniforms.uObstacleColor,
+                    options.obstacleColor.r,
+                    options.obstacleColor.g,
+                    options.obstacleColor.b
+                );
+            }
         }
 
         // Set texel size for shading

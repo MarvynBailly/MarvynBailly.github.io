@@ -1,12 +1,12 @@
 /**
- * Advection Shader
+ * Advection Shader with Obstacles
  * 
  * Implements semi-Lagrangian advection for unconditional stability.
- * Backtraces particle positions and samples with bilinear interpolation.
+ * Obstacles: Clamp traced positions to avoid sampling from obstacles
  * 
  * References:
  * - math_foundations.md - Section 5 (Semi-Lagrangian Method)
- * - technical_analysis.md - Advection Shader
+ * - obstacle_math_foundations.md - Section 7 (Advection with Obstacles)
  */
 
 precision highp float;
@@ -15,6 +15,7 @@ precision highp sampler2D;
 varying vec2 vUv;
 uniform sampler2D uVelocity;
 uniform sampler2D uSource;
+uniform sampler2D uObstacles;
 uniform vec2 texelSize;
 uniform vec2 dyeTexelSize;
 uniform float dt;
@@ -38,10 +39,19 @@ void main () {
     #ifdef MANUAL_FILTERING
         // Manual bilinear filtering for devices without linear float filtering
         vec2 coord = vUv - dt * bilerp(uVelocity, vUv, texelSize).xy * texelSize;
-        vec4 result = bilerp(uSource, coord, dyeTexelSize);
     #else
         // Use hardware linear filtering
         vec2 coord = vUv - dt * texture2D(uVelocity, vUv).xy * texelSize;
+    #endif
+    
+    // If traced position lands in obstacle, clamp to current position
+    if (texture2D(uObstacles, coord).r > 0.5) {
+        coord = vUv;  // Particle "stops" at obstacle boundary
+    }
+    
+    #ifdef MANUAL_FILTERING
+        vec4 result = bilerp(uSource, coord, dyeTexelSize);
+    #else
         vec4 result = texture2D(uSource, coord);
     #endif
     

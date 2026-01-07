@@ -14,12 +14,14 @@ export class VorticityModule {
      * @param {WebGLRenderingContext} gl - WebGL context
      * @param {Object} programs - Compiled shader programs
      * @param {FBOManager} fboManager - FBO manager
+     * @param {Object} obstacleTexture - Obstacle texture (optional)
      */
-    constructor(gl, programs, fboManager) {
+    constructor(gl, programs, fboManager, obstacleTexture = null) {
         this.gl = gl;
         this.curlProgram = programs.curl;
         this.vorticityProgram = programs.vorticity;
         this.fboManager = fboManager;
+        this.obstacleTexture = obstacleTexture;
     }
 
     /**
@@ -58,6 +60,11 @@ export class VorticityModule {
         );
 
         gl.uniform1i(this.curlProgram.uniforms.uVelocity, velocity.attach(0));
+
+        // NEW: Bind obstacle texture
+        if (this.obstacleTexture && this.curlProgram.uniforms.uObstacles !== undefined) {
+            gl.uniform1i(this.curlProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
+        }
 
         this.fboManager.blit(curl);
     }

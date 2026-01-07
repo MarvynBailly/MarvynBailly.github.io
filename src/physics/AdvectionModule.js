@@ -14,11 +14,13 @@ export class AdvectionModule {
      * @param {WebGLRenderingContext} gl - WebGL context
      * @param {Object} programs - Compiled shader programs
      * @param {FBOManager} fboManager - FBO manager
+     * @param {Object} obstacleTexture - Obstacle texture (optional)
      */
-    constructor(gl, programs, fboManager) {
+    constructor(gl, programs, fboManager, obstacleTexture = null) {
         this.gl = gl;
         this.advectionProgram = programs.advection;
         this.fboManager = fboManager;
+        this.obstacleTexture = obstacleTexture;
     }
 
     /**
@@ -65,6 +67,11 @@ export class AdvectionModule {
         // Bind textures
         gl.uniform1i(this.advectionProgram.uniforms.uVelocity, velocity.attach(0));
         gl.uniform1i(this.advectionProgram.uniforms.uSource, source.attach(1));
+
+        // NEW: Bind obstacle texture if available
+        if (this.obstacleTexture && this.advectionProgram.uniforms.uObstacles !== undefined) {
+            gl.uniform1i(this.advectionProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
+        }
 
         // Render
         this.fboManager.blit(target);

@@ -1,12 +1,12 @@
 /**
- * Curl Shader
+ * Curl Shader with Obstacles
  * 
  * Computes curl (vorticity) of velocity field in 2D.
- * curl = ∂v/∂x - ∂u/∂y
+ * Obstacles: Skip computation
  * 
  * References:
  * - math_foundations.md - Section 9.1 (Vorticity)
- * - technical_analysis.md - Curl Shader
+ * - obstacle_math_foundations.md - Section 8.3 (Vorticity with Obstacles)
  */
 
 precision mediump float;
@@ -18,8 +18,15 @@ varying highp vec2 vR;
 varying highp vec2 vT;
 varying highp vec2 vB;
 uniform sampler2D uVelocity;
+uniform sampler2D uObstacles;
 
 void main () {
+    // Skip vorticity computation in obstacles
+    if (texture2D(uObstacles, vUv).r > 0.5) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+    }
+    
     float L = texture2D(uVelocity, vL).y;
     float R = texture2D(uVelocity, vR).y;
     float T = texture2D(uVelocity, vT).x;

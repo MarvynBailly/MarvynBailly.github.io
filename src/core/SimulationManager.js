@@ -13,6 +13,7 @@
 import { WebGLContextManager } from './WebGLContextManager.js';
 import { ShaderManager, Material, Program } from './ShaderManager.js';
 import { TextureManager } from './TextureManager.js';
+import { ObstacleManager } from './ObstacleManager.js';
 import { FBOManager } from './FBOManager.js';
 import { AdvectionModule } from '../physics/AdvectionModule.js';
 import { PressureSolverModule } from '../physics/PressureSolverModule.js';
@@ -99,10 +100,10 @@ export class SimulationManager {
         this._initFramebuffers();
 
         // Initialize physics modules
-        this.advectionModule = new AdvectionModule(this.gl, this.programs, this.fboManager);
-        this.pressureModule = new PressureSolverModule(this.gl, this.programs, this.fboManager, this.textureManager);
-        this.vorticityModule = new VorticityModule(this.gl, this.programs, this.fboManager);
-        this.forcesModule = new ForcesModule(this.gl, this.programs, this.fboManager);
+        this.advectionModule = new AdvectionModule(this.gl, this.programs, this.fboManager, this.obstacle);
+        this.pressureModule = new PressureSolverModule(this.gl, this.programs, this.fboManager, this.textureManager, this.obstacle);
+        this.vorticityModule = new VorticityModule(this.gl, this.programs, this.fboManager, this.obstacle);
+        this.forcesModule = new ForcesModule(this.gl, this.programs, this.fboManager, this.obstacle);
 
         // Initialize rendering modules
         this.bloomModule = new BloomModule(this.gl, this.programs, this.fboManager, this.textureManager, this.config);
@@ -299,6 +300,22 @@ export class SimulationManager {
             r.internalFormat, r.format,
             texType, this.gl.NEAREST
         );
+
+        // NEW: Create obstacle manager with aspect-ratio-corrected dimensions
+        if (this.config.OBSTACLES_ENABLED) {
+            this.obstacleManager = new ObstacleManager(
+                simRes.width,   // Use aspect-ratio-corrected width
+                simRes.height,  // Use aspect-ratio-corrected height
+                this.config
+            );
+
+            const obstacleData = this.obstacleManager.getObstacleData();
+            this.obstacle = this.textureManager.createObstacleTexture(
+                simRes.width,
+                simRes.height,
+                obstacleData
+            );
+        }
     }
 
     /**
@@ -383,7 +400,10 @@ export class SimulationManager {
             bloomTexture: bloomTexture,
             sunrays: this.config.SUNRAYS,
             sunraysTexture: sunraysTexture,
-            ditheringTexture: this.ditheringTexture
+            ditheringTexture: this.ditheringTexture,
+            showObstacles: this.config.SHOW_OBSTACLES,
+            obstacleTexture: this.obstacle,
+            obstacleColor: this.config.OBSTACLE_COLOR
         });
     }
 

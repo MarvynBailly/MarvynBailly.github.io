@@ -23,6 +23,11 @@ uniform sampler2D uDithering;
 uniform vec2 ditherScale;
 uniform vec2 texelSize;
 
+#ifdef SHOW_OBSTACLES
+uniform sampler2D uObstacles;
+uniform vec3 uObstacleColor;
+#endif
+
 // Linear to gamma color space conversion
 vec3 linearToGamma(vec3 color) {
     color = max(color, vec3(0));
@@ -30,6 +35,16 @@ vec3 linearToGamma(vec3 color) {
 }
 
 void main () {
+#ifdef SHOW_OBSTACLES
+    // Check if current pixel is an obstacle
+    float obstacle = texture2D(uObstacles, vUv).r;
+    if (obstacle > 0.5) {
+        // Render obstacle with specified color
+        gl_FragColor = vec4(uObstacleColor, 1.0);
+        return;
+    }
+#endif
+
     vec3 c = texture2D(uTexture, vUv).rgb;
 
 #ifdef SHADING

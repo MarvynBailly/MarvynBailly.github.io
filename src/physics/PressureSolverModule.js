@@ -16,14 +16,16 @@ export class PressureSolverModule {
      * @param {Object} programs - Compiled shader programs
      * @param {FBOManager} fboManager - FBO manager
      * @param {TextureManager} textureManager - Texture manager
+     * @param {Object} obstacleTexture - Obstacle texture (optional)
      */
-    constructor(gl, programs, fboManager, textureManager) {
+    constructor(gl, programs, fboManager, textureManager, obstacleTexture = null) {
         this.gl = gl;
         this.divergenceProgram = programs.divergence;
         this.pressureProgram = programs.pressure;
         this.gradientSubtractProgram = programs.gradientSubtract;
         this.fboManager = fboManager;
         this.textureManager = textureManager;
+        this.obstacleTexture = obstacleTexture;
     }
 
     /**
@@ -69,6 +71,11 @@ export class PressureSolverModule {
 
         gl.uniform1i(this.divergenceProgram.uniforms.uVelocity, velocity.attach(0));
 
+        // NEW: Bind obstacle texture
+        if (this.obstacleTexture && this.divergenceProgram.uniforms.uObstacles !== undefined) {
+            gl.uniform1i(this.divergenceProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
+        }
+
         this.fboManager.blit(divergence);
     }
 
@@ -91,6 +98,11 @@ export class PressureSolverModule {
         );
 
         gl.uniform1i(this.pressureProgram.uniforms.uDivergence, divergence.attach(1));
+
+        // NEW: Bind obstacle texture
+        if (this.obstacleTexture && this.pressureProgram.uniforms.uObstacles !== undefined) {
+            gl.uniform1i(this.pressureProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
+        }
 
         // Jacobi iterations (ping-pong between read/write)
         for (let i = 0; i < iterations; i++) {
@@ -120,6 +132,11 @@ export class PressureSolverModule {
 
         gl.uniform1i(this.gradientSubtractProgram.uniforms.uPressure, pressure.read.attach(0));
         gl.uniform1i(this.gradientSubtractProgram.uniforms.uVelocity, velocity.attach(1));
+
+        // NEW: Bind obstacle texture
+        if (this.obstacleTexture && this.gradientSubtractProgram.uniforms.uObstacles !== undefined) {
+            gl.uniform1i(this.gradientSubtractProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
+        }
 
         this.fboManager.blit(output);
     }

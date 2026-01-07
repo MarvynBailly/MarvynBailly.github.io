@@ -13,11 +13,13 @@ export class ForcesModule {
      * @param {WebGLRenderingContext} gl - WebGL context
      * @param {Object} programs - Compiled shader programs
      * @param {FBOManager} fboManager - FBO manager
+     * @param {Object} obstacleTexture - Obstacle texture (optional)
      */
-    constructor(gl, programs, fboManager) {
+    constructor(gl, programs, fboManager, obstacleTexture = null) {
         this.gl = gl;
         this.splatProgram = programs.splat;
         this.fboManager = fboManager;
+        this.obstacleTexture = obstacleTexture;
     }
 
     /**

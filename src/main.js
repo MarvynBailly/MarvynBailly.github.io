@@ -169,12 +169,12 @@ function setupUI() {
         }
 
         // Toggle pause with spacebar
-        if (e.key === ' ') {
-            e.preventDefault();
-            if (simulation && simulation.config) {
-                simulation.config.PAUSED = !simulation.config.PAUSED;
-            }
-        }
+        // if (e.key === ' ') {
+        //     e.preventDefault();
+        //     if (simulation && simulation.config) {
+        //         simulation.config.PAUSED = !simulation.config.PAUSED;
+        //     }
+        // }
     });
 }
 
