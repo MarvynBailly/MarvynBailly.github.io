@@ -21,6 +21,17 @@ uniform sampler2D uPressure;
 uniform sampler2D uVelocity;
 uniform sampler2D uObstacles;
 
+/**
+ * Sample pressure with obstacle handling
+ * If neighbor is obstacle, use Neumann BC (∂p/∂n = 0)
+ */
+float samplePressure(vec2 coords, float fallback) {
+    if (texture2D(uObstacles, coords).r > 0.5) {
+        return fallback;  // Neumann BC: ∂p/∂n = 0
+    }
+    return texture2D(uPressure, coords).x;
+}
+
 void main () {
     // If current cell is obstacle, set velocity to zero
     if (texture2D(uObstacles, vUv).r > 0.5) {
@@ -28,11 +39,14 @@ void main () {
         return;
     }
     
-    // Normal gradient subtraction for fluid cells
-    float L = texture2D(uPressure, vL).x;
-    float R = texture2D(uPressure, vR).x;
-    float T = texture2D(uPressure, vT).x;
-    float B = texture2D(uPressure, vB).x;
+    // Sample current cell pressure (for Neumann BC fallback)
+    float C = texture2D(uPressure, vUv).x;
+    
+    // Sample neighbors with obstacle handling
+    float L = samplePressure(vL, C);
+    float R = samplePressure(vR, C);
+    float T = samplePressure(vT, C);
+    float B = samplePressure(vB, C);
     
     vec2 velocity = texture2D(uVelocity, vUv).xy;
     
