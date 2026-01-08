@@ -461,6 +461,53 @@ body {
         padding: 20px 20px;
     }
 
+    /* Unified Header - Stack vertically on mobile */
+    .unified-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
+        gap: 15px;
+    }
+
+    .unified-header .brand {
+        width: 100%;
+    }
+
+    .unified-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .unified-header .subtitle {
+        font-size: 0.7rem;
+    }
+
+    .unified-header .nav-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .unified-header .nav-link {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1 1 auto;
+        justify-content: center;
+        min-width: fit-content;
+    }
+
+    .unified-header .nav-link .icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Hide "Old Website" text on very small screens, keep icon */
+    @media (max-width: 480px) {
+        .unified-header .nav-link {
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+    }
+
     .nav {
         top: auto;
         bottom: 20px;
@@ -495,6 +542,23 @@ body {
     .stats {
         bottom: 100px;
         font-size: 11px;
+    }
+
+    /* About page mobile */
+    .about-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        top: auto;
+        position: relative;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
     }
 }
 

@@ -464,12 +464,63 @@ td {
 
 /* Mobile */
 @media (max-width: 768px) {
+
+    /* Unified Header - Stack vertically on mobile */
+    .unified-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
+        gap: 15px;
+    }
+
+    .unified-header .brand {
+        width: 100%;
+    }
+
+    .unified-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .unified-header .subtitle {
+        font-size: 0.7rem;
+    }
+
+    .unified-header .nav-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .unified-header .nav-link,
+    .nav-link {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1 1 auto;
+        justify-content: center;
+        min-width: fit-content;
+    }
+
+    .unified-header .nav-link .icon,
+    .nav-link .icon {
+        width: 14px;
+        height: 14px;
+    }
+
     .blog-post {
-        padding: 80px 20px 40px;
+        padding: 40px 20px;
+    }
+
+    .blog-list {
+        padding: 30px 20px;
+        gap: 20px;
+    }
+
+    .post-header {
+        margin-bottom: 30px;
     }
 
     .post-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     .lead {
@@ -488,5 +539,35 @@ td {
     .btn-secondary {
         width: 100%;
         text-align: center;
+    }
+
+    .blog-card {
+        min-width: 100%;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .card-desc {
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+
+    .unified-header .nav-link,
+    .nav-link {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .post-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .blog-list {
+        padding: 20px 15px;
     }
 }
