@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Polygon - Generative polygon art visualization using p5.js">
+    <meta name="description"
+        content="Polygon - A flocking particle simulation that creates geometric patterns using p5.js">
     <title>Polygon Art - Marvyn Bailly</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +15,7 @@
     <header class="unified-header">
         <div class="brand">
             <h1>Marvyn Bailly</h1>
-            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+            <p class="subtitle">PhD Candidate in Applied Mathematics &amp; Scientific Computation</p>
         </div>
 
         <nav class="nav-buttons">
@@ -39,70 +40,312 @@
     <article class="blog-post">
         <header class="post-header">
             <h1>Polygon</h1>
-            <p class="subtitle">Generative Polygon Art</p>
+            <p class="subtitle">Flocking Particles Create Geometric Art</p>
         </header>
 
         <section>
             <p class="lead">
-                Polygon is a generative art piece that creates geometric patterns using connected vertices.
-                Each refresh produces a unique composition of interconnected shapes that slowly evolve over time.
+                Polygon is a generative art piece that combines flocking behavior with geometric visualization.
+                Particles drift across the screen following Perlin noise and each other, connecting to nearby
+                neighbors to form translucent polygonal shapes that shift and evolve over time.
+            </p>
+
+            <p>
+                A special thanks to <a href="https://thecodingtrain.com" target="_blank">Daniel Shiffman</a>! Your
+                incredible <a href="https://www.youtube.com/c/TheCodingTrain/videos" target="_blank">Youtube channel</a>
+                and book <a href="https://natureofcode.com" target="_blank">Nature of Code</a> inspired me to create
+                this piece along side many others that can be found on my <a
+                    href="https://marvyn.com/old_website/coding_projects/" target="_blank">old website</a>. You taught
+                me how to code! Thank you!
             </p>
         </section>
 
         <section>
             <h2>The Concept</h2>
             <p>
-                The idea behind Polygon is simple: scatter a set of particles across the canvas subject to simple rules,
-                then
-                connect nearby particles with lines. As the particles move, the connections update, creating an
-                ever-shifting web of geometric forms. The result is a display where rigid polygons emerge organically
-                from the chaos of moving points. It's a visualization of how order can arise from simple rules applied
-                to random initial conditions.
+                The idea combines two classic algorithms: <strong>Perlin noise flow fields</strong> and
+                <strong>Craig Reynolds' flocking behaviors</strong>. Particles are pushed by noise while
+                simultaneously trying to stay together, align with neighbors, and avoid collisions.
+            </p>
+            <p>
+                The visual effect comes from drawing polygons between nearby particles. As the flock moves,
+                the polygons constantly reshape, creating an organic, almost biological appearance.
             </p>
         </section>
 
         <section>
-            <h2>How It Works</h2>
+            <h2>Particle Properties</h2>
             <p>
-                The algorithm consists of a few key components:
+                Each particle has a set of properties that control its behavior:
             </p>
 
-            <h3>Particle System</h3>
+            <div class="code-block">
+                <h4>Particle Class</h4>
+                <pre><code>class Particle {
+    constructor() {
+        // Spawn off-screen to the left
+        this.pos = createVector(random(-100, -10), random(height));
+        this.vel = createVector(0, 0);
+        this.acc = createVector(0, 0);
+        
+        // Random size affects behavior
+        this.size = random(minSize, maxSize);
+        
+        // Larger particles see further
+        this.sight = map(this.size, minSize, maxSize, 50, 100);
+        
+        this.buddies = [];  // Nearby particles
+        this.maxSpeed = 1;
+        this.maxForce = 0.5;
+    }
+}</code></pre>
+            </div>
+
             <p>
-                A collection of particles is initialized at random positions. Each particle has a velocity that causes
-                it to drift across the canvas.
+                Notice that <code>sight</code> is derived from size - larger particles can "see" further,
+                giving them more connections and making them more influential in the flock.
+            </p>
+        </section>
+
+        <section>
+            <h2>Perlin Noise Flow</h2>
+            <p>
+                Each particle is pushed by a force derived from Perlin noise. The noise value is sampled
+                based on the particle's horizontal position, creating bands of similar flow:
             </p>
 
-            <h3>Connection Logic</h3>
+            <div class="code-block">
+                <h4>Noise-Based Movement</h4>
+                <pre><code>function draw() {
+    zOff += 0.5;  // Animate noise over time
+    
+    for (let particle of particles) {
+        // Sample noise based on x position
+        let xOff = particle.pos.x / width;
+        let xNoise = noise(xOff, zOff);
+        
+        // Apply horizontal force
+        particle.applyForce(createVector(xNoise, 0));
+    }
+}</code></pre>
+            </div>
+
             <p>
-                For each frame, the algorithm calculates the distance between every pair of particles. If two particles
-                are within a threshold distance, a line is drawn between them.
+                The <code>zOff</code> variable changes over time, causing the noise field to evolve and
+                preventing particles from settling into static patterns.
+            </p>
+        </section>
+
+        <section>
+            <h2>Flocking Behavior</h2>
+            <p>
+                The flocking algorithm has three components, each producing a steering force:
             </p>
 
-            <h3>Visual Style</h3>
+            <h3>1. Separation</h3>
             <p>
-                The opacity of each connection line is based on distance—closer particles create stronger (more opaque)
-                lines, while distant particles have faint connections. This creates a natural depth effect.
+                Avoid crowding nearby particles. If another particle is within <code>2 × size</code>,
+                steer away from it. Closer particles create stronger repulsion.
             </p>
+
+            <div class="code-block">
+                <h4>Separation Force</h4>
+                <pre><code>separate(others) {
+    var desiredSeparation = this.size * 2;
+    var sum = createVector();
+    var count = 0;
+    
+    for (var other of others) {
+        var distance = p5.Vector.dist(this.pos, other.pos);
+        
+        if (distance &gt; 0 &amp;&amp; distance &lt; desiredSeparation) {
+            // Vector pointing away from neighbor
+            var opposite = p5.Vector.sub(this.pos, other.pos);
+            opposite.normalize();
+            opposite.div(distance);  // Closer = stronger
+            sum.add(opposite);
+            count++;
+        }
+    }
+    
+    // Average and convert to steering force
+    if (count &gt; 0) {
+        sum.div(count);
+        sum.setMag(this.maxSpeed);
+        return p5.Vector.sub(sum, this.vel).limit(this.maxForce);
+    }
+    return createVector();
+}</code></pre>
+            </div>
+
+            <h3>2. Alignment</h3>
+            <p>
+                Steer toward the average heading of neighbors within <code>sight × 2</code> range.
+                This keeps the flock moving together.
+            </p>
+
+            <h3>3. Cohesion</h3>
+            <p>
+                Steer toward the average position of nearby particles within a close range.
+                This pulls stragglers back toward the group.
+            </p>
+
+            <div class="code-block">
+                <h4>Combining Forces</h4>
+                <pre><code>flock() {
+    var sep = this.separate(this.buddies);
+    var ali = this.align(this.buddies);
+    var coh = this.cohesion(this.buddies);
+    
+    // Weight the behaviors
+    sep.mult(3);    // Strong separation
+    ali.mult(4);    // Strongest alignment
+    coh.mult(1.5);  // Moderate cohesion
+    
+    this.applyForce(sep);
+    this.applyForce(ali);
+    this.applyForce(coh);
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Mass and Force</h2>
+            <p>
+                Larger particles have more "mass" and respond slower to forces. This is implemented
+                by scaling forces inversely with size:
+            </p>
+
+            <div class="code-block">
+                <h4>Mass-Based Force Application</h4>
+                <pre><code>applyForce(force) {
+    let f = force.copy();
+    
+    // Larger particles are heavier (smaller multiplier)
+    let m = map(this.size, minSize, maxSize, 0.005, 0.001);
+    f.mult(m);
+    
+    this.acc.add(f);
+}</code></pre>
+            </div>
+
+            <p>
+                This creates a natural hierarchy where small particles zip around quickly while
+                large particles drift slowly, anchoring the flock.
+            </p>
+        </section>
+
+        <section>
+            <h2>Polygon Visualization</h2>
+            <p>
+                The visual magic happens in the <code>show()</code> function. Each particle draws a
+                polygon connecting itself to all nearby "buddies":
+            </p>
+
+            <div class="code-block">
+                <h4>Drawing Polygons</h4>
+                <pre><code>show() {
+    if (this.buddies.length &gt; 0) {
+        stroke(220, 220, 220, 10);   // Very transparent
+        fill(220, 220, 220, 15);
+        
+        beginShape();
+        vertex(this.pos.x, this.pos.y);
+        for (let bud of this.buddies) {
+            vertex(bud.pos.x, bud.pos.y);
+        }
+        vertex(this.pos.x, this.pos.y);  // Close the shape
+        endShape();
+    }
+}</code></pre>
+            </div>
+
+            <p>
+                The extremely low alpha values (10-15 out of 255) create the layered, glowing effect
+                as many overlapping polygons accumulate brightness.
+            </p>
+        </section>
+
+        <section>
+            <h2>Particle Lifecycle</h2>
+            <p>
+                Particles spawn from the left edge and drift rightward. When they exit the screen,
+                they're removed and replaced:
+            </p>
+
+            <div class="code-block">
+                <h4>Spawning and Removal</h4>
+                <pre><code>// Remove particles that exit the screen
+if (particle.edge()) {
+    particles.splice(i, 1);
+}
+
+// Maintain population
+if (particles.length &lt; population) {
+    let dif = population - particles.length;
+    for (let i = 0; i &lt; dif; i++) {
+        particles.push(new Particle());
+    }
+}</code></pre>
+            </div>
+
+            <p>
+                This creates a continuous flow from left to right, with the flock constantly
+                reforming as particles enter and exit.
+            </p>
+        </section>
+
+        <section>
+            <h2>Key Parameters</h2>
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td><code>population</code></td>
+                    <td>100</td>
+                    <td>Number of particles on screen</td>
+                </tr>
+                <tr>
+                    <td><code>minSize / maxSize</code></td>
+                    <td>5 / 20</td>
+                    <td>Range of particle sizes</td>
+                </tr>
+                <tr>
+                    <td><code>sight</code></td>
+                    <td>50-100</td>
+                    <td>Connection range (based on size)</td>
+                </tr>
+                <tr>
+                    <td><code>maxSpeed</code></td>
+                    <td>1</td>
+                    <td>Maximum velocity</td>
+                </tr>
+                <tr>
+                    <td><code>maxForce</code></td>
+                    <td>0.5</td>
+                    <td>Maximum steering force</td>
+                </tr>
+            </table>
         </section>
 
         <section>
             <h2>Technical Details</h2>
-            <p>
-                Built with <strong>p5.js</strong>, the sketch uses:
-            </p>
             <ul>
-                <li>Object-oriented particle management</li>
-                <li>Distance-based line rendering</li>
-                <li>Boundary wrapping for seamless animation</li>
-                <li>Real-time performance optimization</li>
+                <li><strong>Framework</strong>: p5.js</li>
+                <li><strong>Particles</strong>: 100 simultaneous</li>
+                <li><strong>Frame Rate</strong>: 60 FPS target</li>
+                <li><strong>Rendering</strong>: Additive blending via low-alpha shapes</li>
             </ul>
         </section>
 
         <section>
             <h2>View the Art</h2>
             <div class="cta">
-                <a href="/old_website/art/polygon/" class="btn-primary" target="_blank">View Polygon</a>
+                <a href="https://editor.p5js.org/Nostrada/full/1Y_k6zKkU" class="btn-primary" target="_blank">View
+                    Polygon</a>
                 <a href="https://editor.p5js.org/Nostrada/sketches/1Y_k6zKkU" class="btn-secondary" target="_blank">View
                     Source Code</a>
             </div>
