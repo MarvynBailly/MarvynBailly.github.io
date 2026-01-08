@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PewPew - An asteroids-inspired arcade game built with p5.js">
-    <title>PewPew Game - Marvyn Bailly</title>
+    <meta name="description"
+        content="PewPewPew - An asteroids-inspired arcade game built with p5.js featuring power-ups, bosses, and a global leaderboard">
+    <title>PewPewPew - Marvyn Bailly</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,7 +15,7 @@
     <header class="unified-header">
         <div class="brand">
             <h1>Marvyn Bailly</h1>
-            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+            <p class="subtitle">PhD Candidate in Applied Mathematics &amp; Scientific Computation</p>
         </div>
 
         <nav class="nav-buttons">
@@ -38,66 +39,297 @@
 
     <article class="blog-post">
         <header class="post-header">
-            <h1>PewPew</h1>
+            <h1>PewPewPew</h1>
             <p class="subtitle">An Asteroids-Inspired Arcade Game</p>
         </header>
 
         <section>
             <p class="lead">
-                PewPew is a fast-paced arcade shooter inspired by the classic game Asteroids. Built with p5.js, it
-                features smooth controls, power-ups, and custom pixel art sprites created by my friend Uriah Barzola.
+                PewPewPew is a fast-paced arcade shooter built with p5.js. Survive waves of enemies, collect power-ups,
+                defeat bosses, and climb the global leaderboard. Features custom music, mobile support, and an RPG-style
+                upgrade system.
+            </p>
+            <p>
+                Special thanks to my friend <a href="https://www.uriahb.com" target="_blank">Uriah Barzola</a> for
+                creating the
+                amazing menu art! It is my fault that the resolution is wrong on the image.
             </p>
         </section>
 
         <section>
             <h2>Gameplay</h2>
-            <p>
-                The objective is simple: survive as long as possible while destroying enemies. But don't let the simple
-                premise fool you—things get hectic quickly!
-            </p>
 
             <h3>Controls</h3>
             <ul>
                 <li><strong>WASD</strong> - Move your ship</li>
-                <li><strong>Mouse Click</strong> - Shoot bullets</li>
+                <li><strong>Mouse</strong> - Aim (ship points toward cursor)</li>
+                <li><strong>Auto-fire</strong> - Bullets fire automatically</li>
             </ul>
 
-            <h3>Power-Ups</h3>
+            <h3>Objective</h3>
             <p>
-                Throughout the game, power-ups spawn that enhance your abilities. Collect them to gain advantages like
-                increased fire rate, spread shots, or temporary invincibility.
+                Survive as long as possible while destroying enemies. Each kill increases your score and contributes to
+                your level progress. Every 150 points spawns a boss fight!
             </p>
         </section>
 
         <section>
-            <h2>Development</h2>
+            <h2>The Player</h2>
             <p>
-                PewPew was built using <strong>p5.js</strong>, a JavaScript library that makes creative coding
-                accessible. The game features:
+                The player ship is more than just a triangle - it's a full RPG character with health, levels, and
+                temporary power-up states.
+            </p>
+
+            <div class="code-block">
+                <h4>Player Properties</h4>
+                <pre><code>class player {
+    constructor(x, y) {
+        this.pos = createVector(x, y);
+        this.vel = createVector(0, 0);
+        this.heading = 0;
+        this.maxSpeed = 5;
+        this.health = 3;
+        this.alive = true;
+        
+        // Power-up states
+        this.shield = false;
+        this.minigun = false;
+        this.multishot = false;
+        
+        // Leveling system
+        this.level = 1;
+        this.levelMax = 10;
+        this.levelProgress = 0;
+        
+        // Invincibility frames after upgrade
+        this.invincible = false;
+    }
+}</code></pre>
+            </div>
+
+            <h3>Level-Up System</h3>
+            <p>
+                Kill enemies to fill your level bar. When it's full, the game pauses and you choose an upgrade:
             </p>
             <ul>
-                <li>Smooth 60 FPS gameplay</li>
-                <li>Collision detection between bullets, enemies, and the player</li>
-                <li>Particle effects for explosions and impacts</li>
-                <li>Progressive difficulty scaling</li>
+                <li><strong>+1 Health</strong> - Increase max health</li>
+                <li><strong>Upgrade Speed</strong> - Move faster</li>
+                <li><strong>Upgrade Bullet Speed</strong> - Reduce fire cooldown</li>
+            </ul>
+            <p>
+                Each level requires more kills than the last: <code>levelMax = 10 + 2 × level</code>
+            </p>
+        </section>
+
+        <section>
+            <h2>Power-Ups</h2>
+            <p>
+                Six different power-ups spawn randomly throughout the game:
+            </p>
+
+            <table class="param-table">
+                <tr>
+                    <th>Power-Up</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td>❤️ Health Pack</td>
+                    <td>+1 Health</td>
+                </tr>
+                <tr>
+                    <td>🛡️ Shield</td>
+                    <td>Absorb one hit without losing health</td>
+                </tr>
+                <tr>
+                    <td>🔫 Minigun</td>
+                    <td>Continuous rapid fire for 250 frames (with recoil!)</td>
+                </tr>
+                <tr>
+                    <td>🔱 Multishot</td>
+                    <td>Fire 3 bullets in a spread pattern for 500 frames</td>
+                </tr>
+                <tr>
+                    <td>💥 Nuke</td>
+                    <td>Instantly destroy all enemies on screen</td>
+                </tr>
+                <tr>
+                    <td>❄️ Freeze</td>
+                    <td>Stop all enemy movement for 200 frames</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+                <h4>Power-Up Implementation</h4>
+                <pre><code>action(player) {
+    if (this.type.Name == "Nuke") {
+        let scoreIncrease = enemies.length;
+        enemies = [];  // Clear all enemies
+        score += scoreIncrease;
+        
+        // Level up for each kill
+        for (let i = 0; i &lt; scoreIncrease; i++) {
+            ship.levelUp('enemy');
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Enemy AI</h2>
+            <p>
+                Enemies use <strong>steering behaviors</strong> to chase the player. The <code>arrive()</code> function
+                implements smooth pursuit:
+            </p>
+
+            <div class="code-block">
+                <h4>Steering Behavior</h4>
+                <pre><code>arrive(target) {
+    // Calculate desired velocity toward target
+    let desired = p5.Vector.sub(target, this.pos);
+    desired.setMag(this.maxspeed);
+    
+    // Steering = desired - current velocity
+    let steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
+    
+    this.applyForce(steer);
+}</code></pre>
+            </div>
+
+            <h3>Enemy Types</h3>
+            <ul>
+                <li><strong>Basic</strong> - Small, fast, 1 HP</li>
+                <li><strong>Boss</strong> - Large, slower, 5 HP (spawns every 150 score)</li>
             </ul>
 
-            <h3>Art & Design</h3>
+            <h3>Difficulty Scaling</h3>
             <p>
-                All sprites and visual assets were created by <strong>Uriah Barzola</strong>, giving the game its
-                distinctive retro-futuristic aesthetic. The pixel art style pays homage to classic arcade games while
-                feeling fresh and modern.
+                The game gets harder over time:
             </p>
+            <ul>
+                <li>Enemy spawn rate increases every 500 frames (+1%)</li>
+                <li>Enemy cap: 150 maximum on screen</li>
+                <li>Bosses pause normal spawning until defeated</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Minigun Physics</h2>
+            <p>
+                The minigun power-up includes realistic recoil - continuous fire pushes the ship backward!
+            </p>
+
+            <div class="code-block">
+                <h4>Recoil Implementation</h4>
+                <pre><code>if (ship.minigun) {
+    // Fire bullet with slight random spread
+    bullets.push(new Bullet(
+        ship.pos.x, ship.pos.y,
+        ship.heading + random(-0.1, 0.1)
+    ));
+    
+    // Calculate opposite direction for knockback
+    let oppDir = p5.Vector.fromAngle(ship.heading + PI);
+    oppDir.normalize();
+    
+    // More recoil with multishot active
+    if (ship.multishot) {
+        oppDir.mult(0.75);
+    } else {
+        oppDir.mult(0.25);
+    }
+    
+    ship.move(oppDir);
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Global Leaderboard</h2>
+            <p>
+                The game features a Firebase-powered global leaderboard. When you die, you can submit your score with a
+                username.
+            </p>
+
+            <div class="code-block">
+                <h4>Score Submission</h4>
+                <pre><code>function submitScore() {
+    var data = {
+        name: initUsername.value(),
+        score: score
+    }
+    ref.push(data);
+    
+    // Hide to prevent multiple entries
+    submitButton.hide();
+    initUsername.hide();
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Music System</h2>
+            <p>
+                Seven original music tracks play randomly during gameplay:
+            </p>
+
+            <div class="code-block">
+                <h4>Random Track Selection</h4>
+                <pre><code>function playMusic() {
+    if (currentTrack == null) {
+        currentTrack = getRandomSong();
+    }
+    if (!currentTrack.isPlaying()) {
+        currentTrack = getRandomSong();
+        currentTrack.play();
+    }
+}
+
+function getRandomSong() {
+    return tracks[Math.floor(Math.random() * tracks.length)];
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Mobile Support</h2>
+            <p>
+                The game detects mobile devices and provides touch controls:
+            </p>
+            <ul>
+                <li><strong>D-Pad</strong> - Virtual directional buttons for movement</li>
+                <li><strong>Joystick</strong> - Touch joystick for aiming</li>
+            </ul>
+
+            <div class="code-block">
+                <h4>Mobile Detection</h4>
+                <pre><code>function checkMobileDevice() {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+        .test(navigator.userAgent)) {
+        return true;
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Technical Details</h2>
+            <ul>
+                <li><strong>Framework</strong>: p5.js</li>
+                <li><strong>Backend</strong>: Firebase Realtime Database (leaderboard)</li>
+                <li><strong>Audio</strong>: 7 music tracks + sound effects</li>
+                <li><strong>Rendering</strong>: 60 FPS target with FPS counter</li>
+                <li><strong>Input</strong>: Keyboard/mouse + mobile touch controls</li>
+            </ul>
         </section>
 
         <section>
             <h2>Play Now</h2>
-            <p>
-                The game runs directly in your browser—no download required!
-            </p>
             <div class="cta">
-                <a href="/old_website/games/pewpew/" class="btn-primary" target="_blank">Play PewPew</a>
-                <a href="https://editor.p5js.org/Nostrada/sketches/MOZZr3AIC" class="btn-secondary" target="_blank">View
+                <a href="https://editor.p5js.org/Nostrada/full/1A82qBy5f" class="btn-primary" target="_blank">Play
+                    PewPewPew</a>
+                <a href="https://editor.p5js.org/Nostrada/sketches/1A82qBy5f" class="btn-secondary" target="_blank">View
                     Source Code</a>
             </div>
         </section>
