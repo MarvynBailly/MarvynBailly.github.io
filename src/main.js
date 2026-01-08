@@ -202,6 +202,14 @@ function setupSettingsControls() {
     if (sunrays) { sunrays.checked = config.SUNRAYS; sunrays.addEventListener('change', (e) => config.SUNRAYS = e.target.checked); }
     if (shading) { shading.checked = config.SHADING; shading.addEventListener('change', (e) => config.SHADING = e.target.checked); }
     if (obstacles) { obstacles.checked = config.SHOW_OBSTACLES; obstacles.addEventListener('change', (e) => config.SHOW_OBSTACLES = e.target.checked); }
+
+    // Interaction options
+    const splatOnMove = document.getElementById('splat-on-move-toggle');
+    const continuousColor = document.getElementById('continuous-color-toggle');
+    if (splatOnMove) { splatOnMove.checked = config.SPLAT_ON_MOVE; splatOnMove.addEventListener('change', (e) => config.SPLAT_ON_MOVE = e.target.checked); }
+    if (continuousColor) { continuousColor.checked = config.CONTINUOUS_COLOR_CHANGE; continuousColor.addEventListener('change', (e) => config.CONTINUOUS_COLOR_CHANGE = e.target.checked); }
+
+    setupSlider('color-change-speed', 'color-speed-value', (v) => config.COLOR_CHANGE_SPEED = parseInt(v), 'ms');
     setupSlider('velocity-dissipation', 'vel-diss-value', (v) => config.VELOCITY_DISSIPATION = parseFloat(v));
     setupSlider('density-dissipation', 'den-diss-value', (v) => config.DENSITY_DISSIPATION = parseFloat(v));
     setupSlider('curl-strength', 'curl-value', (v) => config.CURL = parseInt(v));
@@ -212,12 +220,12 @@ function setupSettingsControls() {
     if (reset) reset.addEventListener('click', () => location.reload());
 }
 
-function setupSlider(id, valId, callback) {
+function setupSlider(id, valId, callback, suffix = '') {
     const slider = document.getElementById(id);
     const display = document.getElementById(valId);
     if (slider && display) {
         slider.addEventListener('input', (e) => {
-            display.textContent = e.target.value;
+            display.textContent = e.target.value + suffix;
             callback(e.target.value);
         });
     }

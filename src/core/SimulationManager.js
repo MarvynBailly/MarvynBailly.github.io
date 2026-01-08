@@ -114,7 +114,7 @@ export class SimulationManager {
         this.ditheringTexture = createDitheringTexture(this.gl);
 
         // Initialize interaction
-        this.pointerManager = new PointerManager(this.canvas);
+        this.pointerManager = new PointerManager(this.canvas, this.config);
         this.interactionManager = new InteractionManager(this.pointerManager, this.forcesModule, this.config);
 
         // Initial splats for visual interest

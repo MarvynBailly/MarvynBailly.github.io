@@ -32,7 +32,10 @@ export class InteractionManager {
         const pointers = this.pointerManager.getPointers();
 
         for (const pointer of pointers) {
-            if (pointer.moved && pointer.down) {
+            // Apply forces if: moved AND (splatOnMove OR pointer is down)
+            const shouldApplyForce = pointer.moved && (this.config.SPLAT_ON_MOVE || pointer.down);
+
+            if (shouldApplyForce) {
                 // Apply velocity splat
                 this.forcesModule.applySplat(
                     velocity,

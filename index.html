@@ -148,6 +148,13 @@
             </div>
             <div class='settings-section'>
                 <h3>Interaction</h3>
+                <label class='checkbox-label'><input type='checkbox' id='splat-on-move-toggle' checked>
+                    <span>Splat on Mouse Move</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='continuous-color-toggle' checked>
+                    <span>Continuous Color Change</span></label>
+                <div class='slider-control'><label>Color Change Speed: <span
+                            id='color-speed-value'>1500</span>ms</label><input type='range' id='color-change-speed'
+                        min='100' max='2500' value='1500' step='50'></div>
                 <div class='slider-control'><label>Force Strength: <span id='force-value'>2000</span></label><input
                         type='range' id='splat-force' min='500' max='10000' value='2000' step='100'></div>
                 <div class='slider-control'><label>Splat Radius: <span id='radius-value'>0.25</span></label><input

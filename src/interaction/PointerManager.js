@@ -42,13 +42,64 @@ class Pointer {
 export class PointerManager {
     /**
      * @param {HTMLCanvasElement} canvas - Canvas element
+     * @param {Config} config - Configuration
      */
-    constructor(canvas) {
+    constructor(canvas, config) {
         this.canvas = canvas;
+        this.config = config;
         this.pointers = [];
         this.pointers.push(new Pointer(0)); // Default pointer for mouse
 
         this._setupEventListeners();
+        this._startColorChangeLoop();
+    }
+
+    /**
+     * Start passive color change loop with smooth transitions
+     * 
+     * @private
+     */
+    _startColorChangeLoop() {
+        // Initialize color transition state for each pointer
+        for (const pointer of this.pointers) {
+            pointer.currentColor = { ...pointer.color };
+            pointer.targetColor = generateColor();
+            pointer.transitionStart = 0;
+        }
+
+        const updateColors = (timestamp) => {
+            if (this.config.CONTINUOUS_COLOR_CHANGE) {
+                const transitionDuration = this.config.COLOR_CHANGE_SPEED;
+
+                for (const pointer of this.pointers) {
+                    // Initialize transition start time if not set
+                    if (!pointer.transitionStart) {
+                        pointer.transitionStart = timestamp;
+                    }
+
+                    // Calculate transition progress (0 to 1)
+                    const elapsed = timestamp - pointer.transitionStart;
+                    const progress = Math.min(elapsed / transitionDuration, 1.0);
+
+                    // Lerp between current and target color
+                    pointer.color = {
+                        r: pointer.currentColor.r + (pointer.targetColor.r - pointer.currentColor.r) * progress,
+                        g: pointer.currentColor.g + (pointer.targetColor.g - pointer.currentColor.g) * progress,
+                        b: pointer.currentColor.b + (pointer.targetColor.b - pointer.currentColor.b) * progress
+                    };
+
+                    // When transition completes, set new target
+                    if (progress >= 1.0) {
+                        pointer.currentColor = { ...pointer.targetColor };
+                        pointer.targetColor = generateColor();
+                        pointer.transitionStart = timestamp;
+                    }
+                }
+            }
+            requestAnimationFrame(updateColors);
+        };
+
+        requestAnimationFrame(updateColors);
     }
 
     /**
@@ -132,6 +183,10 @@ export class PointerManager {
             let pointer = this.pointers.find(p => p.id === touch.identifier);
             if (!pointer) {
                 pointer = new Pointer(touch.identifier);
+                // Initialize color transition state
+                pointer.currentColor = { ...pointer.color };
+                pointer.targetColor = generateColor();
+                pointer.transitionStart = 0;
                 this.pointers.push(pointer);
             }
 

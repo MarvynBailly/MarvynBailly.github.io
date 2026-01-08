@@ -97,7 +97,7 @@ export function HSLtoRGB(h, s, l) {
 export function generateColor() {
     const h = random(0, 360);
     const s = random(50, 100);
-    const l = random(40, 60);
+    const l = random(25, 45);  // Reduced from 40-60 to make colors less bright/white
     return HSLtoRGB(h, s, l);
 }
 
