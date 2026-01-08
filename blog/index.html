@@ -277,7 +277,164 @@ for (int i = 0; i &amp;lt; 16; i++) {
             </p>
         </section>
 
+        <section id="obstacles">
+            <h2>Obstacles: Solid Boundary Conditions</h2>
+            <p>
+                Real fluids don't just flow freely - they interact with solid surfaces. Our simulation includes
+                an obstacle (the "M" shape you see) that demonstrates how fluids behave around boundaries.
+            </p>
+
+            <h3>The Challenge</h3>
+            <p>
+                Solids impose two key physical constraints:
+            </p>
+            <ul>
+                <li><strong>No-Penetration</strong>: Fluid cannot pass through walls</li>
+                <li><strong>No-Slip</strong>: Viscous fluid at a wall has zero velocity</li>
+            </ul>
+            <p>
+                Mathematically, at a solid boundary:
+            </p>
+            <p class="equation">
+                $$\mathbf{u}|_{\text{wall}} = 0$$
+            </p>
+
+            <h3>Representing Obstacles</h3>
+            <p>
+                We use a <strong>binary obstacle mask texture</strong> - each pixel stores whether that location
+                is solid (1) or fluid (0). This mask is sampled in every shader to modify behavior near boundaries.
+            </p>
+
+            <div class="code-block">
+                <h4>Obstacle Mask Creation</h4>
+                <pre><code>// Create obstacle texture from rectangles
+const mask = new Uint8Array(width * height);
+
+for (const obstacle of obstacles) {
+    for (let y = 0; y &lt; height; y++) {
+        for (let x = 0; x &lt; width; x++) {
+            if (isInsideRectangle(x, y, obstacle)) {
+                mask[y * width + x] = 255;  // Mark as obstacle
+            }
+        }
+    }
+}</code></pre>
+            </div>
+
+            <h3>Boundary Conditions in Each Solver Step</h3>
+
+            <h4>1. Advection</h4>
+            <p>
+                When back-tracing particle paths, we check if the traced position lands inside an obstacle.
+                If so, we clamp it to the boundary - particles can't advect through walls.
+            </p>
+            <div class="code-block">
+                <pre><code>vec2 tracedPos = vUv - dt * velocity * texelSize;
+
+// Check if traced position hits obstacle
+if (texture2D(uObstacles, tracedPos).r &gt; 0.5) {
+    tracedPos = vUv;  // Stay at current position
+}</code></pre>
+            </div>
+
+            <h4>2. Divergence Computation</h4>
+            <p>
+                The most subtle part. When computing \(\nabla \cdot \mathbf{u}\), we sample neighboring
+                velocities. If a neighbor is an obstacle, we apply the <strong>no-slip reflection</strong>:
+            </p>
+            <p class="equation">
+                $$u_{\text{obstacle}} = -u_{\text{current}}$$
+            </p>
+            <p>
+                This reflection ensures the <em>average</em> velocity at the boundary is zero.
+            </p>
+
+            <div class="code-block">
+                <h4>GLSL Divergence with Obstacles</h4>
+                <pre><code>float sampleVelocity(vec2 coords, float currentComponent) {
+    // Domain boundaries
+    if (coords.x &lt; 0.0 || coords.x &gt; 1.0 || 
+        coords.y &lt; 0.0 || coords.y &gt; 1.0) {
+        return -currentComponent;  // Reflect at domain edge
+    }
+    
+    // Check for obstacle
+    if (texture2D(uObstacles, coords).r &gt; 0.5) {
+        return -currentComponent;  // No-slip: reflect
+    }
+    
+    // Normal fluid cell
+    return texture2D(uVelocity, coords);
+}</code></pre>
+            </div>
+
+            <h4>3. Pressure Solve</h4>
+            <p>
+                Obstacles use <strong>Neumann boundary conditions</strong>: \(\frac{\partial p}{\partial n} = 0\).
+                The pressure gradient normal to the wall is zero.
+            </p>
+            <p>
+                In practice, when sampling pressure neighbors during Jacobi iteration, if a neighbor is an
+                obstacle, we use the current cell's pressure (no gradient).
+            </p>
+
+            <div class="code-block">
+                <pre><code>float samplePressure(vec2 coords) {
+    if (texture2D(uObstacles, coords).r &gt; 0.5) {
+        // Neumann BC: return current cell pressure
+        return texture2D(uPressure, vUv).r;
+    }
+    return texture2D(uPressure, coords).r;
+}</code></pre>
+            </div>
+
+            <h4>4. Gradient Subtraction</h4>
+            <p>
+                After solving for pressure, we subtract \(\nabla p\) from velocity. In obstacle cells,
+                we skip this and simply enforce zero velocity.
+            </p>
+
+            <div class="code-block">
+                <pre><code>vec2 u = texture2D(uVelocity, vUv).xy;
+
+if (texture2D(uObstacles, vUv).r &gt; 0.5) {
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // No velocity in obstacles
+} else {
+    vec2 gradient = vec2(pR - pL, pT - pB) * 0.5;
+    gl_FragColor = vec4(u - gradient, 0.0, 1.0);
+}</code></pre>
+            </div>
+
+            <div class="note">
+                <strong>Why This Works:</strong> The combination of reflected velocities in divergence,
+                Neumann pressure conditions, and zero velocity enforcement creates a consistent
+                no-slip boundary. The fluid naturally flows around the obstacle, forming vortices and
+                turbulence in its wake.
+            </div>
+
+            <h3>Visualizing Obstacles</h3>
+            <p>
+                The obstacle itself is rendered in the final display pass by sampling the mask texture
+                and blending a distinct color (bright cyan) where obstacles exist.
+            </p>
+
+            <div class="code-block">
+                <h4>Display Shader with Obstacles</h4>
+                <pre><code>vec3 color = texture2D(uDye, vUv).rgb;
+
+#ifdef SHOW_OBSTACLES
+    float obstacle = texture2D(uObstacles, vUv).r;
+    if (obstacle &gt; 0.5) {
+        color = uObstacleColor;  // Override with obstacle color
+    }
+#endif
+
+gl_FragColor = vec4(color, 1.0);</code></pre>
+            </div>
+        </section>
+
         <section id="challenges">
+
             <h2>Challenges & Solutions</h2>
 
             <h3>Numerical Stability</h3>
@@ -359,11 +516,35 @@ for (int i = 0; i &amp;lt; 16; i++) {
                 <li>Fedkiw, Ronald, et al. "Visual Simulation of Smoke." SIGGRAPH 2001.</li>
             </ul>
         </section>
-    </article>
 
-    <footer class="blog-footer">
-        <p>Built with Mathematics and WebGL | 2026</p>
-    </footer>
+        <section id="acknowledgments">
+            <h2>Acknowledgments</h2>
+            <p>
+                This implementation is heavily inspired by <strong>Pavel Dobryakov's</strong> excellent
+                <a href="https://github.com/PavelDoGreat/WebGL-Fluid-Simulation" target="_blank"
+                    rel="noopener noreferrer">
+                    WebGL Fluid Simulation
+                </a>. His work provided invaluable insights into GPU-based fluid dynamics and modern WebGL techniques.
+            </p>
+            <p>
+                Big thanks to Pavel for creating such an elegant and well-engineered implementation that serves
+                as an outstanding reference for the fluid simulation community.
+            </p>
+        </section>
+
+        <section id="references">
+            <h2>Further Reading</h2>
+            <ul class="references">
+                <li>Stam, Jos. "Stable Fluids." SIGGRAPH 1999.</li>
+                <li>Harris, Mark J. "Fast Fluid Dynamics Simulation on the GPU." GPU Gems Chapter 38, NVIDIA, 2004.</li>
+                <li>Bridson, Robert. "Fluid Simulation for Computer Graphics." A K Peters/CRC Press, 2008.</li>
+                <li>Fedkiw, Ronald, et al. "Visual Simulation of Smoke." SIGGRAPH 2001.</li>
+            </ul>
+        </section>
+
+        <footer class="blog-footer">
+            <p>Built with Mathematics and WebGL | 2026</p>
+        </footer>
 </body>
 
 </html>

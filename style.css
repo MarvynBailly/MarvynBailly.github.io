@@ -183,7 +183,7 @@ body {
     bottom: 30px;
     right: 40px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
     pointer-events: auto;
     z-index: 20;
@@ -457,8 +457,8 @@ body {
     transform: translateY(-50%);
     width: min(380px, calc(100vw - 80px));
     max-height: 80vh;
-    overflow-y: auto;
-    padding: 30px;
+    display: flex;
+    flex-direction: column;
     background: var(--color-surface);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
@@ -474,6 +474,32 @@ body {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-50%) translateX(20px);
+}
+
+/* Sticky panel header */
+.panel-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 30px 20px 30px;
+    background: var(--color-surface);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--color-primary);
+}
+
+/* Scrollable panel content */
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 30px 30px 30px;
 }
 
 .panel h2 {

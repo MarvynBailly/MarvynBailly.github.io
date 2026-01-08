@@ -56,13 +56,13 @@ export class Config {
         // Obstacle Configuration
         this.OBSTACLES_ENABLED = true;
         this.SHOW_OBSTACLES = true;
-        this.OBSTACLE_COLOR = { r: 0.0, g: 0.8, b: 1.0 };  // Bright cyan
+        this.OBSTACLE_COLOR = { r: 0.0, g: 0.0, b: 0.1 };  // Bright cyan
 
 
         // Vertical column "M" shape: distinct vertical bars of varying heights
         this.LENGTH = 0.015;
         this.CENTER_X = 0.5
-        this.CENTER_Y = 0.4
+        this.CENTER_Y = 0.45
 
         this.DEFAULT_OBSTACLES = [
             // Left vertical pillar (tallest)
