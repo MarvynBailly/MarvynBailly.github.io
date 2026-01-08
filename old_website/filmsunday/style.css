@@ -1,0 +1,265 @@
+/* CSS for styling the home page */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+
+@media (max-width: 767px) {
+  body {
+    font-size: 16px; /* Larger text size for phones */
+  }
+}
+
+h1 {
+  text-align: center;
+  font-size: 2em;
+  margin: 1em 0;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin: 0 1em;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav a.active {
+  font-weight: bold;
+}
+
+p {
+  max-width: 800px;
+  margin: 2em auto;
+  font-size: 1.2em;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  nav {
+    flex-direction: column;
+  }
+}
+
+/* CSS for styling the film submission page */
+form {
+  max-width: 800px;
+  margin: 2em auto;
+  padding: 2em;
+  background-color: #eee;
+  border: 4px solid #ddd;
+}
+
+label {
+  display: block;
+  font-size: 1.2em;
+  margin: 0.5em 0;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  font-size: 1.2em;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+  display: block;
+  margin: 1em auto;
+  font-size: 1.2em;
+  padding: 0.5em 1em;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+#film-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.film {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  margin-bottom: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #f8f8f8;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.film p{
+  font-weight: normal;
+  font-size: 18px
+}
+
+.trailerPlayer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.film label {
+  display: block;
+  margin: 0;
+  margin-bottom: 20px;
+  font-size: 25px;
+  text-decoration: underline;
+
+}
+
+button[type="submit"] {
+  display: block;
+  margin: 1em auto 0;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  background-color: green;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: black;
+  color: white;
+}
+
+/* CSS for the results page */
+
+#results {
+  display: flex;
+  margin: auto;
+  width: 50%; 
+  height: 500px
+}
+
+#votes {
+  width: 50%;
+  display: contents;
+}
+
+#chart{
+  width: 50%; 
+  height: 50%; 
+}
+
+.vote {
+  text-align: left;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.film-item{
+  display: none;
+}
+
+.film {
+  font-weight: bold;
+}
+
+.voter {
+  font-style: italic;
+}
+
+.film-checkbox {
+  appearance: none;
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 5px;
+  width: 80px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.film-checkbox:checked {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Style the form */
+#admin-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+}
+
+#admin-form label {
+  margin-right: 10px;
+}
+
+#admin-form input {
+  width: 200px;
+  height: 30px;
+  font-size: 16px;
+}
+
+#admin-form button {
+  width: 80px;
+  height: 30px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin: 0 0 0 15px;
+}
+
+/* Style the "admin" tab */
+#admin-tab {
+  display: none; /* Hide the tab by default */
+  flex-grow: 1;
+  text-align: center;
+}
+
+
+/* Container for the logo and the heading */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Styling for the logo */
+#site-logo {
+  position: absolute;
+  left: 10px; /* Adjust as needed for spacing */
+  height: 15%;
+}
+
+/* Styling for the heading */
+h1 {
+  flex-grow: 1;
+}

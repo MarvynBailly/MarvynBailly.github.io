@@ -1,0 +1,487 @@
+body{
+  margin: 0;
+  padding: 0;
+}
+
+
+/* NAV BAR */
+
+.nav-bar { 
+  top: 0;
+  left: 0;
+  width: 100%;    
+  height: 10%;
+}
+
+.nav-bar-inner {
+  position: relative;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin: 0 5vw;
+  padding: 2vh 6vw;
+}
+
+.nav-bar-inner-left{
+  position: relative;
+  float: left;
+  line-height: 40px;
+  font-weight: bold;
+}
+
+.nav-bar-inner-right{
+  position: relative;
+  float:right;
+  line-height: 40px;
+  height: 100px;
+  padding-top: 33px;
+}
+
+.nav-bar-inner-right a{
+  font-size: 16pt;
+  color: black;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0px 20px 0px 20px;
+}
+
+.nav-bar-inner-right a:hover {
+  color:orange;
+}
+
+/* Nav bar when width is less than 950px */
+
+.icon{
+  display: none;
+  color: black;
+  font-size: 30px;
+  position: relative;
+  float:right;
+  margin-right: 0;
+  line-height: 40px;
+}
+
+.icon:hover{
+  color: orange;
+}
+
+@media screen and (max-width: 950px) {
+  .nav-bar-inner-right a {
+    display: none;
+  }
+
+  .icon {
+    display: block;
+    position: absolute;
+    right: 6vw;
+    top: 45px;
+  }
+  .nav-bar-responsive{
+    top: 0;
+    height: 75px;
+    width: 100%;
+    position: absolute;
+  } 
+
+  .nav-bar-responsive a{
+    float: none;
+    display: block;
+  }
+  .nav-bar-inner-left {
+    display: block;
+    width: 100%;
+  }
+
+  .nav-bar-inner-right{
+    padding-top: 0;
+  }
+
+  .nav-bar-inner-right a{
+    margin: 10px 0px 10px 0px;
+    text-align: right;
+  }
+
+  .nav-bar-inner-right a:hover{
+    color: orange;
+  }
+}
+
+/* Gray out */
+.overlay-hidden{
+  display: none;
+}
+
+.overlay-show{
+  background: gray;      
+  position: absolute;   
+  top: 0;               
+  right: 0;             
+  bottom: 0;
+  left: 0;
+  opacity: 0.5;
+}
+
+/* Custom Button */
+
+
+.custom-button{
+  outline: none;
+  background-color: transparent;
+  border: solid;
+  border-width: 10px;
+  border-color: transparent;
+  color: black;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  width: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.custom-button:hover{
+  background-color: transparent;
+  color: orange;
+}
+
+/*Page Layout*/
+.pagesec{
+ width:auto;
+ height:auto; 
+}
+
+.frontpage{
+  margin-top: 13vh;
+  padding-top: 11vh;
+  padding-right: 11vw;
+  padding-left: 11vw;
+  padding-bottom: 14.2vh;
+  margin-left: auto;
+}
+
+.frontpage > div[target=main]{
+  text-align: left;
+  width: 15vw;
+}
+
+.frontpage > div[target=main] h1{
+  display: inline-block;
+  padding-top: 7vh;
+  font-weight: 300;
+  font-size: 80px;
+}
+
+.frontpage > div[target=secondary]{
+  text-align: center;
+  padding-bottom: 13.4vh ;
+}
+
+.frontpage > div[target=secondary] h1{
+  display: inline-block;
+  padding-top: 5vh;
+  margin-bottom: 11vh;
+  font-weight: 300;
+  font-size: 80px;
+}
+
+.frontpage > div[target=secondary] a{
+  overflow: auto;
+  white-space: inherit;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.frontpage > div[target=third]{
+  text-align: center;
+  padding-bottom: 0;
+  height: 14.8vh;
+}
+
+.frontpage > div[target=third] h1{
+  display: inline-block;
+  padding-top: 5vh;
+  margin-bottom: 11vh;
+  font-weight: 300;
+  font-size: 80px;
+}
+
+.frontpage > div[target=third] a{
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.frontpage p{
+  padding-left: 1vw;
+  margin-top: 0px;
+  font-size: 20px;
+}
+
+.lowertext{
+  text-align: center;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* gallery pages */
+
+.wrapper{
+  padding: 9vh 11vw 11vh 11vw;
+}
+
+/* gallery */
+
+* {
+  box-sizing: border-box;
+}
+
+.row {
+ margin: 0;
+ background: transparent;
+ /*background: rgba(255,255,255,.5);*/
+}
+
+.row,
+.row > .column {
+  padding: 10px;
+}
+
+.column {
+  float: left;
+  width: 33.33333%;
+  display: none
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.imageholder{
+  height: 100%;
+}
+
+.content {
+  width: 301px;
+  height: 500px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px rgb(200,200,200);
+  transition: all 250ms ease-in-out;
+  position: relative;
+}
+
+.content:hover{
+  top: -2px;
+}
+
+.content img{
+  border-radius: 10px 10px 0px 0px;
+}
+
+.content h1{
+  font-size: 15pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 15px;
+}
+
+.content p{
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.content button{
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  text-align: center;
+  cursor: pointer;  
+}
+
+.content button a{
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+
+.content button a:hover{
+  color: orange;
+}
+
+.selector{ 
+  outline: none;
+  background-color: transparent;
+  padding: 10px;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16pt;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+  cursor: pointer;  
+}
+
+.selector:hover{
+  color: orange;
+}
+
+.selector.active{
+  color: orange;
+}
+
+.buttonholder{
+  text-align: center;
+  padding-bottom: 50px;
+}
+
+@media screen and (max-width: 1250px) {
+  .column {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .column {
+    width: 100%;
+  }
+  .row {
+    margin: 0 auto;
+  }
+}
+
+.description{
+  height: 150px;
+}
+
+.show {
+  display: block;
+}
+
+/* Sketch Pages*/
+.sketchholder{
+  text-align: center;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 38vh;
+}
+
+.sketchholder a{
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-bottom: 20px;
+}
+
+.sketchholder button{
+  background-color: transparent;
+  padding: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: none;
+  text-align: center;
+  cursor: pointer;  
+}
+
+.sketchholder button a{
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+
+.sketchholder button a:hover{
+  color: orange;
+}
+
+#sketchholder{
+  height: 60vh;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.scratchholder{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.gifholder{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/*Contact*/
+
+.contact-content p{
+  overflow: auto;
+  white-space: inherit;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13pt;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 0px;
+  padding-left: 0px;
+}
+
+.contact-content img{
+  width: 400px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  opacity: 1;
+  transition: .5s ease;
+  backface-visibility: hidden;
+}
+
+.contact-content img:hover{
+  opacity:0.5;
+}
+
+.middle {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.container:hover .middle {
+  opacity: 1;
+}
+
+.contact-content a{
+  color: black;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0px 20px 0px 20px;
+}
+
+.contact-content a:hover {
+  color:orange;
+}
+
+
+/* Markdown to html rendering*/
+.markdown-body h1 {
+  border-bottom: 2px solid #000000;
+}

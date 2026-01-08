@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>School</title>
+        <link href="../styles.css" rel="stylesheet">
+        <link rel="icon" href="https://marvyn.com/images/simple_logo.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+
+    <body>
+        <div class="overlay-hidden" id="overlay"></div>
+        <div class="pagesec">
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                                                <a href="https://marvyn.com/games/">Games</a>
+                        <a href="https://marvyn.com/blog/">Blog</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/about/">About</a>
+                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="frontpage">
+                <div target="secondary">
+                    <h1>School</h1>    
+                    <div class="lowertext">
+                        <a>Math, philosphy, and computer science assigments</a>
+                    </div>             
+                </div> 
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="selector">
+                <div id="selectorcontainer">
+                    <button class="selector active" onclick="filterSelection('all')"><a>Show all</a></button>
+                    <button class="selector" onclick="filterSelection('math')"><a>Math</a></button>
+                    <button class="selector" onclick="filterSelection('phil')"><a>Philosophy</a></button>
+                    <button class="selector" onclick="filterSelection('cs')"><a>CS</a></button>
+                </div> 
+            </div>
+            <div class="row">
+                <div class="column math">
+                    <div class="content">
+                        <a href="./writings/ Beauty of Euler’s Identity.pdf" download="The_Beauty_of_Eulers_Identity" target="_blank"><img src="../images/the_beauty_of_eulers_identity.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>The Beauty of Euler’s Identity</h1>
+                            <p>A shot paper about Euler's Identity</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./writings/The Beauty of Euler’s Identity.pdf" download="The_Beauty_of_Eulers_Identity" translate="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column math">
+                    <div class="content">
+                        <a href="https://marvyn.com/school/mountains/" target="_blank"><img src="../images/mountains.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Mountains</h1>
+                            <p>A desmos project using algebra.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/school/mountains/" target="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column math">
+                    <div class="content">
+                        <a href="./writings/Coexisting with Zombies.pdf" download="Coexisting with Zombies"><img src="../images/coexisting_with_zombies.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Coexisting with Zombies</h1>
+                            <p>A math paper studying the zombie apocalypse.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./writings/Coexisting with Zombies.pdf" download="Coexisting with Zombies" translate="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column phil">
+                    <div class="content">
+                        <a href="./writings/Kant’s Supreme Principle of Morality.pdf" download="Kant’s Supreme Principle of Morality"><img src="../images/kants_supreme_principle_of_morality.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Kant’s Supreme Principle of Morality</h1>
+                            <p>A philosphy paper concerning Kant's work on Morals.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./writings/Kant’s Supreme Principle of Morality.pdf" download="Kant’s Supreme Principle of Morality" translate="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column phil">
+                    <div class="content">
+                        <a href="./writings/Personhood in the Age of Artificial Intelligence.pdf" download="Personhood in the Age of Artificial Intelligence"><img src="../images/personhood_in_the_age_of_artificial_intelligence.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Personhood in the Age of Artificial Intelligence</h1>
+                            <p>My thoughts on the current definition of personhood in the 21st century.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./writings/Personhood in the Age of Artificial Intelligence.pdf" download="Personhood in the Age of Artificial Intelligence" translate="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column phil">
+                    <div class="content">
+                        <a href="./writings/Utilitarianism, Kantianism, and Aristotle’s Virtue Ethics.pdf" download="Utilitarianism, Kantianism, and Aristotle’s Virtue Ethics"><img src="../images/utilitarianism_kantianism_and_aristotles_virtue_ethics.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Personhood in the Age of Artificial Intelligence</h1>
+                            <p>My thoughts on the current definition of personhood in the 21st century.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./writings/Utilitarianism, Kantianism, and Aristotle’s Virtue Ethics.pdf" download="Utilitarianism, Kantianism, and Aristotle’s Virtue Ethics" translate="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column math">
+                    <div class="content">
+                        <a href="https://marvyn.com/school/intermediate_value_theorem"><img src="../images/intermediate_value_theorem.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Intermediate Value Theorem</h1>
+                            <p>Visualization of the intermediate value theorem using Desmos</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/school/intermediate_value_theorem">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column math">
+                    <div class="content">
+                        <a href="https://marvyn.com/school/sequences_series"><img src="../images/sequences_series.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Sequences and Series</h1>
+                            <p>Visualization of Sequences and Series using Desmos</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/school/sequences_series">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column math">
+                    <div class="content">
+                        <a href="https://marvyn.com/school/center_of_mass" target="_blank"><img src="../images/center_of_mass.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Center of Mass</h1>
+                            <p>Finding the center of mass of a triangle in Desmos</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://marvyn.com/school/center_of_mass" target="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="https://docs.google.com/document/d/14KYSBWKCoIjQasfF4QoLNuezdp3EXkyX8L4GMYpr8KI/edit?usp=sharing" target="_blank"><img src="../images/bluej.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Blue J</h1>
+                            <p>Work from the textbook "BlueJ."</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="https://docs.google.com/document/d/14KYSBWKCoIjQasfF4QoLNuezdp3EXkyX8L4GMYpr8KI/edit?usp=sharing" target="_blank">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./2_to_1_selector/index.html"><img src="../images/2_to_1_selector.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>2-to-1 Selector</h1>
+                            <p>A selector made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="2_to_1_selector/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./adding_machine/index.html"><img src="../images/adding_machine.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Adding Machine</h1>
+                            <p>An adding machine made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./adding_machine/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./d_type_flip_flop/index.html"><img src="../images/d_type_flip_flop.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>level-triggered d-type flip-flop</h1>
+                            <p>A latche machine made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./d_type_flip_flop/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./8_bit_latch/index.html"><img src="../images/8_bit_latch.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>8-Bit Latch</h1>
+                            <p>A latche machine made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./8_bit_latch/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./ripple_counter/index.html"><img src="../images/ripple_counter.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Ripple Counter</h1>
+                            <p>A ripple counter made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./ripple_counter/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column cs">
+                    <div class="content">
+                        <a href="./subtractor/index.html"><img src="../images/subtractor.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Subtractor</h1>
+                            <p>A subtractor machine made with Digital.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./subtractor/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container2">
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>p5.js example</title>
+            <style> body {padding: 0; margin: 0;} </style>
+            <script src="../imports/p5/p5.js"></script>
+            <script src="sketch.js"></script>
+        </div>
+        <script>
+            filterSelection("all")
+            function filterSelection(c) {
+              var x, i;
+              x = document.getElementsByClassName("column");
+              if (c == "all") c = "";
+              for (i = 0; i < x.length; i++) {
+                RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) AddClass(x[i], "show");
+              }
+            }
+            
+            function AddClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+              }
+            }
+            
+            function RemoveClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                  arr1.splice(arr1.indexOf(arr2[i]), 1);     
+                }
+              }
+              element.className = arr1.join(" ");
+            }
+            
+            var btnContainer = document.getElementById("selectorcontainer");
+            var btns = btnContainer.getElementsByClassName("selector");
+            for (var i = 0; i < btns.length; i++) { 
+              btns[i].addEventListener("click", function(){
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+              });
+            }
+        </script>
+        <!-- Nav Bar-->
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                    pause();  
+                } else {
+                    x.className = "nav-bar";
+                    unpause();
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>
+    </body>
+</html>

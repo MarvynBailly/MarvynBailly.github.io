@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Coding Projects</title>
+        <link href="../styles.css" rel="stylesheet">
+        <link rel="icon" href="https://marvyn.com/images/simple_logo.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+
+    <body>
+        <div class="overlay-hidden" id="overlay"></div>
+        <div class="pagesec">
+            <div class="nav-bar" id="my-nav-bar" style="position: absolute;"> 
+                <div class="nav-bar-inner">
+                    <div class="nav-bar-inner-left">
+                        <a href="https://marvyn.com/"><img src="https://marvyn.com/images/simple_logo.png"; width="100px"; height="100px"></a>
+                    </div>
+    
+                    <div class="nav-bar-inner-right">
+                        <a href="https://marvyn.com/school/">School</a>
+                        <a href="https://marvyn.com/coding_projects/">Coding Projects</a>
+                        <a href="https://marvyn.com/art/">Art</a>
+                                                <a href="https://marvyn.com/games/">Games</a>
+                        <a href="https://marvyn.com/blog/">Blog</a>
+                        <a style="margin-right: 0px;" href="https://marvyn.com/about/">About</a>
+                    </div>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            </div>
+            <div class="frontpage">
+                <div target="secondary">
+                    <h1>Coding Projects</h1>    
+                    <div class="lowertext">
+                        <a>Various coding projects made with p5.js, Processing, Python, App Inventor and Scratch.</a>
+                    </div>             
+                </div> 
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="selector">
+                <div id="selectorcontainer">
+                    <button class="selector active" onclick="filterSelection('all')"><a>Show all</a></button>
+                    <button class="selector" onclick="filterSelection('p5.js')"><a>p5.js</a></button>
+                    <button class="selector" onclick="filterSelection('python')"><a>Python</a></button>
+                    <button class="selector" onclick="filterSelection('other')"><a>Other</a></button>
+                </div> 
+            </div>
+            <div class="row">
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./ecosystem_control/index.html" ><img src="../images/ecosystem_control.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Ecosystem with User Control</h1>
+                            <p>The user can control particles within the Ecosystem.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./ecosystem_control/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./flock_control/index.html" ><img src="../images/flock_control.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Flocking with User Control</h1>
+                            <p>The user can control particles.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./flock_control/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./recaman/index.html" ><img src="../images/recaman.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Recamán's Sequence</h1>
+                            <p>A recursive sequence used to make art and noise.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./recaman/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./langtons_ant_2/index.html" ><img src="../images/langtons_ant_2.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Langton's Ant Part 2</h1>
+                            <p>Four of Lanton's Ants in the same sketch</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./langtons_ant_2/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./langtons_ant_1/index.html" ><img src="../images/langtons_ant_1.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Langton's Ant Part 1</h1>
+                            <p>A simple 2D turing machine known as Langton's Ant.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./langtons_ant_1/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./smart_rockets/index.html" ><img src="../images/smart_rockets.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Smart Rockets</h1>
+                            <p>Rockets evolve time to avoid the wall and reach the target.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./smart_rockets/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./evolution/index.html" ><img src="../images/evolution.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Evolution</h1>
+                            <p>Evolution takes place in two species after each itiration.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./evolution/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./darwin_effect/index.html" ><img src="../images/darwin_effect.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Darwin Effect</h1>
+                            <p>The Darwin Effect takes place in two species.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./darwin_effect/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./ecosystem/index.html" ><img src="../images/ecosystem.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Ecosystem</h1>
+                            <p>Two species coexisting in an environment.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./ecosystem/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./flock/index.html" ><img src="../images/flock.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Flocking</h1>
+                            <p>Agents that flock together while seperating from each other.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./flock/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <div class="imageholder">
+                            <a href="./flow_field/index.html" ><img src="../images/flow_field.png" alt="test" width="100%"></a>
+                        </div>
+                        <div class="description">
+                            <h1>Flow Field</h1>
+                            <p>Particls that travel along a flow field.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./flow_field/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./word_morph/index.html" ><img src="../images/word_morph.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>!!!!!!Word Morph!!!!!</h1>
+                            <p>Particls form different worlds.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./word_morph/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./vector_field_2/index.html" ><img src="../images/vector_field_2.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Vector Field Part 2</h1>
+                            <p>Different patterns created using vector fields.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./vector_field_2/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./vector_field_1/index.html" ><img src="../images/vector_field_1.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Vector Field Part 1</h1>
+                            <p>Using vector fields to create patterns.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./vector_field_1/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./spheres/index.html" ><img src="../images/spheres.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Spheres</h1>
+                            <p>An pattern created multiple spheres.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./spheres/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./sphere/index.html" ><img src="../images/sphere.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Sphere</h1>
+                            <p>An illision created by random lines.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./sphere/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./chaos_game/index.html" ><img src="../images/chaos_game.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Chaos Game</h1>
+                            <p>A fractal is created by randomly selecting points within a polygon.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./chaos_game/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column other">
+                    <div class="content">
+                        <a href="./choice_app/index.html" ><img src="../images/choice_app.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Choice App</h1>
+                            <p>An app that choices for you.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./choice_app/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./worley_noise/index.html" ><img src="../images/worley_noise.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Worley Noise</h1>
+                            <p>A noise function used for graphics. Warning, this runs slow.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./worley_noise/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./static_noise/index.html" ><img src="../images/static_noise.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Static Noise</h1>
+                            <p>A visual representation of static noise.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./static_noise/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="./snapchat_organizer/index.html" ><img src="../images/snapchat_organizer.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Snapchat Organizer</h1>
+                            <p>A Python program that organizes Snapchat data.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./snapchat_organizer/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="./treasure_hunt/index.html" ><img src="../images/treasure_hunt.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Treasure Hunt</h1>
+                            <p>Two algorithms race to find energy.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./treasure_hunt/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="./car_driver/index.html" ><img src="../images/car_driver.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Car Driver</h1>
+                            <p>Drive and refill a car.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./car_driver/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column python">
+                    <div class="content">
+                        <a href="./converter/index.html" ><img src="../images/converter.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Converter</h1>
+                            <p>Convert a ten base number into any base number.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./converter/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./fractal_tree/index.html" ><img src="../images/fractal_tree.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Fractal Tree</h1>
+                            <p>A Fractal tree created with p5.js.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./fractal_tree/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column other">
+                    <div class="content">
+                        <a href="./maze_project/index.html" ><img src="../images/maze_project.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Maze Project</h1>
+                            <p>A house finding its way through a maze.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./maze_project/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column other">
+                    <div class="content">
+                        <a href="./frictionless_ball/index.html" ><img src="../images/frictionless_ball.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>frictionless ball</h1>
+                            <p>Hit all the check marks with the ball.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./frictionless_ball/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./fire_particle/index.html" ><img src="../images/fire_particle.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Fire Particles</h1>
+                            <p>Particles made to look like sparks.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./fire_particle/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./attractors/index.html" ><img src="../images/attractors.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Attractors</h1>
+                            <p>A visual representation of attractors.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./attractors/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./mandelbrot_set/index.html" ><img src="../images/mandelbrot_set.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>The Mandlebrot Set</h1>
+                            <p>The Mandlebrot Set coding in p5.js.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./mandelbrot_set/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./polar_rose/index.html" ><img src="../images/polar_rose.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Polar Roses</h1>
+                            <p>Roses created in polar coordinates.</p>
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./polar_rose/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column p5.js">
+                    <div class="content">
+                        <a href="./crazy_circle/index.html"><img src="../images/first_p5.png" alt="test" width="100%"></a>
+                        <div class="description">
+                            <h1>Crazy Circles</h1>
+                            <p>Create drawings with circles.</p>     
+                        </div>
+                        <div class="buttonholder">
+                            <button><a href="./crazy_circle/index.html">View Project </a></button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <div class="container2">
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>p5.js example</title>
+            <style> body {padding: 0; margin: 0;} </style>
+            <script src="../imports/p5/p5.js"></script>
+            <script src="particle.js"></script>
+            <script src="sketch.js"></script>
+        </div>
+
+        <!-- Nav Bar-->
+
+        <script>            
+            filterSelection("all")
+            function filterSelection(c) {
+              var x, i;
+              x = document.getElementsByClassName("column");
+              if (c == "all") c = "";
+              for (i = 0; i < x.length; i++) {
+                RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) AddClass(x[i], "show");
+              }
+            }
+            
+            function AddClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+              }
+            }
+            
+            function RemoveClass(element, name) {
+              var i, arr1, arr2;
+              arr1 = element.className.split(" ");
+              arr2 = name.split(" ");
+              for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                  arr1.splice(arr1.indexOf(arr2[i]), 1);     
+                }
+              }
+              element.className = arr1.join(" ");
+            }
+            
+            var btnContainer = document.getElementById("selectorcontainer");
+            var btns = btnContainer.getElementsByClassName("selector");
+            for (var i = 0; i < btns.length; i++) { 
+              btns[i].addEventListener("click", function(){
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+              });
+            }
+        </script>
+        <script>
+            function myFunction() {
+                var x = document.getElementById("my-nav-bar");
+                var y = document.getElementById("overlay");
+                if (x.className === "nav-bar") {
+                    x.className += "-responsive";
+                    pause();  
+                } else {
+                    x.className = "nav-bar";
+                    unpause(); 
+                }
+                if(y.className === "overlay-hidden"){
+                    y.className = "overlay-show";
+                }else{
+                    y.className = "overlay-hidden";
+                }
+            }
+        </script>
+    </body>
+</html>
