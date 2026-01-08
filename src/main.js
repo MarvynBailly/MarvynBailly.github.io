@@ -197,9 +197,11 @@ function setupSettingsControls() {
     const bloom = document.getElementById('bloom-toggle');
     const sunrays = document.getElementById('sunrays-toggle');
     const shading = document.getElementById('shading-toggle');
+    const obstacles = document.getElementById('obstacles-toggle');
     if (bloom) { bloom.checked = config.BLOOM; bloom.addEventListener('change', (e) => config.BLOOM = e.target.checked); }
     if (sunrays) { sunrays.checked = config.SUNRAYS; sunrays.addEventListener('change', (e) => config.SUNRAYS = e.target.checked); }
     if (shading) { shading.checked = config.SHADING; shading.addEventListener('change', (e) => config.SHADING = e.target.checked); }
+    if (obstacles) { obstacles.checked = config.SHOW_OBSTACLES; obstacles.addEventListener('change', (e) => config.SHOW_OBSTACLES = e.target.checked); }
     setupSlider('velocity-dissipation', 'vel-diss-value', (v) => config.VELOCITY_DISSIPATION = parseFloat(v));
     setupSlider('density-dissipation', 'den-diss-value', (v) => config.DENSITY_DISSIPATION = parseFloat(v));
     setupSlider('curl-strength', 'curl-value', (v) => config.CURL = parseInt(v));

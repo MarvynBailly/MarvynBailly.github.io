@@ -12,7 +12,7 @@
 export class Config {
     constructor() {
         // Simulation Resolution
-        this.SIM_RESOLUTION = 128;      // Resolution for velocity/pressure computation
+        this.SIM_RESOLUTION = 256;      // Resolution for velocity/pressure computation
         this.DYE_RESOLUTION = 1024;     // Resolution for dye (visual) texture
         this.CAPTURE_RESOLUTION = 512;  // Resolution for screenshots
 
@@ -33,7 +33,7 @@ export class Config {
         this.COLOR_UPDATE_SPEED = 10;   // How fast colors cycle
 
         // Bloom Effect
-        this.BLOOM = true;
+        this.BLOOM = false;
         this.BLOOM_ITERATIONS = 8;
         this.BLOOM_RESOLUTION = 256;
         this.BLOOM_INTENSITY = 0.8;
@@ -41,7 +41,7 @@ export class Config {
         this.BLOOM_SOFT_KNEE = 0.7;
 
         // Sunrays Effect
-        this.SUNRAYS = true;
+        this.SUNRAYS = false;
         this.SUNRAYS_RESOLUTION = 196;
         this.SUNRAYS_WEIGHT = 0.5;
 
@@ -58,31 +58,40 @@ export class Config {
         this.SHOW_OBSTACLES = true;
         this.OBSTACLE_COLOR = { r: 0.0, g: 0.8, b: 1.0 };  // Bright cyan
 
-        // Large "M" shape in center using axis-aligned rectangles
-        // Smoother diagonal approximation with more rectangles
+
+        // Vertical column "M" shape: distinct vertical bars of varying heights
+        this.LENGTH = 0.015;
+        this.CENTER_X = 0.5
+        this.CENTER_Y = 0.4
+
         this.DEFAULT_OBSTACLES = [
-            // Left vertical bar
-            { type: 'rectangle', x: 0.33, y: 0.32, width: 0.05, height: 0.36 },
-            // Right vertical bar
-            { type: 'rectangle', x: 0.62, y: 0.32, width: 0.05, height: 0.36 },
-            // Center vertical bar (middle peak)
-            { type: 'rectangle', x: 0.475, y: 0.48, width: 0.05, height: 0.20 },
+            // Left vertical pillar (tallest)
+            { type: 'rectangle', x: this.CENTER_X - 8 * this.LENGTH, y: this.CENTER_Y - 8 * this.LENGTH, width: this.LENGTH * 4, height: this.LENGTH * 13 },
 
-            // Left diagonal (6 blocks for smooth transition)
-            { type: 'rectangle', x: 0.380, y: 0.650, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.395, y: 0.620, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.410, y: 0.590, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.425, y: 0.560, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.440, y: 0.530, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.455, y: 0.500, width: 0.035, height: 0.045 },
+            { type: 'rectangle', x: this.CENTER_X - 8 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH * 3, height: this.LENGTH * 7 },
 
-            // Right diagonal (6 blocks for smooth transition, mirrored)
-            { type: 'rectangle', x: 0.585, y: 0.650, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.570, y: 0.620, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.555, y: 0.590, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.540, y: 0.560, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.525, y: 0.530, width: 0.035, height: 0.045 },
-            { type: 'rectangle', x: 0.510, y: 0.500, width: 0.035, height: 0.045 }
+            // Left side descending columns
+            { type: 'rectangle', x: this.CENTER_X - 5 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X - 4 * this.LENGTH, y: this.CENTER_Y + 4 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X - 3 * this.LENGTH, y: this.CENTER_Y + 3 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X - 2 * this.LENGTH, y: this.CENTER_Y + 2 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X - this.LENGTH, y: this.CENTER_Y + this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+
+
+            // Center valley columns (shortest)
+            { type: 'rectangle', x: this.CENTER_X, y: this.CENTER_Y, width: this.LENGTH, height: this.LENGTH * 5 },
+
+            // Right side ascending columns
+            { type: 'rectangle', x: this.CENTER_X + this.LENGTH, y: this.CENTER_Y + this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X + 2 * this.LENGTH, y: this.CENTER_Y + 2 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X + 3 * this.LENGTH, y: this.CENTER_Y + 3 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X + 4 * this.LENGTH, y: this.CENTER_Y + 4 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+            { type: 'rectangle', x: this.CENTER_X + 5 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
+
+
+            // Right vertical pillar (tallest)
+            { type: 'rectangle', x: this.CENTER_X + 6 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH * 3, height: this.LENGTH * 7 },
+            { type: 'rectangle', x: this.CENTER_X + 5 * this.LENGTH, y: this.CENTER_Y - 8 * this.LENGTH, width: this.LENGTH * 4, height: this.LENGTH * 13 },
         ];
     }
 
