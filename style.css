@@ -112,6 +112,57 @@ body {
     pointer-events: none;
 }
 
+/* Unified Sticky Header for About/Blog pages */
+.unified-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(20, 25, 50, 0.9);
+    /* Slightly more opaque for readability */
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.unified-header .brand {
+    display: flex;
+    flex-direction: column;
+}
+
+.unified-header h1 {
+    font-size: 1.5rem;
+    /* More compact than main splash */
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.unified-header .subtitle {
+    font-size: 0.8rem;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Nav inside header */
+.unified-header .nav-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Reusing existing .nav-link styles but ensuring no fixed positioning */
+.unified-header .nav-link {
+    /* Styles inherited from global .nav-link, layout handled by flex parent */
+}
+
+/* Existing Header Styles (kept for Main Page) */
 .header {
     padding: 30px 40px;
     background: linear-gradient(180deg, var(--color-surface) 0%, transparent 100%);
@@ -135,6 +186,7 @@ body {
     color: var(--color-text-dim);
     font-weight: 400;
 }
+
 
 /* Navigation */
 .nav {
