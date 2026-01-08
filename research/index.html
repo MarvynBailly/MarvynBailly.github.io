@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Marvyn Bailly's Blog - applied mathematics, fluid dynamics, and scientific computing.">
-    <title>Blog - Marvyn Bailly</title>
-    <link rel="stylesheet" href="style.css">
+        content="Research by Marvyn Bailly - Applied Mathematics, Scientific Computing, and Fluid Dynamics.">
+    <title>Research - Marvyn Bailly</title>
+    <!-- Reuse blog styles for consistency -->
+    <link rel="stylesheet" href="../blog/style.css">
 </head>
 
 <body>
@@ -26,15 +27,15 @@
                 </svg>
                 Home
             </a>
-            <a href="./" class="nav-link"
-                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
+            <a href="../blog/" class="nav-link">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" />
                     <polyline points="3 7 12 13 21 7" />
                 </svg>
                 Blog
             </a>
-            <a href="../research/" class="nav-link">
+            <a href="./" class="nav-link"
+                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -60,20 +61,33 @@
     <!-- Main Content -->
     <main class="blog-list">
         <header class="post-header">
-            <h1>Blog</h1>
-            <p class="subtitle">Thoughts on mathematics, simulation, and code</p>
+            <h1>Research</h1>
+            <p class="subtitle">Projects in grid adaptation, turbulence modeling, and high-performance computing</p>
         </header>
 
-        <!-- Blog Post Card -->
-        <a href="fluid-simulation.html" class="blog-card">
+        <!-- Placeholder Research Card 1 -->
+        <a href="#" class="blog-card">
             <div class="card-content">
-                <span class="card-date">January 2026</span>
-                <h2 class="card-title">Understanding Real-Time Fluid Simulation</h2>
+                <span class="card-date">Current</span>
+                <h2 class="card-title">Grid Adaptation for Wall-Modeled Turbulence</h2>
                 <p class="card-desc">
-                    A dive into GPU-accelerated Navier-Stokes solvers. Explore the math and code behind real-time
-                    fluid dynamics on the home page.
+                    Investigating optimal grid strategies for accurately resolving boundary layers in high-speed flows
+                    using wall-modeled large eddy simulation (WMLES).
                 </p>
-                <span class="read-more">Read Article</span>
+                <span class="read-more">Coming Soon</span>
+            </div>
+        </a>
+
+        <!-- Placeholder Research Card 2 -->
+        <a href="#" class="blog-card">
+            <div class="card-content">
+                <span class="card-date">2023 - 2024</span>
+                <h2 class="card-title">Diurnal Cycles in Internal Ocean Dynamics</h2>
+                <p class="card-desc">
+                    Studying the impact of daily heating cycles on internal wave propagation and mixing in the upper
+                    ocean using large eddy simulations.
+                </p>
+                <span class="read-more">Coming Soon</span>
             </div>
         </a>
     </main>

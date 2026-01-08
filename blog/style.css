@@ -125,6 +125,24 @@ body {
     color: var(--color-text);
 }
 
+/* Global Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 217, 255, 0.5);
+}
+
 /* Blog Post */
 .blog-post {
     max-width: 800px;
@@ -135,6 +153,8 @@ body {
 .post-header {
     text-align: center;
     margin-bottom: 60px;
+    grid-column: 1 / -1;
+    /* Ensure spans full width in grid layouts */
 }
 
 .post-header h1 {
@@ -315,13 +335,81 @@ td {
     color: var(--color-text-dim);
 }
 
-/* Call to Action */
-.cta {
-    display: flex;
-    gap: 16px;
-    margin: 40px 0;
-    flex-wrap: wrap;
+/* Blog List */
+.blog-list {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
 }
+
+.blog-card {
+    background: var(--color-surface);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 217, 255, 0.15);
+    border-color: var(--color-primary);
+}
+
+.card-content {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-date {
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.card-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.read-more {
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.read-more::after {
+    content: "→";
+    transition: transform 0.2s;
+}
+
+.blog-card:hover .read-more::after {
+    transform: translateX(4px);
+}
+
 
 .btn-primary,
 .btn-secondary {
