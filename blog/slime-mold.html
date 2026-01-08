@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Slime Mold Simulation - A Processing-based agent simulation inspired by physarum polycephalum">
+    <title>Slime Mold Simulation - Marvyn Bailly</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Sticky Unified Header -->
+    <header class="unified-header">
+        <div class="brand">
+            <h1>Marvyn Bailly</h1>
+            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+        </div>
+
+        <nav class="nav-buttons">
+            <a href="../index.html" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+            <a href="./" class="nav-link"
+                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Blog
+            </a>
+        </nav>
+    </header>
+
+    <article class="blog-post">
+        <header class="post-header">
+            <h1>Slime Mold Simulation</h1>
+            <p class="subtitle">Emergent Behavior from Simple Rules</p>
+        </header>
+
+        <section>
+            <p class="lead">
+                This project simulates the behavior of slime mold (Physarum polycephalum) using simple agent-based
+                rules. Thousands of particles follow pheromone trails, creating beautiful organic patterns that emerge
+                naturally from local interactions.
+            </p>
+        </section>
+
+        <section>
+            <h2>Inspiration</h2>
+            <p>
+                Physarum polycephalum is a single-celled organism that exhibits remarkable problem-solving abilities.
+                Despite having no brain, it can find the shortest path between food sources and has even been used to
+                model efficient transportation networks.
+            </p>
+            <p>
+                This simulation recreates its behavior computationally, demonstrating how complex patterns can emerge
+                from simple rules.
+            </p>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+
+            <h3>Agent Behavior</h3>
+            <p>
+                Each "slime" agent follows a simple set of rules:
+            </p>
+            <ol>
+                <li><strong>Sense</strong> - Check pheromone levels at three sensors (forward, left, right)</li>
+                <li><strong>Steer</strong> - Turn toward the direction with highest pheromone concentration</li>
+                <li><strong>Move</strong> - Take a step forward in the current direction</li>
+                <li><strong>Deposit</strong> - Leave a trail of pheromone at the current position</li>
+            </ol>
+
+            <h3>Pheromone Dynamics</h3>
+            <p>
+                The pheromone field undergoes two processes each frame:
+            </p>
+            <ul>
+                <li><strong>Diffusion</strong> - Pheromones spread to neighboring cells using a blur operation</li>
+                <li><strong>Evaporation</strong> - Pheromone levels gradually decay over time</li>
+            </ul>
+
+            <div class="code-block">
+                <h4>Steering Algorithm</h4>
+                <pre><code>// Sense in three directions
+float weightForward = sense(agent, 0);
+float weightLeft = sense(agent, sensorAngle);
+float weightRight = sense(agent, -sensorAngle);
+
+// Turn toward highest concentration
+if (weightForward > weightLeft && weightForward > weightRight) {
+    // Continue straight
+} else if (weightLeft > weightRight) {
+    agent.angle -= turnSpeed * dt;
+} else {
+    agent.angle += turnSpeed * dt;
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Parameters</h2>
+            <p>
+                The simulation behavior can be dramatically altered by adjusting these parameters:
+            </p>
+            <ul>
+                <li><strong>Sensor Angle</strong> - How far apart the left/right sensors are</li>
+                <li><strong>Sensor Distance</strong> - How far ahead the sensors look</li>
+                <li><strong>Turn Speed</strong> - How quickly agents can change direction</li>
+                <li><strong>Diffuse Speed</strong> - How fast pheromones spread</li>
+                <li><strong>Evaporation Rate</strong> - How quickly trails fade</li>
+            </ul>
+            <p>
+                The simulation dynamically varies these parameters over time, creating an ever-evolving visual display.
+            </p>
+        </section>
+
+        <section>
+            <h2>Multiple Species</h2>
+            <p>
+                Version 3.0 of the simulation introduces multiple "species" of agents, each with their own color (red,
+                green, or blue). Agents are attracted to trails of their own species but repelled by trails of other
+                species.
+            </p>
+            <p>
+                This creates fascinating territorial patterns as the different populations compete for space and form
+                complex boundaries.
+            </p>
+        </section>
+
+        <section>
+            <h2>Technical Details</h2>
+            <p>
+                Built with <strong>Processing</strong> (Java-based creative coding environment), the simulation
+                features:
+            </p>
+            <ul>
+                <li>2000+ simultaneous agents</li>
+                <li>Pixel-level rendering for performance</li>
+                <li>Real-time parameter animation</li>
+                <li>Multi-species interaction</li>
+            </ul>
+        </section>
+
+
+        <!-- link to github code -->
+        <section>
+            <h2>Original Code</h2>
+            <div class="cta">
+                <a href="https://github.com/MarvynBailly/MarvynBailly.github.io/tree/master/old_website/summer2022/projects/slime"
+                    class="btn-primary" target="_blank">View Code on GitHub</a>
+            </div>
+        </section>
+
+        <footer class="blog-footer">
+            <p>&copy; 2026 Marvyn Bailly</p>
+        </footer>
+    </article>
+
+</body>
+
+</html>

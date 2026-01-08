@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Polygon - Generative polygon art visualization using p5.js">
+    <title>Polygon Art - Marvyn Bailly</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Sticky Unified Header -->
+    <header class="unified-header">
+        <div class="brand">
+            <h1>Marvyn Bailly</h1>
+            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+        </div>
+
+        <nav class="nav-buttons">
+            <a href="../index.html" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+            <a href="./" class="nav-link"
+                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Blog
+            </a>
+        </nav>
+    </header>
+
+    <article class="blog-post">
+        <header class="post-header">
+            <h1>Polygon</h1>
+            <p class="subtitle">Generative Polygon Art</p>
+        </header>
+
+        <section>
+            <p class="lead">
+                Polygon is a generative art piece that creates geometric patterns using connected vertices.
+                Each refresh produces a unique composition of interconnected shapes that slowly evolve over time.
+            </p>
+        </section>
+
+        <section>
+            <h2>The Concept</h2>
+            <p>
+                The idea behind Polygon is simple: scatter a set of particles across the canvas subject to simple rules,
+                then
+                connect nearby particles with lines. As the particles move, the connections update, creating an
+                ever-shifting web of geometric forms. The result is a display where rigid polygons emerge organically
+                from the chaos of moving points. It's a visualization of how order can arise from simple rules applied
+                to random initial conditions.
+            </p>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+            <p>
+                The algorithm consists of a few key components:
+            </p>
+
+            <h3>Particle System</h3>
+            <p>
+                A collection of particles is initialized at random positions. Each particle has a velocity that causes
+                it to drift across the canvas.
+            </p>
+
+            <h3>Connection Logic</h3>
+            <p>
+                For each frame, the algorithm calculates the distance between every pair of particles. If two particles
+                are within a threshold distance, a line is drawn between them.
+            </p>
+
+            <h3>Visual Style</h3>
+            <p>
+                The opacity of each connection line is based on distance—closer particles create stronger (more opaque)
+                lines, while distant particles have faint connections. This creates a natural depth effect.
+            </p>
+        </section>
+
+        <section>
+            <h2>Technical Details</h2>
+            <p>
+                Built with <strong>p5.js</strong>, the sketch uses:
+            </p>
+            <ul>
+                <li>Object-oriented particle management</li>
+                <li>Distance-based line rendering</li>
+                <li>Boundary wrapping for seamless animation</li>
+                <li>Real-time performance optimization</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>View the Art</h2>
+            <div class="cta">
+                <a href="/old_website/art/polygon/" class="btn-primary" target="_blank">View Polygon</a>
+                <a href="https://editor.p5js.org/Nostrada/sketches/1Y_k6zKkU" class="btn-secondary" target="_blank">View
+                    Source Code</a>
+            </div>
+        </section>
+
+        <footer class="blog-footer">
+            <p>&copy; 2026 Marvyn Bailly</p>
+        </footer>
+    </article>
+
+</body>
+
+</html>
