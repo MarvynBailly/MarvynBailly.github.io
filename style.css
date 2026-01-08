@@ -502,6 +502,25 @@ body {
     padding: 20px 30px 30px 30px;
 }
 
+/* Scrollbar styling for settings panel */
+.panel-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 217, 255, 0.5);
+}
+
 .panel h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;

@@ -63,6 +63,11 @@ export class Config {
         this.CONTINUOUS_COLOR_CHANGE = true; // Vary colors while mouse is held down
         this.COLOR_CHANGE_SPEED = 1500;     // Color change interval in milliseconds (lower = faster)
 
+        // Wind Tunnel Mode
+        this.WIND_TUNNEL_MODE = false;      // Enable passive left-to-right wind
+        this.WIND_TUNNEL_FORCE = 20;        // Strength of wind tunnel force
+        this.OUTFLOW_BOUNDARY = false;      // Allow flow to exit on right edge (non-reflecting)
+
 
         // Vertical column "M" shape: distinct vertical bars of varying heights
         this.LENGTH = 0.015;

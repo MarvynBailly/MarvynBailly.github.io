@@ -25,10 +25,22 @@ uniform sampler2D uObstacles;
  * Handles both domain boundaries and obstacles
  */
 float sampleVelocity(vec2 coords, float currentComponent, float normalSample) {
-    // Check domain boundary first
-    if (coords.x < 0.0 || coords.x > 1.0 || coords.y < 0.0 || coords.y > 1.0) {
-        return -currentComponent;  // Domain boundary: no-slip
+    // Check domain boundary
+    if (coords.x < 0.0 || coords.y < 0.0 || coords.y > 1.0) {
+        return -currentComponent;  // No-slip on left/top/bottom
     }
+    
+    #ifdef OUTFLOW_BOUNDARY
+        // Outflow on right edge: allow flow to exit
+        if (coords.x > 1.0) {
+            return currentComponent;  // Non-reflecting outflow
+        }
+    #else
+        // No-slip on right edge (default)
+        if (coords.x > 1.0) {
+            return -currentComponent;
+        }
+    #endif
     
     // Check obstacle
     if (texture2D(uObstacles, coords).r > 0.5) {

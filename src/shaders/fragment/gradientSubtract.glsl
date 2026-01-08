@@ -39,6 +39,15 @@ void main () {
         return;
     }
     
+    #ifdef OUTFLOW_BOUNDARY
+        // At right edge with outflow boundary, preserve velocity (don't apply pressure correction)
+        if (vUv.x >= 0.99) {
+            vec2 velocity = texture2D(uVelocity, vUv).xy;
+            gl_FragColor = vec4(velocity, 0.0, 1.0);
+            return;
+        }
+    #endif
+    
     // Sample current cell pressure (for Neumann BC fallback)
     float C = texture2D(uPressure, vUv).x;
     

@@ -153,6 +153,11 @@ export class SimulationManager {
         const baseVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, baseVertex);
         const blurVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, blurVertex);
 
+        // Store shaders that need dynamic recompilation
+        this.divergenceFragSource = divergenceFrag;
+        this.gradientSubtractFragSource = gradientSubtractFrag;
+        this.baseVertexShader = baseVertexShader;
+
         // Create programs
         const advectionKeywords = this.webglManager.supportsLinearFiltering() ? [] : ['MANUAL_FILTERING'];
 
@@ -162,21 +167,13 @@ export class SimulationManager {
                 baseVertexShader,
                 this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, advectionFrag, advectionKeywords)
             ),
-            divergence: new Program(
-                this.gl,
-                baseVertexShader,
-                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, divergenceFrag)
-            ),
+            divergence: this._compileDivergenceShader(divergenceFrag, baseVertexShader),
             pressure: new Program(
                 this.gl,
                 baseVertexShader,
                 this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, pressureFrag)
             ),
-            gradientSubtract: new Program(
-                this.gl,
-                baseVertexShader,
-                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, gradientSubtractFrag)
-            ),
+            gradientSubtract: this._compileGradientSubtractShader(gradientSubtractFrag, baseVertexShader),
             curl: new Program(
                 this.gl,
                 baseVertexShader,
@@ -231,6 +228,93 @@ export class SimulationManager {
 
         // Create display material (supports keywords)
         this.displayMaterial = new Material(this.gl, baseVertexShader, displayFrag);
+    }
+
+    /**
+     * Load shader file from URL
+     * 
+     * @private
+     * @param {string} url - Shader file URL
+     * @returns {Promise<string>} Shader source code
+     */
+    async _loadShaderFile(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to load shader: ${url}`);
+        }
+        return await response.text();
+    }
+
+    /**
+     * Compile divergence shader with appropriate keywords
+     * 
+     * @private
+     * @param {string} fragSource - Fragment shader source
+     * @param {WebGLShader} vertexShader - Compiled vertex shader
+     * @returns {Program} Compiled divergence program
+     */
+    _compileDivergenceShader(fragSource, vertexShader) {
+        const keywords = [];
+        if (this.config.OUTFLOW_BOUNDARY) {
+            keywords.push('OUTFLOW_BOUNDARY');
+        }
+
+        const fragmentShader = this.shaderManager.compileShader(
+            this.gl.FRAGMENT_SHADER,
+            fragSource,
+            keywords
+        );
+
+        return new Program(this.gl, vertexShader, fragmentShader);
+    }
+
+    /**
+     * Compile gradient subtraction shader with appropriate keywords
+     * 
+     * @private
+     * @param {string} fragSource - Fragment shader source
+     * @param {WebGLShader} vertexShader - Compiled vertex shader
+     * @returns {Program} Compiled gradient subtraction program
+     */
+    _compileGradientSubtractShader(fragSource, vertexShader) {
+        const keywords = [];
+        if (this.config.OUTFLOW_BOUNDARY) {
+            keywords.push('OUTFLOW_BOUNDARY');
+        }
+
+        const fragmentShader = this.shaderManager.compileShader(
+            this.gl.FRAGMENT_SHADER,
+            fragSource,
+            keywords
+        );
+
+        return new Program(this.gl, vertexShader, fragmentShader);
+    }
+
+
+    /**
+     * Update shaders when outflow boundary setting changes
+     */
+    updateOutflowShaders() {
+        if (this.divergenceFragSource && this.baseVertexShader) {
+            // Recompile divergence shader
+            this.programs.divergence = this._compileDivergenceShader(
+                this.divergenceFragSource,
+                this.baseVertexShader
+            );
+
+            // Recompile gradient subtraction shader
+            this.programs.gradientSubtract = this._compileGradientSubtractShader(
+                this.gradientSubtractFragSource,
+                this.baseVertexShader
+            );
+
+            // Update the pressure solver module's references
+            if (this.pressureSolverModule) {
+                this.pressureSolverModule.divergenceProgram = this.programs.divergence;
+                this.pressureSolverModule.gradientSubtractProgram = this.programs.gradientSubtract;
+            }
+        }
     }
 
     /**
@@ -332,7 +416,20 @@ export class SimulationManager {
         // 1. Apply user interaction
         this.interactionManager.applyPointerForces(this.velocity, this.dye, this.aspectRatio);
 
-        // 2. Advect velocity
+        // 2. Apply wind tunnel force (if enabled)
+        if (this.config.WIND_TUNNEL_MODE) {
+            this.forcesModule.applySplat(
+                this.velocity,
+                0.5, 0.5,  // Center of screen
+                this.config.WIND_TUNNEL_FORCE, 0,  // Force pointing right
+                { r: 0, g: 0, b: 0 },  // No color
+                100.0,  // Very large radius to cover entire screen
+                this.aspectRatio,
+                false  // Additive (accumulate)
+            );
+        }
+
+        // 3. Advect velocity
         this.advectionModule.advect(
             this.velocity.read,
             this.velocity.read,

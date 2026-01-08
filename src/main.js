@@ -125,6 +125,7 @@ function setupUI() {
     if (infoBtn && infoPanel) {
         infoBtn.addEventListener('click', () => {
             infoPanel.classList.toggle('hidden');
+            if (settingsPanel) settingsPanel.classList.add('hidden'); // Close settings panel
         });
     }
 
@@ -206,9 +207,20 @@ function setupSettingsControls() {
     // Interaction options
     const splatOnMove = document.getElementById('splat-on-move-toggle');
     const continuousColor = document.getElementById('continuous-color-toggle');
+    const windTunnel = document.getElementById('wind-tunnel-toggle');
+    const outflowBoundary = document.getElementById('outflow-boundary-toggle');
     if (splatOnMove) { splatOnMove.checked = config.SPLAT_ON_MOVE; splatOnMove.addEventListener('change', (e) => config.SPLAT_ON_MOVE = e.target.checked); }
     if (continuousColor) { continuousColor.checked = config.CONTINUOUS_COLOR_CHANGE; continuousColor.addEventListener('change', (e) => config.CONTINUOUS_COLOR_CHANGE = e.target.checked); }
+    if (windTunnel) { windTunnel.checked = config.WIND_TUNNEL_MODE; windTunnel.addEventListener('change', (e) => config.WIND_TUNNEL_MODE = e.target.checked); }
+    if (outflowBoundary) {
+        outflowBoundary.checked = config.OUTFLOW_BOUNDARY;
+        outflowBoundary.addEventListener('change', (e) => {
+            config.OUTFLOW_BOUNDARY = e.target.checked;
+            simulation.updateOutflowShaders(); // Recompile shaders with new keyword
+        });
+    }
 
+    setupSlider('wind-tunnel-force', 'wind-force-value', (v) => config.WIND_TUNNEL_FORCE = parseInt(v));
     setupSlider('color-change-speed', 'color-speed-value', (v) => config.COLOR_CHANGE_SPEED = parseInt(v), 'ms');
     setupSlider('velocity-dissipation', 'vel-diss-value', (v) => config.VELOCITY_DISSIPATION = parseFloat(v));
     setupSlider('density-dissipation', 'den-diss-value', (v) => config.DENSITY_DISSIPATION = parseFloat(v));

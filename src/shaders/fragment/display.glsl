@@ -46,6 +46,9 @@ void main () {
 #endif
 
     vec3 c = texture2D(uTexture, vUv).rgb;
+    // Reduce max brightness to prevent white saturation
+    c *= .95;
+
 
 #ifdef SHADING
     // Normal-based shading using dye density gradient
