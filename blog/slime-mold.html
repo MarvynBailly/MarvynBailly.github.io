@@ -62,93 +62,270 @@
                 This simulation recreates its behavior computationally, demonstrating how complex patterns can emerge
                 from simple rules.
             </p>
+            <p>
+                A massive thanks to the incredible work of Sebastian Lague. He has provided me with so much inspiration.
+                His original implementation can be found <a href="https://github.com/SebLague/Slime-Simulation">here</a>
+                and was the main inspiration for this project.
+            </p>
         </section>
 
         <section>
-            <h2>How It Works</h2>
-
-            <h3>Agent Behavior</h3>
+            <h2>The Agent Model</h2>
             <p>
-                Each "slime" agent follows a simple set of rules:
-            </p>
-            <ol>
-                <li><strong>Sense</strong> - Check pheromone levels at three sensors (forward, left, right)</li>
-                <li><strong>Steer</strong> - Turn toward the direction with highest pheromone concentration</li>
-                <li><strong>Move</strong> - Take a step forward in the current direction</li>
-                <li><strong>Deposit</strong> - Leave a trail of pheromone at the current position</li>
-            </ol>
-
-            <h3>Pheromone Dynamics</h3>
-            <p>
-                The pheromone field undergoes two processes each frame:
+                Each "slime" agent is surprisingly simple - it only knows two things:
             </p>
             <ul>
-                <li><strong>Diffusion</strong> - Pheromones spread to neighboring cells using a blur operation</li>
-                <li><strong>Evaporation</strong> - Pheromone levels gradually decay over time</li>
+                <li><strong>Position</strong>: Where it is on the canvas (x, y coordinates)</li>
+                <li><strong>Angle</strong>: Which direction it's facing</li>
             </ul>
 
             <div class="code-block">
-                <h4>Steering Algorithm</h4>
-                <pre><code>// Sense in three directions
-float weightForward = sense(agent, 0);
-float weightLeft = sense(agent, sensorAngle);
-float weightRight = sense(agent, -sensorAngle);
+                <h4>Agent Class</h4>
+                <pre><code>class Agent {
+    PVector position;
+    float angle;
+    
+    Agent(float x, float y, float a) {
+        position = new PVector(x, y);
+        angle = a;
+    }
+}</code></pre>
+            </div>
 
-// Turn toward highest concentration
-if (weightForward > weightLeft && weightForward > weightRight) {
-    // Continue straight
-} else if (weightLeft > weightRight) {
-    agent.angle -= turnSpeed * dt;
-} else {
-    agent.angle += turnSpeed * dt;
+            <p>
+                That's it! We just position and direction.
+            </p>
+        </section>
+
+        <section>
+            <h2>The Simulation Loop</h2>
+            <p>
+                Each frame, every agent performs three steps:
+            </p>
+            <ol>
+                <li><strong>Sense</strong> - Check pheromone levels at three sensors</li>
+                <li><strong>Steer</strong> - Turn toward the direction with highest concentration</li>
+                <li><strong>Move</strong> - Take a step forward and deposit pheromone</li>
+            </ol>
+
+            <div class="code-block">
+                <h4>Main Loop</h4>
+                <pre><code>void draw() {
+    background(0);
+    
+    // Agent loop
+    for (Agent a : agents) {
+        steer(a);              // Decide direction
+        int index = a.update(); // Move forward
+        displayArray[index] = 255; // Deposit pheromone
+    }
+    
+    processDisplay();  // Diffuse and evaporate
+    updateDisplay();   // Render to screen
 }</code></pre>
             </div>
         </section>
 
         <section>
-            <h2>Parameters</h2>
+            <h2>Sensing: The Three-Sensor Model</h2>
             <p>
-                The simulation behavior can be dramatically altered by adjusting these parameters:
+                Each agent has three "sensors" that detect pheromone concentration:
             </p>
             <ul>
-                <li><strong>Sensor Angle</strong> - How far apart the left/right sensors are</li>
-                <li><strong>Sensor Distance</strong> - How far ahead the sensors look</li>
-                <li><strong>Turn Speed</strong> - How quickly agents can change direction</li>
-                <li><strong>Diffuse Speed</strong> - How fast pheromones spread</li>
-                <li><strong>Evaporation Rate</strong> - How quickly trails fade</li>
+                <li><strong>Forward sensor</strong>: Directly ahead of the agent</li>
+                <li><strong>Left sensor</strong>: Offset by <code>sensorAngle</code> to the left</li>
+                <li><strong>Right sensor</strong>: Offset by <code>sensorAngle</code> to the right</li>
             </ul>
+
+            <div class="code-block">
+                <h4>Sensing Function</h4>
+                <pre><code>float sense(Agent a, float sensorAngleOff) {
+    // Calculate sensor position
+    float sensorAngle = a.angle + sensorAngleOff;
+    PVector sensorDir = new PVector(cos(sensorAngle), sin(sensorAngle));
+    PVector sensorCenter = sensorDir.mult(sensorDst).add(a.position.copy());
+    
+    // Sum pheromone in sensor area
+    float sum = 0;
+    for (int xOff = -sensorSize; xOff &lt;= sensorSize; xOff++) {
+        for (int yOff = -sensorSize; yOff &lt;= sensorSize; yOff++) {
+            PVector sample = new PVector(sensorCenter.x + xOff, 
+                                         sensorCenter.y + yOff);
+            if (inBounds(sample)) {
+                sum += displayArray[getIndex(sample)];
+            }
+        }
+    }
+    return sum;
+}</code></pre>
+            </div>
+
             <p>
-                The simulation dynamically varies these parameters over time, creating an ever-evolving visual display.
+                The sensor samples a small area (determined by <code>sensorSize</code>) at a distance
+                <code>sensorDst</code> away from the agent.
             </p>
         </section>
 
         <section>
-            <h2>Multiple Species</h2>
+            <h2>Steering: Following the Trail</h2>
             <p>
-                Version 3.0 of the simulation introduces multiple "species" of agents, each with their own color (red,
-                green, or blue). Agents are attracted to trails of their own species but repelled by trails of other
-                species.
+                The steering logic compares the three sensor readings and decides which way to turn:
+            </p>
+
+            <div class="code-block">
+                <h4>Steering Decision Tree</h4>
+                <pre><code>void steer(Agent a) {
+    float weightForward = sense(a, 0);
+    float weightLeft = sense(a, sensorAngle);
+    float weightRight = sense(a, -sensorAngle);
+    
+    float randomSteer = random(1);
+    
+    // If forward is strongest, go straight
+    if (weightForward &gt; weightLeft &amp;&amp; weightForward &gt; weightRight) {
+        a.angle += 0;
+    }
+    // If forward is weakest, turn randomly
+    else if (weightForward &lt; weightLeft &amp;&amp; weightForward &lt; weightRight) {
+        a.angle += 2 * (randomSteer - 0.5) * turnSpeed * dt;
+    }
+    // If left is stronger, turn left
+    else if (weightLeft &gt; weightRight) {
+        a.angle -= randomSteer * turnSpeed * dt;
+    }
+    // If right is stronger, turn right
+    else if (weightLeft &lt; weightRight) {
+        a.angle += randomSteer * turnSpeed * dt;
+    }
+}</code></pre>
+            </div>
+
+            <p>
+                Notice the randomness! Even when turning, agents add some random variation. This prevents the system
+                from getting stuck in repetitive patterns.
+            </p>
+        </section>
+
+        <section>
+            <h2>Pheromone Dynamics</h2>
+            <p>
+                The pheromone field is where the magic happens. It's a 2D array where each cell stores a brightness
+                value (0-255). Each frame, two processes occur:
+            </p>
+
+            <h3>Diffusion</h3>
+            <p>
+                Pheromones spread to neighboring cells using a 3×3 blur:
+            </p>
+            <div class="code-block">
+                <pre><code>// Average of 9 neighboring cells
+float blur = sum / 9;
+// Blend original with blurred value
+float diffuse = lerp(originalValue, blur, diffuseSpeed * dt);</code></pre>
+            </div>
+
+            <h3>Evaporation</h3>
+            <p>
+                Pheromones gradually fade over time:
+            </p>
+            <div class="code-block">
+                <pre><code>// Reduce brightness, but don't go negative
+float evap = max(0, diffuse - evapSpeed * dt);</code></pre>
+            </div>
+
+            <p>
+                The balance between diffusion and evaporation is critical. Too much diffusion creates uniform blur. Too
+                much evaporation erases trails before agents can follow them.
+            </p>
+        </section>
+
+        <section>
+            <h2>Key Parameters</h2>
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td><code>colonySize</code></td>
+                    <td>5000</td>
+                    <td>Number of agents in simulation</td>
+                </tr>
+                <tr>
+                    <td><code>sensorAngle</code></td>
+                    <td>6</td>
+                    <td>Angle offset for left/right sensors (radians)</td>
+                </tr>
+                <tr>
+                    <td><code>sensorDst</code></td>
+                    <td>10</td>
+                    <td>How far ahead sensors look (pixels)</td>
+                </tr>
+                <tr>
+                    <td><code>turnSpeed</code></td>
+                    <td>0.5</td>
+                    <td>Maximum turning rate per frame</td>
+                </tr>
+                <tr>
+                    <td><code>diffuseSpeed</code></td>
+                    <td>0.05</td>
+                    <td>Rate of pheromone spreading</td>
+                </tr>
+                <tr>
+                    <td><code>evapSpeed</code></td>
+                    <td>0.8</td>
+                    <td>Rate of pheromone fading</td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Emergent Patterns</h2>
+            <p>
+                The simulation produces several characteristic patterns:
+            </p>
+
+            <h3>Network Formation</h3>
+            <p>
+                Agents naturally organize into branching networks as they reinforce successful paths and abandon dead
+                ends.
+            </p>
+
+            <h3>Pulsing Behavior</h3>
+            <p>
+                Dense regions can exhibit pulsing as agents cycle between following and dispersing.
+            </p>
+
+            <h3>Self-Avoiding Paths</h3>
+            <p>
+                With the right parameters, agents spread out to explore while maintaining connectivity.
+            </p>
+        </section>
+
+        <section>
+            <h2>Why It Works</h2>
+            <p>
+                The simulation demonstrates <strong>stigmergy</strong> - indirect coordination through environmental
+                modification. Agents don't communicate directly; they leave traces that influence future behavior of
+                themselves and others.
             </p>
             <p>
-                This creates fascinating territorial patterns as the different populations compete for space and form
-                complex boundaries.
+                This principle appears throughout nature: ant colonies, termite mounds, and even human systems like
+                footpaths through parks ("desire lines").
             </p>
         </section>
 
         <section>
             <h2>Technical Details</h2>
-            <p>
-                Built with <strong>Processing</strong> (Java-based creative coding environment), the simulation
-                features:
-            </p>
             <ul>
-                <li>2000+ simultaneous agents</li>
-                <li>Pixel-level rendering for performance</li>
-                <li>Real-time parameter animation</li>
-                <li>Multi-species interaction</li>
+                <li><strong>Platform</strong>: Processing (Java-based creative coding)</li>
+                <li><strong>Renderer</strong>: P2D (hardware-accelerated 2D)</li>
+                <li><strong>Resolution</strong>: 600×600 pixels</li>
+                <li><strong>Agents</strong>: 5,000 simultaneous</li>
+                <li><strong>Boundaries</strong>: Agents bounce and randomize direction at edges</li>
             </ul>
         </section>
-
 
         <!-- link to github code -->
         <section>

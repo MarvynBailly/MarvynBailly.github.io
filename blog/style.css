@@ -210,6 +210,20 @@ p {
     color: var(--color-text-dim);
 }
 
+/* Inline links in content */
+.blog-post a:not(.nav-link):not(.btn-primary):not(.btn-secondary):not(.blog-card) {
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.blog-post a:not(.nav-link):not(.btn-primary):not(.btn-secondary):not(.blog-card):hover {
+    color: #fff;
+    border-bottom-color: var(--color-primary);
+    text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+
 /* Equations */
 .equation-block {
     background: var(--color-surface);
