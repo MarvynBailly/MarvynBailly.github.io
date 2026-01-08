@@ -56,7 +56,7 @@ export class Config {
         // Obstacle Configuration
         this.OBSTACLES_ENABLED = true;
         this.SHOW_OBSTACLES = true;
-        this.OBSTACLE_COLOR = { r: 0.0, g: 0.0, b: 0.1 };  // Bright cyan
+        this.OBSTACLE_COLOR = { r: 0.0, g: 0.1, b: 0.2 };  // Bright cyan
 
         // Interaction Options
         this.SPLAT_ON_MOVE = true;          // Splat follows mouse without clicking

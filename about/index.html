@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="About Marvyn Bailly - PhD Candidate in Applied Mathematics & Scientific Computation">
+    <title>About Me - Marvyn Bailly</title>
+    <link rel="stylesheet" href="../style.css">
+    <!-- Inline override to ensure static layout works regardless of cached css -->
+    <style>
+        /* CRITICAL: Override global styles that lock scrolling */
+        html,
+        body {
+            overflow: auto !important;
+            height: auto !important;
+            display: block !important;
+            position: static !important;
+        }
+
+        body {
+            background: var(--color-bg);
+            min-height: 100vh;
+        }
+
+        .about-container {
+            position: relative;
+            top: 0;
+            height: auto;
+            overflow: visible;
+            margin: 0 auto;
+        }
+
+        /* Additional CV specific styles */
+        .experience-item {
+            margin-bottom: 24px;
+        }
+
+        .experience-item h3 {
+            margin-bottom: 4px;
+            color: var(--color-text);
+        }
+
+        .experience-item p {
+            margin-bottom: 8px;
+            color: var(--color-text-dim);
+        }
+
+        .experience-item ul {
+            margin-top: 8px;
+        }
+
+        .experience-item li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar (consistent with other pages) -->
+    <nav class="nav"
+        style="position: sticky; top: 0; background: var(--color-bg); padding: 20px 40px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <a href="../index.html" class="nav-link">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Home
+        </a>
+        <a href="../blog/" class="nav-link">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" />
+                <polyline points="3 7 12 13 21 7" />
+            </svg>
+            Blog
+        </a>
+        <a href="../research/" class="nav-link">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Research
+        </a>
+    </nav>
+
+    <!-- Header (Consistent with Front Page) -->
+    <header class="header" style="background: transparent; padding-bottom: 0;">
+        <h1>Marvyn Bailly</h1>
+        <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="about-container">
+        <!-- Profile Column -->
+        <aside class="profile-section">
+            <img src="marvyn_photo.jpg" alt="Marvyn Bailly" class="profile-photo">
+
+            <!-- Social Links -->
+            <div class="social-links">
+                <a href="https://github.com/MarvynBailly" target="_blank" class="social-btn" aria-label="GitHub">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                        </path>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/marvyn-bailly" target="_blank" class="social-btn"
+                    aria-label="LinkedIn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Downloads -->
+            <div class="download-section">
+                <a href="mbailly_cv.pdf" download class="download-btn">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download CV
+                </a>
+                <a href="mbailly_resume.pdf" download class="download-btn">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Download Resume
+                </a>
+            </div>
+        </aside>
+
+        <!-- Use blog-post class to inherit text styles -->
+        <article class="blog-post" style="padding: 0; max-width: none; margin: 0;">
+
+            <section id="education">
+                <h2>Education</h2>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>University of Maryland, College Park</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2023 – Present</span>
+                    </div>
+                    <p><em>PhD, Applied Mathematics and Scientific Computation (AMSC) (GPA: 3.892)</em></p>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>University of Washington</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2022 – 2023</span>
+                    </div>
+                    <p><em>M.S., Applied Mathematics (Concentration in Numerical Methods) (GPA: 3.84)</em></p>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>University of Oregon</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2020 – 2022</span>
+                    </div>
+                    <p><em>B.S., Mathematics (Concentration in Applied and Computational) (GPA: 3.96)</em></p>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Central Oregon Community College</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2017 – 2020</span>
+                    </div>
+                    <p><em>A.A., Baker Early College Program (GPA: 4.0)</em></p>
+                </div>
+
+                <div class="note">
+                    <strong>Relevant Coursework:</strong> Computational Fluid Dynamics, Natural Language Processing,
+                    Parallel Computing, Scientific Computing, Applied Numerical Optimization, Numerical Analysis
+                </div>
+            </section>
+
+            <section id="research">
+                <h2>Research Experience</h2>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Research Assistant</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2024 – Present</span>
+                    </div>
+                    <h4 style="margin-top: 4px; color: var(--color-text-dim);">Computational Turbulence Laboratory,
+                        Dept. of Mechanical Engineering, UMD</h4>
+                    <p><em>Advisor: Johan Larsson</em></p>
+                    <ul>
+                        <li>Working on creating an automatic quad/hex mesh framework to produce high quality grids for
+                            finite volume fluid methods.</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Research Assistant</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2023 – 2024</span>
+                    </div>
+                    <h4 style="margin-top: 4px; color: var(--color-text-dim);">Computational Turbulence Laboratory,
+                        Dept. of Atmospheric & Oceanic Science, UMD</h4>
+                    <p><em>Advisor: Jacob Wenegrat</em></p>
+                    <ul>
+                        <li>Worked with a team of Atmospheric and Oceanic scientists to study the effect of the diurnal
+                            cycle on internal ocean dynamics.</li>
+                        <li>Implemented large eddy simulations (LES) in Julia and performed computations on Zaratan.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="other-experience">
+                <h2>Other Experience</h2>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Teaching Assistant</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2022 – Present</span>
+                    </div>
+                    <p><em>University of Maryland & University of Washington</em></p>
+                    <ul>
+                        <li>Led biweekly problem-solving sessions and provided feedback for undergraduate courses in
+                            probability and calculus and graduate courses in data science.</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Graduate Student Committee</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2025 – Present</span>
+                    </div>
+                    <p><em>University of Maryland</em></p>
+                    <ul>
+                        <li>Co-organized and led the Joint AMSC, Math & Stat Student Seminar (JAMS).</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3>Summer Camp Director</h3>
+                        <span style="color: var(--color-primary); font-family: var(--font-mono);">2023 – 2025</span>
+                    </div>
+                    <p><em>University of Maryland - Girls Talk Math</em></p>
+                    <ul>
+                        <li>Co-directed summer program operations, managed hiring of undergraduate leaders, and
+                            coordinated
+                            industry out-reach.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="skills">
+                <h2>Skills</h2>
+                <div class="algorithm-box">
+                    <p style="margin: 0;">
+                        <strong>Experience with:</strong> Julia, Python (pandas, numpy, matplotlib, transformers),
+                        Linux, MATLAB, bash, Excel, Java, Javascript, C++, LaTeX, git, HPC (SLURM)
+                    </p>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        style="text-align: center; padding: 40px; color: var(--color-text-dim); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 60px;">
+        <p>© 2026 Marvyn Bailly</p>
+    </footer>
+
+</body>
+
+</html>

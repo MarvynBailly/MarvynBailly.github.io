@@ -130,24 +130,24 @@ export class SimulationManager {
      */
     async _loadShaders() {
         // Load shader source code
-        const baseVertex = await this._loadShaderFile('src/shaders/vertex/baseVertex.glsl');
-        const blurVertex = await this._loadShaderFile('src/shaders/vertex/blurVertex.glsl');
+        const baseVertex = await this._loadShaderFile('/src/shaders/vertex/baseVertex.glsl');
+        const blurVertex = await this._loadShaderFile('/src/shaders/vertex/blurVertex.glsl');
 
-        const advectionFrag = await this._loadShaderFile('src/shaders/fragment/advection.glsl');
-        const divergenceFrag = await this._loadShaderFile('src/shaders/fragment/divergence.glsl');
-        const pressureFrag = await this._loadShaderFile('src/shaders/fragment/pressure.glsl');
-        const gradientSubtractFrag = await this._loadShaderFile('src/shaders/fragment/gradientSubtract.glsl');
-        const curlFrag = await this._loadShaderFile('src/shaders/fragment/curl.glsl');
-        const vorticityFrag = await this._loadShaderFile('src/shaders/fragment/vorticity.glsl');
-        const splatFrag = await this._loadShaderFile('src/shaders/fragment/splat.glsl');
-        const displayFrag = await this._loadShaderFile('src/shaders/fragment/display.glsl');
-        const copyFrag = await this._loadShaderFile('src/shaders/fragment/utils/copy.glsl');
-        const clearFrag = await this._loadShaderFile('src/shaders/fragment/utils/clear.glsl');
-        const bloomPrefilterFrag = await this._loadShaderFile('src/shaders/fragment/bloomPrefilter.glsl');
-        const bloomBlurFrag = await this._loadShaderFile('src/shaders/fragment/bloomBlur.glsl');
-        const bloomFinalFrag = await this._loadShaderFile('src/shaders/fragment/bloomFinal.glsl');
-        const sunraysMaskFrag = await this._loadShaderFile('src/shaders/fragment/sunraysMask.glsl');
-        const sunraysFrag = await this._loadShaderFile('src/shaders/fragment/sunrays.glsl');
+        const advectionFrag = await this._loadShaderFile('/src/shaders/fragment/advection.glsl');
+        const divergenceFrag = await this._loadShaderFile('/src/shaders/fragment/divergence.glsl');
+        const pressureFrag = await this._loadShaderFile('/src/shaders/fragment/pressure.glsl');
+        const gradientSubtractFrag = await this._loadShaderFile('/src/shaders/fragment/gradientSubtract.glsl');
+        const curlFrag = await this._loadShaderFile('/src/shaders/fragment/curl.glsl');
+        const vorticityFrag = await this._loadShaderFile('/src/shaders/fragment/vorticity.glsl');
+        const splatFrag = await this._loadShaderFile('/src/shaders/fragment/splat.glsl');
+        const displayFrag = await this._loadShaderFile('/src/shaders/fragment/display.glsl');
+        const copyFrag = await this._loadShaderFile('/src/shaders/fragment/utils/copy.glsl');
+        const clearFrag = await this._loadShaderFile('/src/shaders/fragment/utils/clear.glsl');
+        const bloomPrefilterFrag = await this._loadShaderFile('/src/shaders/fragment/bloomPrefilter.glsl');
+        const bloomBlurFrag = await this._loadShaderFile('/src/shaders/fragment/bloomBlur.glsl');
+        const bloomFinalFrag = await this._loadShaderFile('/src/shaders/fragment/bloomFinal.glsl');
+        const sunraysMaskFrag = await this._loadShaderFile('/src/shaders/fragment/sunraysMask.glsl');
+        const sunraysFrag = await this._loadShaderFile('/src/shaders/fragment/sunrays.glsl');
 
         // Compile vertex shaders
         const baseVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, baseVertex);
