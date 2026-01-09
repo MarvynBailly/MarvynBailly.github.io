@@ -68,40 +68,72 @@ export class Config {
         this.WIND_TUNNEL_FORCE = 20;        // Strength of wind tunnel force
         this.OUTFLOW_BOUNDARY = false;      // Allow flow to exit on right edge (non-reflecting)
 
-
-        // Vertical column "M" shape: distinct vertical bars of varying heights
-        this.LENGTH = 0.015;
-        this.CENTER_X = 0.5
-        this.CENTER_Y = 0.45
+        // M Logo Configuration
+        // Auto-generated from reference image using image-to-polygon.js
+        // Algorithm: Moore-Neighbor contour tracing + RDP simplification + Earcut triangulation
+        // Source: m_logo_reference_1767962130028.png (epsilon=5, scale=0.35)
 
         this.DEFAULT_OBSTACLES = [
-            // Left vertical pillar (tallest)
-            { type: 'rectangle', x: this.CENTER_X - 8 * this.LENGTH, y: this.CENTER_Y - 8 * this.LENGTH, width: this.LENGTH * 4, height: this.LENGTH * 13 },
-
-            { type: 'rectangle', x: this.CENTER_X - 8 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH * 3, height: this.LENGTH * 7 },
-
-            // Left side descending columns
-            { type: 'rectangle', x: this.CENTER_X - 5 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X - 4 * this.LENGTH, y: this.CENTER_Y + 4 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X - 3 * this.LENGTH, y: this.CENTER_Y + 3 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X - 2 * this.LENGTH, y: this.CENTER_Y + 2 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X - this.LENGTH, y: this.CENTER_Y + this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-
-
-            // Center valley columns (shortest)
-            { type: 'rectangle', x: this.CENTER_X, y: this.CENTER_Y, width: this.LENGTH, height: this.LENGTH * 5 },
-
-            // Right side ascending columns
-            { type: 'rectangle', x: this.CENTER_X + this.LENGTH, y: this.CENTER_Y + this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X + 2 * this.LENGTH, y: this.CENTER_Y + 2 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X + 3 * this.LENGTH, y: this.CENTER_Y + 3 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X + 4 * this.LENGTH, y: this.CENTER_Y + 4 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-            { type: 'rectangle', x: this.CENTER_X + 5 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH, height: this.LENGTH * 5 },
-
-
-            // Right vertical pillar (tallest)
-            { type: 'rectangle', x: this.CENTER_X + 6 * this.LENGTH, y: this.CENTER_Y + 5 * this.LENGTH, width: this.LENGTH * 3, height: this.LENGTH * 7 },
-            { type: 'rectangle', x: this.CENTER_X + 5 * this.LENGTH, y: this.CENTER_Y - 8 * this.LENGTH, width: this.LENGTH * 4, height: this.LENGTH * 13 },
+            {
+                type: 'triangle',
+                v0: { x: 0.5584, y: 0.5328 },
+                v1: { x: 0.5694, y: 0.3954 },
+                v2: { x: 0.6162, y: 0.3961 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.6162, y: 0.3961 },
+                v1: { x: 0.5981, y: 0.6005 },
+                v2: { x: 0.5557, y: 0.6005 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5, y: 0.5079 },
+                v1: { x: 0.4439, y: 0.6005 },
+                v2: { x: 0.4016, y: 0.6001 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.4016, y: 0.6001 },
+                v1: { x: 0.4306, y: 0.3961 },
+                v2: { x: 0.4405, y: 0.5332 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5584, y: 0.5328 },
+                v1: { x: 0.6162, y: 0.3961 },
+                v2: { x: 0.5557, y: 0.6005 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5, y: 0.5079 },
+                v1: { x: 0.4016, y: 0.6001 },
+                v2: { x: 0.4405, y: 0.5332 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5034, y: 0.446 },
+                v1: { x: 0.5584, y: 0.5328 },
+                v2: { x: 0.5557, y: 0.6005 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5, y: 0.5079 },
+                v1: { x: 0.4405, y: 0.5332 },
+                v2: { x: 0.5034, y: 0.446 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.5034, y: 0.446 },
+                v1: { x: 0.5557, y: 0.6005 },
+                v2: { x: 0.5, y: 0.5079 }
+            },
+            {
+                type: 'triangle',
+                v0: { x: 0.3834, y: 0.3961 },
+                v1: { x: 0.4016, y: 0.6001 },
+                v2: { x: 0.4306, y: 0.3961 }
+            }
         ];
     }
 

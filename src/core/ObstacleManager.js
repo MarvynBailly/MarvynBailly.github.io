@@ -2,11 +2,12 @@
  * Obstacle Manager
  * 
  * Generates obstacle mask data from obstacle definitions.
- * Supports circles and rectangles with CPU-side rasterization.
+ * Supports circles, rectangles, triangles, and convex polygons with CPU-side rasterization.
  * 
  * References:
  * - architecture/obstacle_system_design.md - ObstacleManager specification
  * - research/implementation_approaches.md - Binary mask approach
+ * - Barycentric coordinates for triangle rasterization (Blackpawn)
  */
 
 export class ObstacleManager {
@@ -42,6 +43,10 @@ export class ObstacleManager {
             this.addCircle(definition.x, definition.y, definition.radius);
         } else if (definition.type === 'rectangle') {
             this.addRectangle(definition.x, definition.y, definition.width, definition.height);
+        } else if (definition.type === 'triangle') {
+            this.addTriangle(definition.v0, definition.v1, definition.v2);
+        } else if (definition.type === 'polygon') {
+            this.addPolygon(definition.vertices);
         } else {
             console.warn(`Unknown obstacle type: ${definition.type}`);
         }
@@ -130,6 +135,139 @@ export class ObstacleManager {
 
         // Store definition
         this.obstacles.push({ type: 'rectangle', x, y, width, height });
+    }
+
+    /**
+     * Add triangular obstacle using barycentric coordinate rasterization
+     * 
+     * @param {Object} v0 - First vertex {x, y} in normalized coordinates [0, 1]
+     * @param {Object} v1 - Second vertex {x, y} in normalized coordinates [0, 1]
+     * @param {Object} v2 - Third vertex {x, y} in normalized coordinates [0, 1]
+     * 
+     * Reference: Blackpawn "Point in Triangle" using barycentric coordinates
+     */
+    addTriangle(v0, v1, v2) {
+        // Validate inputs
+        if (!v0 || !v1 || !v2 ||
+            typeof v0.x !== 'number' || typeof v0.y !== 'number' ||
+            typeof v1.x !== 'number' || typeof v1.y !== 'number' ||
+            typeof v2.x !== 'number' || typeof v2.y !== 'number') {
+            console.warn('Invalid triangle vertices');
+            return;
+        }
+
+        // Clamp vertices to [0, 1]
+        const clamp = (v) => ({
+            x: Math.max(0, Math.min(1, v.x)),
+            y: Math.max(0, Math.min(1, v.y))
+        });
+        const a = clamp(v0);
+        const b = clamp(v1);
+        const c = clamp(v2);
+
+        // Convert to grid coordinates
+        const ax = a.x * this.width, ay = a.y * this.height;
+        const bx = b.x * this.width, by = b.y * this.height;
+        const cx = c.x * this.width, cy = c.y * this.height;
+
+        // Compute bounding box
+        const minX = Math.max(0, Math.floor(Math.min(ax, bx, cx)));
+        const maxX = Math.min(this.width - 1, Math.ceil(Math.max(ax, bx, cx)));
+        const minY = Math.max(0, Math.floor(Math.min(ay, by, cy)));
+        const maxY = Math.min(this.height - 1, Math.ceil(Math.max(ay, by, cy)));
+
+        // Warn if triangle is very small
+        const gridArea = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+        if (gridArea < 3) {
+            console.warn('Triangle area very small (<3 cells), may not flow correctly');
+        }
+
+        // Rasterize triangle using barycentric coordinate test
+        for (let j = minY; j <= maxY; j++) {
+            for (let i = minX; i <= maxX; i++) {
+                // Test cell center (add 0.5 for pixel center)
+                if (this._pointInTriangle(i + 0.5, j + 0.5, ax, ay, bx, by, cx, cy)) {
+                    const idx = j * this.width + i;
+                    this.obstacleData[idx] = 1.0;  // Mark as obstacle
+                }
+            }
+        }
+
+        // Store definition
+        this.obstacles.push({ type: 'triangle', v0: a, v1: b, v2: c });
+    }
+
+    /**
+     * Add convex polygon obstacle by triangulating with a fan from first vertex
+     * 
+     * @param {Array} vertices - Array of vertices [{x, y}, ...] in normalized coordinates
+     *                          Must be convex and have at least 3 vertices
+     */
+    addPolygon(vertices) {
+        // Validate inputs
+        if (!Array.isArray(vertices) || vertices.length < 3) {
+            console.warn('Polygon must have at least 3 vertices');
+            return;
+        }
+
+        // Triangulate using fan from first vertex
+        // For convex polygon with n vertices, creates n-2 triangles
+        const v0 = vertices[0];
+        for (let i = 1; i < vertices.length - 1; i++) {
+            const v1 = vertices[i];
+            const v2 = vertices[i + 1];
+            this.addTriangle(v0, v1, v2);
+        }
+
+        // Store definition (after triangles are added to avoid double-counting)
+        // Remove the triangle definitions and add polygon definition
+        this.obstacles = this.obstacles.filter(obs => obs.type !== 'triangle' ||
+            !(obs.v0.x === v0.x && obs.v0.y === v0.y));
+        this.obstacles.push({ type: 'polygon', vertices: vertices.map(v => ({ x: v.x, y: v.y })) });
+    }
+
+    /**
+     * Test if point (px, py) is inside triangle using barycentric coordinates
+     * 
+     * @param {number} px - Point x in grid coordinates
+     * @param {number} py - Point y in grid coordinates  
+     * @param {number} ax - Vertex A x in grid coordinates
+     * @param {number} ay - Vertex A y in grid coordinates
+     * @param {number} bx - Vertex B x in grid coordinates
+     * @param {number} by - Vertex B y in grid coordinates
+     * @param {number} cx - Vertex C x in grid coordinates
+     * @param {number} cy - Vertex C y in grid coordinates
+     * @returns {boolean} True if point is inside or on edge of triangle
+     * 
+     * Reference: Blackpawn "Point in Triangle" (https://blackpawn.com/texts/pointinpoly/)
+     */
+    _pointInTriangle(px, py, ax, ay, bx, by, cx, cy) {
+        // Vectors from A to C, A to B, and A to P
+        const v0x = cx - ax, v0y = cy - ay;
+        const v1x = bx - ax, v1y = by - ay;
+        const v2x = px - ax, v2y = py - ay;
+
+        // Dot products
+        const dot00 = v0x * v0x + v0y * v0y;
+        const dot01 = v0x * v1x + v0y * v1y;
+        const dot02 = v0x * v2x + v0y * v2y;
+        const dot11 = v1x * v1x + v1y * v1y;
+        const dot12 = v1x * v2x + v1y * v2y;
+
+        // Compute barycentric coordinates
+        const denom = dot00 * dot11 - dot01 * dot01;
+
+        // Check for degenerate triangle (zero area)
+        if (Math.abs(denom) < 1e-10) {
+            return false;
+        }
+
+        const invDenom = 1.0 / denom;
+        const u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        const v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+        // Check if point is in triangle (including edges)
+        return (u >= 0) && (v >= 0) && (u + v <= 1);
     }
 
     /**

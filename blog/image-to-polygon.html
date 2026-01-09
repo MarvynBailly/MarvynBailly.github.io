@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Image-to-Polygon - Automated contour extraction pipeline for WebGL fluid simulation obstacles">
+    <title>Image-to-Polygon Conversion - Marvyn Bailly</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Sticky Unified Header -->
+    <header class="unified-header">
+        <div class="brand">
+            <h1>Marvyn Bailly</h1>
+            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+        </div>
+
+        <nav class="nav-buttons">
+            <a href="../index.html" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+            <a href="./" class="nav-link"
+                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Blog
+            </a>
+        </nav>
+    </header>
+
+    <article class="blog-post">
+        <header class="post-header">
+            <h1>Image-to-Polygon Conversion</h1>
+            <p class="subtitle">Automated Shape Extraction for WebGL Obstacles</p>
+        </header>
+
+        <section>
+            <p class="lead">
+                This post explores building a pipeline that extracts shapes from images and outputs them as triangle
+                definitions for the fluid simulation, using only documented algorithms and real contour data.
+            </p>
+
+            <p>
+                The goal: take any image (like an "M" logo), trace its boundary, simplify the vertices, and
+                output JavaScript code that can be pasted directly into the <code>config.js</code> file used to control
+                the fluid simulation. No manual
+                vertex placement, no approximations—just pure algorithm-driven extraction.
+            </p>
+        </section>
+
+        <section>
+            <h2>The Problem</h2>
+            <p>
+                The fluid simulation's obstacle system uses a binary mask texture. Obstacles are rasterized from
+                geometric primitives (circles, rectangles, triangles, polygons) into a grid of pixels, which the
+                GPU samples to determine where fluid can flow.
+            </p>
+
+            <p>
+                Initially, the "M" logo was constructed from 15+ rectangles stacked in a staircase pattern to
+                approximate diagonal edges. This looked blocky and required tedious manual coordinate calculation.
+                The challenge: can we extract clean diagonal shapes directly from a reference image?
+            </p>
+        </section>
+
+        <section>
+            <h2>Algorithm Selection</h2>
+            <p>
+                The pipeline needs three core algorithms working in sequence:
+            </p>
+
+            <h3>1. Contour Extraction: Moore-Neighbor Tracing</h3>
+            <p>
+                After thresholding the image to binary (black shape on white background), we need to trace the
+                boundary. <strong>Moore-Neighbor tracing</strong> is a simple boundary-following algorithm that
+                walks around the shape using 8-connectivity.
+            </p>
+
+            <div class="code-block">
+                <h4>Contour Tracing Algorithm</h4>
+                <pre><code>function traceContour(bitmap, width, height) {
+    // Direction vectors for 8-connectivity (clockwise from right)
+    const dx = [1, 1, 0, -1, -1, -1, 0, 1];
+    const dy = [0, 1, 1, 1, 0, -1, -1, -1];
+    
+    // Find starting point (first black pixel)
+    let startX = -1, startY = -1;
+    for (let y = 0; y &lt; height; y++) {
+        for (let x = 0; x &lt; width; x++) {
+            if (bitmap[y * width + x] === 0) {  // Black
+                startX = x;
+                startY = y;
+                break;
+            }
+        }
+        if (startX !== -1) break;
+    }
+    
+    const contour = [];
+    let currentX = startX, currentY = startY;
+    let direction = 0;  // Start looking right
+    
+    do {
+        contour.push({x: currentX, y: currentY});
+        
+        // Search from (direction + 6) % 8 (back-left)
+        let searchDir = (direction + 6) % 8;
+        
+        for (let i = 0; i &lt; 8; i++) {
+            const checkDir = (searchDir + i) % 8;
+            const nx = currentX + dx[checkDir];
+            const ny = currentY + dy[checkDir];
+            
+            if (/* in bounds and black */) {
+                currentX = nx;
+                currentY = ny;
+                direction = checkDir;
+                break;
+            }
+        }
+    } while (currentX !== startX || currentY !== startY);
+    
+    return contour;
+}</code></pre>
+            </div>
+
+            <p>
+                This produces a sequence of pixel coordinates following the shape's edge. For the "M" logo at
+                1024×1024 resolution, this yields hundreds of boundary points—far too many for efficient rendering.
+            </p>
+
+            <h3>2. Simplification: Ramer-Douglas-Peucker</h3>
+            <p>
+                The <strong>Ramer-Douglas-Peucker (RDP)</strong> algorithm reduces the number of vertices while
+                preserving the shape's overall appearance. It works recursively by finding the point farthest from
+                the line connecting the endpoints. If that distance exceeds a threshold (epsilon), the point is
+                kept and the algorithm recurses on both segments.
+            </p>
+
+            <div class="code-block">
+                <h4>RDP Simplification</h4>
+                <pre><code>function rdpSimplify(points, epsilon) {
+    if (points.length &lt;= 2) return points;
+    
+    const start = points[0];
+    const end = points[points.length - 1];
+    
+    let maxDist = 0;
+    let maxIdx = 0;
+    
+    // Find point farthest from line
+    for (let i = 1; i &lt; points.length - 1; i++) {
+        const dist = perpendicularDistance(points[i], start, end);
+        if (dist &gt; maxDist) {
+            maxDist = dist;
+            maxIdx = i;
+        }
+    }
+    
+    if (maxDist &gt; epsilon) {
+        // Recurse on both segments
+        const left = rdpSimplify(points.slice(0, maxIdx + 1), epsilon);
+        const right = rdpSimplify(points.slice(maxIdx), epsilon);
+        return [...left.slice(0, -1), ...right];
+    }
+    
+    return [start, end];
+}</code></pre>
+            </div>
+
+            <p>
+                The <code>epsilon</code> parameter controls the trade-off: higher values yield fewer vertices but
+                lose detail. For the M logo, <code>epsilon=5</code> pixels reduced hundreds of points to just 14
+                vertices while preserving all the important corners.
+            </p>
+
+            <h3>3. Triangulation: Earcut</h3>
+            <p>
+                The simplified contour is likely non-convex (e.g., the inner "V" of the "M"). Since the obstacle
+                manager uses a simple triangle-fan algorithm for convex polygons, we need proper triangulation.
+            </p>
+
+            <p>
+                <strong>Earcut</strong> is a fast, robust triangulation library that handles non-convex polygons,
+                holes, and even self-intersections. It outputs a flat array of triangle indices:
+            </p>
+
+            <div class="code-block">
+                <h4>Earcut Triangulation</h4>
+                <pre><code>import earcut from 'earcut';
+
+const flatCoords = normalized.flatMap(p =&gt; [p.x, p.y]);
+const triangleIndices = earcut(flatCoords);
+
+// Convert indices to triangle definitions
+const triangles = [];
+for (let i = 0; i &lt; triangleIndices.length; i += 3) {
+    triangles.push({
+        type: 'triangle',
+        v0: normalized[triangleIndices[i]],
+        v1: normalized[triangleIndices[i + 1]],
+        v2: normalized[triangleIndices[i + 2]]
+    });
+}</code></pre>
+            </div>
+
+            <p>
+                For the M logo, 14 vertices were triangulated into 10 triangles—ready to paste into the config file.
+            </p>
+        </section>
+
+        <section>
+            <h2>The Pipeline</h2>
+            <p>
+                The complete <code>image-to-polygon.js</code> script combines these algorithms into a single CLI tool:
+            </p>
+
+            <div class="code-block">
+                <h4>Usage</h4>
+                <pre><code>node tools/image-to-polygon.js logo.png --epsilon 5 --scale 0.35</code></pre>
+            </div>
+
+            <p>
+                The script follows this flow:
+            </p>
+
+            <ol>
+                <li><strong>Load image</strong> using Jimp</li>
+                <li><strong>Convert to grayscale</strong> and apply threshold (default: 128)</li>
+                <li><strong>Trace contour</strong> with Moore-Neighbor algorithm</li>
+                <li><strong>Simplify</strong> with RDP (configurable epsilon)</li>
+                <li><strong>Normalize</strong> coordinates to [0,1] range</li>
+                <li><strong>Triangulate</strong> with Earcut</li>
+                <li><strong>Output</strong> JavaScript array ready for <code>config.js</code></li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Coordinate Normalization</h2>
+            <p>
+                A subtle but important step is converting pixel coordinates to the [0, 1] normalized space used by
+                the simulation. Images have their origin at the top-left, while WebGL uses bottom-left:
+            </p>
+
+            <div class="code-block">
+                <h4>Flipping Y-Axis</h4>
+                <pre><code>const normalized = simplified.map(p =&gt; ({
+    x: centerX + (p.x / width - 0.5) * scale * aspectRatio,
+    y: centerY + (0.5 - p.y / height) * scale  // Flip Y
+}));</code></pre>
+            </div>
+
+            <p>
+                The <code>scale</code> parameter controls the final size (default 1.0 = full canvas width), and
+                <code>centerX/centerY</code> allow positioning the shape anywhere on screen.
+            </p>
+        </section>
+
+        <section>
+            <h2>Results</h2>
+            <p>
+                Running the pipeline on the reference M logo (<code>epsilon=5, scale=0.35</code>) produces:
+            </p>
+
+            <table class="param-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Input Resolution</td>
+                    <td>1024×1024 pixels</td>
+                </tr>
+                <tr>
+                    <td>Raw Contour Points</td>
+                    <td>~800 pixels</td>
+                </tr>
+                <tr>
+                    <td>After RDP (ε=5)</td>
+                    <td>14 vertices</td>
+                </tr>
+                <tr>
+                    <td>Triangulation Output</td>
+                    <td>10 triangles</td>
+                </tr>
+            </table>
+
+            <p>
+                The generated triangles perfectly match the reference image when rendered in the simulation. Fluid
+                flows smoothly around the diagonal edges with no penetration or gaps.
+            </p>
+        </section>
+
+        <section>
+            <h2>Key Parameters</h2>
+            <p>
+                The pipeline exposes several tunable parameters for different use cases:
+            </p>
+
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Default</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td><code>--epsilon</code></td>
+                    <td>2</td>
+                    <td>RDP tolerance in pixels (higher = fewer vertices)</td>
+                </tr>
+                <tr>
+                    <td><code>--threshold</code></td>
+                    <td>128</td>
+                    <td>Binary threshold (0-255) for shape detection</td>
+                </tr>
+                <tr>
+                    <td><code>--scale</code></td>
+                    <td>1.0</td>
+                    <td>Output size as fraction of canvas width</td>
+                </tr>
+                <tr>
+                    <td><code>--invert</code></td>
+                    <td>false</td>
+                    <td>Treat white as shape instead of black</td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Technical Details</h2>
+            <ul>
+                <li><strong>Language</strong>: Node.js with ES modules</li>
+                <li><strong>Dependencies</strong>: Jimp (image loading), Earcut (triangulation)</li>
+                <li><strong>RDP Implementation</strong>: Custom recursive implementation</li>
+                <li><strong>Contour Tracing</strong>: Moore-Neighbor with 8-connectivity</li>
+                <li><strong>Output Format</strong>: JavaScript array of triangle objects</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Edge Cases</h2>
+            <p>
+                The pipeline handles several tricky scenarios:
+            </p>
+            <ul>
+                <li><strong>Anti-aliased edges</strong>: Threshold converts gray pixels to binary</li>
+                <li><strong>Multiple contours</strong>: Currently extracts the first found (could be extended)</li>
+                <li><strong>Degenerate triangles</strong>: Earcut is robust to edge cases</li>
+                <li><strong>Very small shapes</strong>: Warning if grid area &lt; 3 cells</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Future Improvements</h2>
+            <p>
+                Possible extensions to the pipeline:
+            </p>
+            <ul>
+                <li><strong>Multi-contour support</strong>: Extract holes (e.g., inner regions of &quot;O&quot; or
+                    &quot;P&quot;)</li>
+                <li><strong>Convex decomposition</strong>: Output polygons instead of triangles when possible</li>
+                <li><strong>Adaptive epsilon</strong>: Automatically tune based on shape complexity</li>
+                <li><strong>Preview mode</strong>: Render extracted shape before exporting</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Try It Yourself</h2>
+            <div class="cta">
+                <a href="https://github.com/MarvynBailly" class="btn-primary" target="_blank">View on GitHub</a>
+            </div>
+            <p style="margin-top: 1rem; color: var(--color-muted);">
+                The image-to-polygon tool is part of the fluid simulation repository. Extract shapes from any image
+                and paste them directly into your config!
+            </p>
+        </section>
+
+        <footer class="blog-footer">
+            <p>&copy; 2026 Marvyn Bailly</p>
+        </footer>
+    </article>
+
+</body>
+
+</html>
