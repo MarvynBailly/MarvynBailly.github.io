@@ -1,0 +1,12 @@
+{
+    "name": "Simple Circle",
+    "description": "Single circle in the center",
+    "obstacles": [
+        {
+            "type": "circle",
+            "x": 0.5,
+            "y": 0.5,
+            "radius": 0.15
+        }
+    ]
+}

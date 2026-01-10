@@ -228,6 +228,16 @@ function setupSettingsControls() {
     setupSlider('pressure-iterations', 'pressure-value', (v) => config.PRESSURE_ITERATIONS = parseInt(v));
     setupSlider('splat-force', 'force-value', (v) => config.SPLAT_FORCE = parseInt(v));
     setupSlider('splat-radius', 'radius-value', (v) => config.SPLAT_RADIUS = parseFloat(v));
+
+    // Obstacle preset selector
+    const presetSelector = document.getElementById('obstacle-preset');
+    if (presetSelector) {
+        presetSelector.value = 'geometric-m'; // Default
+        presetSelector.addEventListener('change', async (e) => {
+            await loadObstaclePreset(e.target.value);
+        });
+    }
+
     const reset = document.getElementById('reset-settings');
     if (reset) reset.addEventListener('click', () => location.reload());
 }
@@ -240,5 +250,38 @@ function setupSlider(id, valId, callback, suffix = '') {
             display.textContent = e.target.value + suffix;
             callback(e.target.value);
         });
+    }
+}
+
+/**
+ * Load obstacle preset from JSON file
+ * 
+ * @param {string} presetName - Name of the preset (without .json extension)
+ */
+async function loadObstaclePreset(presetName) {
+    if (!simulation || !simulation.obstacleManager) {
+        console.warn('Simulation not initialized yet');
+        return;
+    }
+
+    try {
+        // Fetch preset JSON
+        const response = await fetch(`./presets/${presetName}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to load preset: ${response.statusText}`);
+        }
+
+        const preset = await response.json();
+        console.log(`Loading preset: ${preset.name}`);
+
+        // Use SimulationManager method to reload obstacles
+        if (simulation.loadObstaclePreset) {
+            simulation.loadObstaclePreset(preset.obstacles);
+        } else {
+            console.error('loadObstaclePreset method not found on simulation');
+        }
+
+    } catch (error) {
+        console.error('Failed to load obstacle preset:', error);
     }
 }

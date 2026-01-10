@@ -318,6 +318,80 @@ export class SimulationManager {
     }
 
     /**
+     * Load obstacle preset
+     * 
+     * @param {Array} obstacles - Array of obstacle definitions
+     */
+    loadObstaclePreset(obstacles) {
+        if (!this.obstacleManager || !this.obstacle) {
+            console.warn('Obstacles not enabled or not initialized');
+            return;
+        }
+
+        // Clear existing obstacles
+        this.obstacleManager.clear();
+
+        // Load new obstacles
+        if (Array.isArray(obstacles)) {
+            for (const obstacle of obstacles) {
+                this.obstacleManager.addObstacle(obstacle);
+            }
+        }
+
+        // Get obstacle data and texture dimensions
+        const obstacleData = this.obstacleManager.getObstacleData();
+        const width = this.obstacleManager.width;
+        const height = this.obstacleManager.height;
+
+        // Convert Float32Array to Uint8Array
+        const uint8Data = new Uint8Array(width * height);
+        for (let i = 0; i < obstacleData.length; i++) {
+            uint8Data[i] = obstacleData[i] > 0.5 ? 255 : 0;
+        }
+
+        // Determine format based on WebGL version
+        const isWebGL2 = this.webglManager.supportsWebGL2();
+        let uploadData = uint8Data;
+        let format = this.gl.RED;
+
+        // If using WebGL1, expand to RGBA
+        if (!isWebGL2) {
+            uploadData = new Uint8Array(width * height * 4);
+            for (let i = 0; i < uint8Data.length; i++) {
+                uploadData[i * 4] = uint8Data[i];      // R channel
+                uploadData[i * 4 + 1] = 0;             // G
+                uploadData[i * 4 + 2] = 0;             // B
+                uploadData[i * 4 + 3] = 255;           // A
+            }
+            format = this.gl.RGBA;
+        }
+
+        // Update texture with proper alignment
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.obstacle.texture);
+
+        // Set pixel unpack alignment to 1 for single-channel textures
+        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
+
+        this.gl.texSubImage2D(
+            this.gl.TEXTURE_2D,
+            0,  // mip level
+            0, 0,  // x, y offset
+            width,
+            height,
+            format,
+            this.gl.UNSIGNED_BYTE,
+            uploadData
+        );
+
+        // Restore default alignment
+        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 4);
+
+        console.log(`Loaded ${obstacles.length} obstacles (${width}x${height}, WebGL${isWebGL2 ? '2' : '1'})`);
+    }
+
+
+
+    /**
      * Load shader file from URL
      * 
      * @private
