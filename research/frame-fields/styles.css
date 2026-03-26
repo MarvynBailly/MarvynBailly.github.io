@@ -1,0 +1,27 @@
+/* Custom styles for paper explainer sites */
+
+/* Callout styling */
+.callout-note {
+  border-left-color: #2c7fb8;
+}
+
+/* Code block tweaks */
+div.sourceCode {
+  border-radius: 6px;
+}
+
+/* Equation numbering emphasis */
+.math.display {
+  margin: 1.2em 0;
+}
+
+/* Responsive figures */
+.quarto-figure {
+  margin: 1em auto;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  margin: 1em 0;
+}
