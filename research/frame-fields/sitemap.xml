@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://marvyn.com/frame_theory.html</loc>
-    <lastmod>2026-03-26T19:15:31.127Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/demos/cross_field.html</loc>
-    <lastmod>2026-03-26T19:15:31.126Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/index.html</loc>
-    <lastmod>2026-03-26T19:15:31.127Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/gallery.html</loc>
-    <lastmod>2026-03-26T19:15:31.127Z</lastmod>
+    <loc>https://marvyn.com/pde_block_split.html</loc>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
   </url>
   <url>
     <loc>https://marvyn.com/frame_theory_slides.html</loc>
-    <lastmod>2026-03-26T19:15:31.127Z</lastmod>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/demos/cross_field.html</loc>
+    <lastmod>2026-03-27T05:21:14.282Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/index.html</loc>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/gallery.html</loc>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/demos/naca_airfoil.html</loc>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/frame_theory.html</loc>
+    <lastmod>2026-03-27T05:21:14.284Z</lastmod>
   </url>
 </urlset>

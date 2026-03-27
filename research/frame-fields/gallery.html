@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Gallery – On Smooth Frame Field Design</title>
+<title>Gallery – Understanding Frame Fields</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -250,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">On Smooth Frame Field Design</span>
+    <span class="navbar-title">Understanding Frame Fields</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -268,15 +268,12 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Frame Theory</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./pde_block_split.html"> 
+<span class="menu-text">PDE Block Meshing</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="./gallery.html" aria-current="page"> 
 <span class="menu-text">Gallery</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./assets/on_smooth_frame_field_design.pdf"> <i class="bi bi-file-pdf" role="img">
-</i> 
-<span class="menu-text">Original Paper</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -419,6 +416,21 @@ ul.task-list li input[type="checkbox"] {
     </div>
   </a>
 
+  <a class="gallery-card" href="demos/naca_airfoil.html">
+    <div class="gallery-card-preview">
+      <canvas id="preview-naca"></canvas>
+    </div>
+    <div class="gallery-card-body">
+      <h3 class="anchored">NACA Airfoil Domain</h3>
+      <p>Configure a NACA 4-digit airfoil with adjustable thickness, camber, and angle of attack. Choose rectangular or circular far-field domains. Pan &amp; zoom to explore.</p>
+      <div class="gallery-card-tags">
+        <span class="gallery-tag">airfoil</span>
+        <span class="gallery-tag">NACA</span>
+        <span class="gallery-tag">domain</span>
+      </div>
+    </div>
+  </a>
+
 </div>
 
 <script>
@@ -537,6 +549,127 @@ ul.task-list li input[type="checkbox"] {
   window.addEventListener('resize', init);
 
   // Use IntersectionObserver to only animate when visible
+  let animId = null;
+  function loop() {
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      if (!animId) loop();
+    } else {
+      if (animId) { cancelAnimationFrame(animId); animId = null; }
+    }
+  }, { threshold: 0.1 });
+  observer.observe(canvas);
+})();
+
+// Animated preview for the NACA airfoil card
+(function() {
+  const canvas = document.getElementById('preview-naca');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let time = 0;
+
+  function nacaThickness(x, t) {
+    return 5 * t * (0.2969*Math.sqrt(x) - 0.1260*x - 0.3516*x*x + 0.2843*x*x*x - 0.1015*x*x*x*x);
+  }
+
+  function generateAirfoil(n, t) {
+    const pts = [];
+    for (let i = 0; i <= n; i++) {
+      const beta = Math.PI * i / n;
+      const x = 0.5 * (1 - Math.cos(beta));
+      const yt = nacaThickness(x, t);
+      pts.push({ x, yu: yt, yl: -yt });
+    }
+    return pts;
+  }
+
+  function init() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+
+  function draw() {
+    const w = canvas.width / devicePixelRatio;
+    const h = canvas.height / devicePixelRatio;
+    ctx.clearRect(0, 0, w, h);
+
+    // Animate thickness
+    time += 0.012;
+    const t = 0.08 + 0.08 * Math.sin(time * 0.8);
+    const aoa = 8 * Math.sin(time * 0.5) * Math.PI / 180;
+    const cos = Math.cos(-aoa), sin = Math.sin(-aoa);
+
+    const pts = generateAirfoil(60, t);
+
+    // Transform to screen
+    const margin = 40;
+    const scaleX = (w - 2 * margin);
+    const scaleY = (h - 2 * margin) * 1.5;
+    const cx = w / 2, cy = h / 2;
+
+    function toScreen(x, y) {
+      const rx = (x - 0.5) * cos - y * sin;
+      const ry = (x - 0.5) * sin + y * cos;
+      return { sx: cx + rx * scaleX, sy: cy - ry * scaleY };
+    }
+
+    // Fill
+    ctx.fillStyle = 'rgba(44, 62, 80, 0.06)';
+    ctx.beginPath();
+    let s = toScreen(pts[0].x, pts[0].yu);
+    ctx.moveTo(s.sx, s.sy);
+    for (let i = 1; i < pts.length; i++) {
+      s = toScreen(pts[i].x, pts[i].yu);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    for (let i = pts.length - 1; i >= 0; i--) {
+      s = toScreen(pts[i].x, pts[i].yl);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Stroke
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    s = toScreen(pts[0].x, pts[0].yu);
+    ctx.moveTo(s.sx, s.sy);
+    for (let i = 1; i < pts.length; i++) {
+      s = toScreen(pts[i].x, pts[i].yu);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    for (let i = pts.length - 1; i >= 0; i--) {
+      s = toScreen(pts[i].x, pts[i].yl);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    // Domain circle hint
+    ctx.strokeStyle = 'rgba(52, 152, 219, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(w, h) * 0.42, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Quarter-chord dot
+    const qc = toScreen(0.25, 0);
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(qc.sx, qc.sy, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  init();
+  window.addEventListener('resize', init);
+
   let animId = null;
   function loop() {
     draw();
@@ -975,19 +1108,6 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
-      &nbsp;
-    </div>   
-    <div class="nav-footer-center">
-<p>Generated with Paper Explainer — Quarto + Julia</p>
-</div>
-    <div class="nav-footer-right">
-      &nbsp;
-    </div>
-  </div>
-</footer>
 
 
 
