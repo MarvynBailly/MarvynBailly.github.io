@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Interactive Cross Field – On Smooth Frame Field Design</title>
+<title>Interactive Cross Field – Understanding Frame Fields</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -44,9 +44,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-60521889c80adfc020597beeaafd7cba.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-27c281801f924f2756c08e1db5c7c20d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-60521889c80adfc020597beeaafd7cba.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-9d3e2d6a57813694e05fd66b7ee8e684.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-764a5e16ab4476b6f15cc51ad123d5c6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-9d3e2d6a57813694e05fd66b7ee8e684.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -250,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">On Smooth Frame Field Design</span>
+    <span class="navbar-title">Understanding Frame Fields</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -268,15 +268,12 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Frame Theory</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../pde_block_split.html"> 
+<span class="menu-text">PDE Block Meshing</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../gallery.html"> 
 <span class="menu-text">Gallery</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../assets/on_smooth_frame_field_design.pdf"> <i class="bi bi-file-pdf" role="img">
-</i> 
-<span class="menu-text">Original Paper</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -467,6 +464,13 @@ ul.task-list li input[type="checkbox"] {
     <label><input type="checkbox" id="continuous-smooth"> Continuous</label>
   </div>
 
+  <div class="settings-row">
+    <span class="settings-label">Streamlines</span>
+    <label><input type="checkbox" id="show-streamlines"> Show</label>
+    <label>Density: <input type="range" id="stream-density" min="1" max="8" value="3"> <span id="stream-density-val">3</span></label>
+    <label>Length: <input type="range" id="stream-length" min="5" max="80" value="30"> <span id="stream-length-val">30</span></label>
+  </div>
+
   <canvas id="cross-canvas"></canvas>
 </div>
 
@@ -497,6 +501,11 @@ ul.task-list li input[type="checkbox"] {
   const orbitSpeedGroup = document.getElementById('orbit-speed-group');
   const orbitSpeedSlider = document.getElementById('orbit-speed');
   const orbitSpeedVal = document.getElementById('orbit-speed-val');
+  const showStreamlinesCb = document.getElementById('show-streamlines');
+  const streamDensitySlider = document.getElementById('stream-density');
+  const streamDensityVal = document.getElementById('stream-density-val');
+  const streamLengthSlider = document.getElementById('stream-length');
+  const streamLengthVal = document.getElementById('stream-length-val');
 
   // State
   let gridN = 16;
@@ -511,6 +520,10 @@ ul.task-list li input[type="checkbox"] {
   let fixedAngle = 0;
   let orbitSpeed = 5;
   let boundaryConstrained = false;
+  let showStreamlines = false;
+  let streamDensity = 3;
+  let streamLength = 30;
+  let cachedStreamlines = null;
 
   let angles = [];
   let constrained = [];
@@ -639,10 +652,132 @@ ul.task-list li input[type="checkbox"] {
     }
   }
 
+  // ===== Streamline Tracing =====
+
+  // Bilinear interpolation of angle at fractional grid position (gx, gy)
+  // using 4-symmetry representation (cos4θ, sin4θ)
+  function interpAngleGrid(gx, gy, prevDir) {
+    // gx, gy are in grid-cell coords (0..gridN-1 maps to cell centers)
+    const fx = gx - 0.5, fy = gy - 0.5; // shift so cell centers are at integers
+    const i0 = Math.floor(fx), j0 = Math.floor(fy);
+    const u = fx - i0, v = fy - j0;
+
+    // Gather 4 corners, clamping to grid
+    function getAngle(i, j) {
+      return angles[Math.max(0, Math.min(gridN - 1, i))][Math.max(0, Math.min(gridN - 1, j))];
+    }
+    const a00 = getAngle(i0, j0), a10 = getAngle(i0 + 1, j0);
+    const a01 = getAngle(i0, j0 + 1), a11 = getAngle(i0 + 1, j0 + 1);
+
+    // Interpolate in (cos4θ, sin4θ) space
+    const cx = (1 - u) * (1 - v) * Math.cos(4 * a00) + u * (1 - v) * Math.cos(4 * a10)
+             + (1 - u) * v * Math.cos(4 * a01) + u * v * Math.cos(4 * a11);
+    const cy = (1 - u) * (1 - v) * Math.sin(4 * a00) + u * (1 - v) * Math.sin(4 * a10)
+             + (1 - u) * v * Math.sin(4 * a01) + u * v * Math.sin(4 * a11);
+    const baseAngle = Math.atan2(cy, cx) / 4;
+
+    if (prevDir === null) return baseAngle;
+    // Pick representative closest to prevDir
+    let best = baseAngle, bestDot = -Infinity;
+    for (let k = 0; k < 4; k++) {
+      const candidate = baseAngle + k * Math.PI / 2;
+      const dot = Math.cos(candidate) * Math.cos(prevDir) + Math.sin(candidate) * Math.sin(prevDir);
+      if (dot > bestDot) { bestDot = dot; best = candidate; }
+    }
+    return best;
+  }
+
+  function traceStreamline(seedGx, seedGy, nSteps, stepSize) {
+    const line = [{ x: seedGx, y: seedGy }];
+    let px = seedGx, py = seedGy, prevDir = null;
+
+    // Forward
+    for (let s = 0; s < nSteps; s++) {
+      if (px < 0 || px >= gridN || py < 0 || py >= gridN) break;
+      const angle = interpAngleGrid(px, py, prevDir);
+      px += Math.cos(angle) * stepSize;
+      py += Math.sin(angle) * stepSize;
+      prevDir = angle;
+      line.push({ x: px, y: py });
+    }
+
+    // Backward
+    px = seedGx; py = seedGy; prevDir = null;
+    const backLine = [];
+    for (let s = 0; s < nSteps; s++) {
+      if (px < 0 || px >= gridN || py < 0 || py >= gridN) break;
+      const angle = interpAngleGrid(px, py, prevDir !== null ? prevDir + Math.PI : null);
+      px += Math.cos(angle) * stepSize;
+      py += Math.sin(angle) * stepSize;
+      prevDir = angle;
+      backLine.push({ x: px, y: py });
+    }
+    backLine.reverse();
+    return [...backLine, ...line];
+  }
+
+  function computeStreamlines() {
+    const lines = [];
+    const step = 1 / streamDensity;
+    const stepSize = 0.3;
+
+    for (let gi = step; gi < gridN; gi += step) {
+      for (let gj = step; gj < gridN; gj += step) {
+        // Direction 1
+        lines.push(traceStreamline(gi, gj, streamLength, stepSize));
+        // Direction 2 (perpendicular)
+        const baseAngle = interpAngleGrid(gi, gj, null);
+        const perpDir = baseAngle + Math.PI / 2;
+        const line2 = [{ x: gi, y: gj }];
+        let px = gi, py = gj, prevDir = perpDir;
+        for (let s = 0; s < streamLength; s++) {
+          if (px < 0 || px >= gridN || py < 0 || py >= gridN) break;
+          const angle = interpAngleGrid(px, py, prevDir);
+          px += Math.cos(angle) * stepSize;
+          py += Math.sin(angle) * stepSize;
+          prevDir = angle;
+          line2.push({ x: px, y: py });
+        }
+        px = gi; py = gj; prevDir = perpDir + Math.PI;
+        const back2 = [];
+        for (let s = 0; s < streamLength; s++) {
+          if (px < 0 || px >= gridN || py < 0 || py >= gridN) break;
+          const angle = interpAngleGrid(px, py, prevDir);
+          px += Math.cos(angle) * stepSize;
+          py += Math.sin(angle) * stepSize;
+          prevDir = angle;
+          back2.push({ x: px, y: py });
+        }
+        back2.reverse();
+        lines.push([...back2, ...line2]);
+      }
+    }
+    cachedStreamlines = lines;
+  }
+
+  function drawStreamlines() {
+    if (!showStreamlines || !cachedStreamlines) return;
+    ctx.strokeStyle = 'rgba(41, 128, 185, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const line of cachedStreamlines) {
+      if (line.length < 2) continue;
+      ctx.beginPath();
+      // Convert grid coords to pixel coords
+      ctx.moveTo(line[0].x * cellW, line[0].y * cellH);
+      for (let i = 1; i < line.length; i++) {
+        ctx.lineTo(line[i].x * cellW, line[i].y * cellH);
+      }
+      ctx.stroke();
+    }
+  }
+
   function draw() {
     const w = canvas.width / devicePixelRatio;
     const h = canvas.height / devicePixelRatio;
     ctx.clearRect(0, 0, w, h);
+    drawStreamlines();
     for (let i = 0; i < gridN; i++) {
       for (let j = 0; j < gridN; j++) {
         drawCross((i + 0.5) * cellW, (j + 0.5) * cellH, angles[i][j], constrained[i][j]);
@@ -685,6 +820,7 @@ ul.task-list li input[type="checkbox"] {
   function updateAndDraw() {
     updateConstrainedAngles();
     if (smoothField) smoothAngles(smoothIterations);
+    if (showStreamlines) computeStreamlines();
     draw();
   }
 
@@ -790,6 +926,7 @@ ul.task-list li input[type="checkbox"] {
   gridSlider.addEventListener('input', () => {
     gridN = parseInt(gridSlider.value);
     gridSizeVal.textContent = gridN + 'x' + gridN;
+    cachedStreamlines = null;
     initGrid(); resizeCanvas(); updateAndDraw();
   });
   crossSizeSlider.addEventListener('input', () => {
@@ -852,7 +989,28 @@ ul.task-list li input[type="checkbox"] {
 
   resetBtn.addEventListener('click', () => {
     initGrid();
+    cachedStreamlines = null;
     stopAnim(); startAnimIfNeeded();
+    updateAndDraw();
+  });
+
+  showStreamlinesCb.addEventListener('change', () => {
+    showStreamlines = showStreamlinesCb.checked;
+    if (showStreamlines && !cachedStreamlines) computeStreamlines();
+    updateAndDraw();
+  });
+  streamDensitySlider.addEventListener('input', () => {
+    streamDensity = parseInt(streamDensitySlider.value);
+    streamDensityVal.textContent = streamDensity;
+    cachedStreamlines = null;
+    if (showStreamlines) computeStreamlines();
+    updateAndDraw();
+  });
+  streamLengthSlider.addEventListener('input', () => {
+    streamLength = parseInt(streamLengthSlider.value);
+    streamLengthVal.textContent = streamLength;
+    cachedStreamlines = null;
+    if (showStreamlines) computeStreamlines();
     updateAndDraw();
   });
 
@@ -875,6 +1033,7 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Smoothing iterations</strong> controls how many Laplacian relaxation passes run per frame. Low values (1-5) give a soft local effect; high values (50-100) propagate constraints across the whole field.</li>
 <li><strong>Continuous</strong> runs the smoother every animation frame, so the field progressively relaxes in real time. You can watch it converge — constrain a few crosses, enable continuous, and see the field settle into a smooth state over time.</li>
 <li>The smoothing uses 4-symmetry averaging (<code>cos 4&amp;theta;</code>, <code>sin 4&amp;theta;</code>) to respect the cross’s rotational symmetry — the same representation used in the paper’s frame field optimization.</li>
+<li><strong>Streamlines</strong> trace curves that follow the cross field directions. At each point, the angle is interpolated bilinearly in the <code>(cos 4&amp;theta;, sin 4&amp;theta;)</code> representation, and both cross directions (0° and 90°) are traced to show the two families of isolines. Adjust <strong>density</strong> (seed spacing) and <strong>length</strong> (number of integration steps).</li>
 </ul>
 
 
@@ -1300,19 +1459,6 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
-      &nbsp;
-    </div>   
-    <div class="nav-footer-center">
-<p>Generated with Paper Explainer — Quarto + Julia</p>
-</div>
-    <div class="nav-footer-right">
-      &nbsp;
-    </div>
-  </div>
-</footer>
 
 
 

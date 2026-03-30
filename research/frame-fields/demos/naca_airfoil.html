@@ -1,0 +1,3187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>NACA Airfoil Cross Field – Understanding Frame Fields</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-dbc92dda8186f57fa2e333fbb71d6a9d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9d3e2d6a57813694e05fd66b7ee8e684.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-764a5e16ab4476b6f15cc51ad123d5c6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-9d3e2d6a57813694e05fd66b7ee8e684.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Understanding Frame Fields</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../frame_theory.html"> 
+<span class="menu-text">Frame Theory</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pde_block_split.html"> 
+<span class="menu-text">PDE Block Meshing</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../gallery.html"> 
+<span class="menu-text">Gallery</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NACA Airfoil Cross Field</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">NACA Airfoil Cross Field</h1>
+<p class="subtitle lead">Cross field smoothing on a triangulated airfoil domain</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="../gallery.html">← Back to Gallery</a></p>
+<p>Configure the airfoil and domain, then explore the <strong>cross field</strong>. Click vertices to <strong>constrain/release</strong> them. Toggle boundary constraints with the checkboxes. Drag to <strong>pan</strong>, scroll to <strong>zoom</strong>.</p>
+<script src="https://cdn.jsdelivr.net/npm/delaunator@4.0.1/delaunator.min.js"></script>
+
+<style>
+#airfoil-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+#airfoil-canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 6px;
+  cursor: grab;
+  background: var(--bs-body-bg, #fff);
+  touch-action: none;
+}
+#airfoil-canvas.grabbing { cursor: grabbing; }
+.settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  font-size: 0.85rem;
+}
+.settings-row:first-child { border-radius: 6px 6px 0 0; }
+.settings-row + .settings-row { border-top: none; }
+.settings-row:last-of-type { border-radius: 0 0 6px 6px; margin-bottom: 0.8rem; }
+.settings-row label {
+  display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+}
+.settings-row input[type="range"] { width: 100px; }
+.settings-row select, .settings-row button {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  background: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #212529);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.settings-row button:hover, .settings-row button.active {
+  background: var(--bs-primary, #2c3e50); color: #fff;
+}
+.sep { width: 1px; height: 1.2rem; background: var(--bs-border-color, #dee2e6); }
+.settings-label {
+  font-weight: 600; font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 0.03em; color: var(--bs-secondary-color, #6c757d);
+}
+#coord-display {
+  position: absolute; bottom: 8px; right: 12px;
+  font-size: 0.75rem; color: var(--bs-secondary-color, #6c757d);
+  pointer-events: none; font-family: monospace;
+}
+#mesh-info {
+  position: absolute; bottom: 8px; left: 12px;
+  font-size: 0.75rem; color: var(--bs-secondary-color, #6c757d);
+  pointer-events: none; font-family: monospace;
+}
+#energy-chart-container {
+  position: relative;
+  width: 100%;
+  margin-top: 0.8rem;
+}
+#energy-canvas {
+  display: block;
+  width: 100%;
+  height: 180px;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+#energy-label {
+  position: absolute; top: 8px; left: 12px;
+  font-size: 0.75rem; color: var(--bs-secondary-color, #6c757d);
+  pointer-events: none; font-family: monospace;
+}
+#energy-status {
+  position: absolute; top: 8px; right: 12px;
+  font-size: 0.75rem; color: var(--bs-secondary-color, #6c757d);
+  pointer-events: none; font-family: monospace;
+}
+</style>
+
+<div id="airfoil-container">
+
+  <div class="settings-row">
+    <span class="settings-label">Airfoil</span>
+    <label>NACA
+      <input type="text" id="naca-code" value="0012" maxlength="4" size="5" style="width:50px; text-align:center; border:1px solid var(--bs-border-color,#dee2e6); border-radius:4px; font-family:monospace; font-size:0.85rem;">
+    </label>
+    <label>Thickness: <input type="range" id="thickness" min="1" max="30" value="12"> <span id="thickness-val">12%</span></label>
+    <label>Camber: <input type="range" id="camber" min="0" max="9" value="0"> <span id="camber-val">0%</span></label>
+    <label>Camber pos: <input type="range" id="camber-pos" min="0" max="9" value="0"> <span id="camber-pos-val">0</span></label>
+    <div class="sep"></div>
+    <label>Chord: <input type="range" id="chord-length" min="2" max="30" value="10"> <span id="chord-val">1.0</span></label>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Domain</span>
+    <label>AoA: <input type="range" id="aoa" min="-20" max="20" value="0"> <span id="aoa-val">0°</span></label>
+    <div class="sep"></div>
+    <label>Shape: <select id="domain-shape"><option value="rect">Rectangle</option><option value="circle">Circle</option><option value="cgrid" selected="">C-grid</option></select></label>
+    <label>Size: <input type="range" id="domain-size" min="10" max="60" value="10"> <span id="domain-size-val">1.0</span></label>
+    <div class="sep"></div>
+    <label>Spacing: <input type="range" id="mesh-spacing" min="3" max="25" value="10"> <span id="mesh-spacing-val">0.10c</span></label>
+    <div class="sep"></div>
+    <label>Airfoil refine: <input type="range" id="airfoil-refine" min="1" max="10" value="1"> <span id="airfoil-refine-val">1x</span></label>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Field</span>
+    <label><input type="checkbox" id="constrain-airfoil"> Constrain airfoil</label>
+    <label><input type="checkbox" id="constrain-domain"> Constrain domain</label>
+    <div class="sep"></div>
+    <label>Init: <select id="init-mode"><option value="zero">Zero</option><option value="bfs" selected="">BFS propagate</option></select></label>
+    <button id="apply-init-btn">Apply init</button>
+    <button id="solve-linear-btn">Solve linear</button>
+    <div class="sep"></div>
+    <label>Iters: <input type="range" id="smooth-iters" min="1" max="2000" value="100"> <span id="smooth-iters-val">100</span></label>
+    <button id="run-smooth-btn">Run smoother</button>
+    <div class="sep"></div>
+    <button id="detect-sing-btn">Detect singularities</button>
+    <button id="extract-blocks-btn">Extract blocks</button>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Quad</span>
+    <label>Method: <select id="quad-method"><option value="tfi">TFI</option></select></label>
+    <label>Target h: <input type="range" id="target-h" min="1" max="50" value="10"> <span id="target-h-val">0.10</span></label>
+    <button id="gen-quad-btn">Generate quad mesh</button>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Display</span>
+    <label><input type="checkbox" id="show-mesh" checked=""> Mesh</label>
+    <label>Cross: <input type="range" id="cross-size" min="0" max="30" value="8"> <span id="cross-size-val">8</span></label>
+    <label><input type="checkbox" id="show-streamlines"> Streamlines</label>
+    <label>Length: <input type="range" id="stream-length" min="5" max="100" value="10"> <span id="stream-length-val">10</span></label>
+    <div class="sep"></div>
+    <button id="reset-field-btn">Reset field</button>
+    <button id="reset-view-btn">Reset view</button>
+    <div class="sep"></div>
+    <button id="lock-view-btn">Lock view</button>
+  </div>
+
+  <canvas id="airfoil-canvas"></canvas>
+  <div id="coord-display"></div>
+  <div id="mesh-info"></div>
+
+  <div id="energy-chart-container">
+    <canvas id="energy-canvas"></canvas>
+    <div id="energy-label">Dirichlet energy per iteration</div>
+    <div id="energy-status"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('airfoil-canvas');
+  const ctx = canvas.getContext('2d');
+  const energyCanvas = document.getElementById('energy-canvas');
+  const ectx = energyCanvas.getContext('2d');
+  const coordDisplay = document.getElementById('coord-display');
+  const meshInfo = document.getElementById('mesh-info');
+  const energyStatus = document.getElementById('energy-status');
+
+  // ===== Element refs =====
+  const nacaCodeInput = document.getElementById('naca-code');
+  const thicknessSlider = document.getElementById('thickness');
+  const thicknessValEl = document.getElementById('thickness-val');
+  const camberSlider = document.getElementById('camber');
+  const camberValEl = document.getElementById('camber-val');
+  const camberPosSlider = document.getElementById('camber-pos');
+  const camberPosValEl = document.getElementById('camber-pos-val');
+  const chordSlider = document.getElementById('chord-length');
+  const chordValEl = document.getElementById('chord-val');
+  const aoaSlider = document.getElementById('aoa');
+  const aoaValEl = document.getElementById('aoa-val');
+  const domainShapeSelect = document.getElementById('domain-shape');
+  const domainSizeSlider = document.getElementById('domain-size');
+  const domainSizeValEl = document.getElementById('domain-size-val');
+  const meshSpacingSlider = document.getElementById('mesh-spacing');
+  const meshSpacingValEl = document.getElementById('mesh-spacing-val');
+  const airfoilRefineSlider = document.getElementById('airfoil-refine');
+  const airfoilRefineValEl = document.getElementById('airfoil-refine-val');
+  const constrainAirfoilCb = document.getElementById('constrain-airfoil');
+  const constrainDomainCb = document.getElementById('constrain-domain');
+  const initModeSelect = document.getElementById('init-mode');
+  const applyInitBtn = document.getElementById('apply-init-btn');
+  const solveLinearBtn = document.getElementById('solve-linear-btn');
+  const smoothItersSlider = document.getElementById('smooth-iters');
+  const smoothItersValEl = document.getElementById('smooth-iters-val');
+  const runSmoothBtn = document.getElementById('run-smooth-btn');
+  const showMeshCb = document.getElementById('show-mesh');
+  const crossSizeSlider = document.getElementById('cross-size');
+  const crossSizeValEl = document.getElementById('cross-size-val');
+  const showStreamlinesCb = document.getElementById('show-streamlines');
+  const streamLengthSlider = document.getElementById('stream-length');
+  const streamLengthValEl = document.getElementById('stream-length-val');
+  const resetFieldBtn = document.getElementById('reset-field-btn');
+  const resetViewBtn = document.getElementById('reset-view-btn');
+  const lockViewBtn = document.getElementById('lock-view-btn');
+  const detectSingBtn = document.getElementById('detect-sing-btn');
+  const extractBlocksBtn = document.getElementById('extract-blocks-btn');
+  const quadMethodSelect = document.getElementById('quad-method');
+  const targetHSlider = document.getElementById('target-h');
+  const targetHValEl = document.getElementById('target-h-val');
+  const genQuadBtn = document.getElementById('gen-quad-btn');
+
+  // ===== State =====
+  let maxCamber = 0, camberPosition = 0, thickness = 0.12;
+  let chordLength = 1.0;
+  let aoaDeg = 0;
+  let domainShape = 'cgrid', domainSize = 1.0;
+  let meshSpacing = 0.10;
+  let airfoilRefine = 1;
+  let smoothIterations = 100;
+  let showMesh = true, crossSize = 8;
+  let showStreamlines = false, streamLength = 10;
+  let cachedStreamlines = null; // recomputed on field/mesh change
+
+  // Topology data
+  let singularities = [];     // [{x, y, index, triIdx}]
+  let separatrixData = [];    // [{points: [{x,y},...], fromSing}]
+  let motorgraph = null;      // {nodes: [{x,y,type,singIdx}], edges: [{from,to,sepIdx}]}
+  let blockBoundaries = [];   // [{polygon: [{x,y},...], corners: [int]}]
+  let quadMesh = null;        // [{quads: [[{x,y},{x,y},{x,y},{x,y}],...]}]
+  let targetH = 0.10;
+
+  function clearTopology() {
+    singularities = [];
+    separatrixData = [];
+    motorgraph = null;
+    blockBoundaries = [];
+    quadMesh = null;
+  }
+
+  // Energy history
+  let energyHistory = [];
+
+  // View
+  let viewCx = 0.5, viewCy = 0.0, viewScale = 1;
+
+  // Interaction
+  let isDragging = false, dragMoved = false;
+  let dragStartX = 0, dragStartY = 0, dragStartCx = 0, dragStartCy = 0;
+  let viewLocked = false;
+  let constrainDragIdx = -1; // vertex being rotated in locked mode
+
+  // Mesh data
+  let mesh = null;
+  // mesh = { points, coords, triangles, adjacency, nAirfoil, nDomain, airfoilIndices, domainIndices }
+
+  // Field data
+  let fieldAngles = null;   // Float64Array
+  let fieldConstrained = null; // Uint8Array (0 or 1)
+
+  // ===== NACA Geometry =====
+
+  function nacaThickness(x, t) {
+    return 5 * t * (0.2969 * Math.sqrt(x) - 0.1260 * x - 0.3516 * x * x + 0.2843 * x * x * x - 0.1015 * x * x * x * x);
+  }
+
+  function nacaCamberLine(x, m, p) {
+    if (m === 0 || p === 0) return { yc: 0, dyc: 0 };
+    let yc, dyc;
+    if (x < p) {
+      yc = (m / (p * p)) * (2 * p * x - x * x);
+      dyc = (2 * m / (p * p)) * (p - x);
+    } else {
+      yc = (m / ((1 - p) * (1 - p))) * (1 - 2 * p + 2 * p * x - x * x);
+      dyc = (2 * m / ((1 - p) * (1 - p))) * (p - x);
+    }
+    return { yc, dyc };
+  }
+
+  function generateAirfoil(nPts, m, p, t) {
+    const upper = [], lower = [];
+    for (let i = 0; i <= nPts; i++) {
+      const beta = Math.PI * i / nPts;
+      const x = 0.5 * (1 - Math.cos(beta));
+      const yt = nacaThickness(x, t);
+      const { yc, dyc } = nacaCamberLine(x, m, p);
+      const theta = Math.atan(dyc);
+      upper.push({ x: x - yt * Math.sin(theta), y: yc + yt * Math.cos(theta) });
+      lower.push({ x: x + yt * Math.sin(theta), y: yc - yt * Math.cos(theta) });
+    }
+    const pts = [];
+    for (let i = 0; i < upper.length; i++) pts.push(upper[i]);
+    for (let i = lower.length - 2; i >= 1; i--) pts.push(lower[i]);
+    return pts;
+  }
+
+  function rotatePoint(px, py, angleDeg, cx, cy) {
+    const a = -angleDeg * Math.PI / 180;
+    const cos = Math.cos(a), sin = Math.sin(a);
+    return { x: cx + (px - cx) * cos - (py - cy) * sin, y: cy + (px - cx) * sin + (py - cy) * cos };
+  }
+
+  function scalePoints(pts, chord) {
+    // Scale from unit chord [0,1] to [0,chord], centered so quarter-chord stays at (0.25*chord, 0)
+    return pts.map(p => ({ x: p.x * chord, y: p.y * chord }));
+  }
+
+  function rotatePoints(pts, angleDeg, cx, cy) {
+    return pts.map(p => rotatePoint(p.x, p.y, angleDeg, cx, cy));
+  }
+
+  // ===== Domain Geometry =====
+
+  function generateDomainBoundary(shape, s, spacing, centerX) {
+    const pts = [];
+    const cornerIndices = []; // indices of corner vertices in the domain boundary
+    if (shape === 'rect') {
+      const x0 = centerX - s, x1 = centerX + s, y0 = -s, y1 = s;
+      const perimeter = 2 * (x1 - x0) + 2 * (y1 - y0);
+      const n = Math.max(8, Math.round(perimeter / spacing));
+      const step = perimeter / n;
+      // Bottom
+      cornerIndices.push(pts.length);
+      for (let d = 0; d < (x1 - x0) - 0.001; d += step) pts.push({ x: x0 + d, y: y0 });
+      // Right
+      cornerIndices.push(pts.length);
+      for (let d = 0; d < (y1 - y0) - 0.001; d += step) pts.push({ x: x1, y: y0 + d });
+      // Top
+      cornerIndices.push(pts.length);
+      for (let d = 0; d < (x1 - x0) - 0.001; d += step) pts.push({ x: x1 - d, y: y1 });
+      // Left
+      cornerIndices.push(pts.length);
+      for (let d = 0; d < (y1 - y0) - 0.001; d += step) pts.push({ x: x0, y: y1 - d });
+    } else if (shape === 'cgrid') {
+      // C-grid: semicircle around the leading edge (left), rectangular
+      // wake region extending behind the trailing edge (right).
+      const wakeX = centerX + s;  // wake exit x-coordinate (right of center)
+
+      // Semicircle: from θ = -π/2 (bottom) around the left to θ = π/2 (top)
+      const arcLen = Math.PI * s;
+      const nArc = Math.max(12, Math.round(arcLen / spacing));
+      for (let i = 0; i <= nArc; i++) {
+        const theta = -Math.PI / 2 - Math.PI * i / nArc;
+        pts.push({ x: centerX + s * Math.cos(theta), y: s * Math.sin(theta) });
+      }
+
+      // Corners of the rectangular wake region (leave unconstrained)
+      // Arc start = index 0 (centerX, -s)
+      // Arc end   = index nArc (centerX, s)
+      cornerIndices.push(0);     // bottom-left: arc start
+      cornerIndices.push(nArc);  // top-left: arc end
+
+      // Top horizontal: from semicircle top (centerX, s) to wake exit (wakeX, s)
+      const wakeLen = wakeX - centerX;
+      const nTop = Math.max(2, Math.round(wakeLen / spacing));
+      for (let i = 1; i <= nTop; i++) {
+        pts.push({ x: centerX + wakeLen * i / nTop, y: s });
+      }
+      cornerIndices.push(nArc + nTop); // top-right (wakeX, s)
+
+      // Wake exit (right side): from (wakeX, s) down to (wakeX, -s)
+      const rightLen = 2 * s;
+      const nRight = Math.max(2, Math.round(rightLen / spacing));
+      for (let i = 1; i <= nRight; i++) {
+        pts.push({ x: wakeX, y: s - rightLen * i / nRight });
+      }
+      cornerIndices.push(nArc + nTop + nRight); // bottom-right (wakeX, -s)
+
+      // Bottom horizontal: from wake exit (wakeX, -s) back to semicircle bottom (centerX, -s)
+      const nBot = Math.max(2, Math.round(wakeLen / spacing));
+      for (let i = 1; i < nBot; i++) {
+        pts.push({ x: wakeX - wakeLen * i / nBot, y: -s });
+      }
+    } else {
+      // Circle (no corners)
+      const circ = 2 * Math.PI * s;
+      const n = Math.max(12, Math.round(circ / spacing));
+      for (let i = 0; i < n; i++) {
+        const theta = 2 * Math.PI * i / n;
+        pts.push({ x: centerX + s * Math.cos(theta), y: s * Math.sin(theta) });
+      }
+    }
+    return { pts, cornerIndices };
+  }
+
+  // ===== Point-in-Polygon =====
+
+  function pointInPolygon(x, y, poly) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i].x, yi = poly[i].y;
+      const xj = poly[j].x, yj = poly[j].y;
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  function pointInDomain(x, y, shape, s, centerX) {
+    if (shape === 'rect') {
+      return x >= centerX - s && x <= centerX + s && y >= -s && y <= s;
+    } else if (shape === 'cgrid') {
+      // Left half: inside semicircle of radius s centered at centerX
+      // Right half: inside rectangle [centerX, centerX+s] x [-s, s]
+      if (y < -s || y > s) return false;
+      if (x > centerX + s) return false;
+      if (x >= centerX) return true; // in the rectangular wake region
+      // In the semicircle region
+      const dx = x - centerX, dy = y;
+      return dx * dx + dy * dy <= s * s;
+    } else {
+      const dx = x - centerX, dy = y;
+      return dx * dx + dy * dy <= s * s;
+    }
+  }
+
+  // ===== Mesh Generation =====
+
+  function generateMesh() {
+    const centerX = chordLength * 0.5;  // domain centered at mid-chord
+    const qc = chordLength * 0.25;      // quarter-chord for rotation
+
+    // 1. Airfoil boundary points (cosine-spaced, count based on spacing and refinement)
+    const effectiveAirfoilSpacing = meshSpacing / airfoilRefine;
+    const airfoilChordPts = Math.max(15, Math.round(2.5 * chordLength / effectiveAirfoilSpacing));
+    const rawAirfoil = generateAirfoil(airfoilChordPts, maxCamber, camberPosition, thickness);
+    const scaledAirfoil = scalePoints(rawAirfoil, chordLength);
+    const airfoilPts = rotatePoints(scaledAirfoil, aoaDeg, qc, 0);
+    const nAirfoil = airfoilPts.length;
+
+    // 2. Domain boundary points
+    const domainResult = generateDomainBoundary(domainShape, domainSize, meshSpacing, centerX);
+    const domainPts = domainResult.pts;
+    const domainCornerIndices = domainResult.cornerIndices;
+    const nDomain = domainPts.length;
+
+    // 3. Interior points via variable-radius Poisson disk sampling
+    //    Produces unstructured triangles: small near airfoil, growing outward.
+    const extent = domainSize;
+
+    // Distance from a point to nearest airfoil boundary point
+    function distToAirfoil(px, py) {
+      let minD2 = Infinity;
+      for (let k = 0; k < nAirfoil; k++) {
+        const dx = px - airfoilPts[k].x, dy = py - airfoilPts[k].y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < minD2) minD2 = d2;
+      }
+      return Math.sqrt(minD2);
+    }
+
+    // Local radius function: controls point density
+    const fineSpacing = Math.max(meshSpacing / airfoilRefine, 0.012);
+    const coarseSpacing = meshSpacing;
+    const growthZone = chordLength * 2.5;
+    function localRadius(px, py) {
+      const d = distToAirfoil(px, py);
+      const t = Math.min(d / growthZone, 1.0);
+      return (fineSpacing + (coarseSpacing - fineSpacing) * t * t) * 0.55;
+    }
+
+    // Seeded PRNG for reproducible meshes
+    let _seed = 42;
+    function rng() { _seed = (_seed * 16807) % 2147483647; return (_seed - 1) / 2147483646; }
+
+    // Spatial hash for fast neighbor queries
+    const cellSize = fineSpacing * 0.707;
+    const spatialHash = new Map();
+    function skey(x, y) { return Math.floor(x / cellSize) + ',' + Math.floor(y / cellSize); }
+    const diskPts = []; // all points (boundary + interior)
+
+    function hashInsert(x, y, idx) {
+      const k = skey(x, y);
+      const bucket = spatialHash.get(k);
+      if (bucket) bucket.push(idx); else spatialHash.set(k, [idx]);
+    }
+    function isTooClose(x, y, r) {
+      const cells = Math.ceil(r / cellSize) + 1;
+      const gi = Math.floor(x / cellSize), gj = Math.floor(y / cellSize);
+      const r2 = r * r;
+      for (let di = -cells; di <= cells; di++) {
+        for (let dj = -cells; dj <= cells; dj++) {
+          const bucket = spatialHash.get((gi + di) + ',' + (gj + dj));
+          if (!bucket) continue;
+          for (let b = 0; b < bucket.length; b++) {
+            const p = diskPts[bucket[b]];
+            const dx = x - p.x, dy = y - p.y;
+            if (dx * dx + dy * dy < r2) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    // Seed with boundary points
+    for (let i = 0; i < nAirfoil; i++) {
+      diskPts.push(airfoilPts[i]);
+      hashInsert(airfoilPts[i].x, airfoilPts[i].y, i);
+    }
+    for (let i = 0; i < nDomain; i++) {
+      diskPts.push(domainPts[i]);
+      hashInsert(domainPts[i].x, domainPts[i].y, nAirfoil + i);
+    }
+
+    // 3b. Insert offset buffer layers along boundaries so the first ring
+    //     of triangles is well-shaped (prevents fan-out to distant interior nodes).
+
+    // Compute outward normals at airfoil boundary vertices
+    const airfoilCentX = airfoilPts.reduce((s, p) => s + p.x, 0) / nAirfoil;
+    const airfoilCentY = airfoilPts.reduce((s, p) => s + p.y, 0) / nAirfoil;
+    function airfoilNormal(i) {
+      const prev = (i - 1 + nAirfoil) % nAirfoil;
+      const next = (i + 1) % nAirfoil;
+      const tx = airfoilPts[next].x - airfoilPts[prev].x;
+      const ty = airfoilPts[next].y - airfoilPts[prev].y;
+      const len = Math.sqrt(tx * tx + ty * ty) || 1e-12;
+      let nx = ty / len, ny = -tx / len;
+      // Ensure it points away from centroid (outward from airfoil body)
+      const toCx = airfoilCentX - airfoilPts[i].x;
+      const toCy = airfoilCentY - airfoilPts[i].y;
+      if (nx * toCx + ny * toCy > 0) { nx = -nx; ny = -ny; }
+      return { nx, ny };
+    }
+
+    // Place offset points along airfoil at ~1 boundary-spacing distance outward.
+    // Use the midpoints between consecutive boundary points for staggering.
+    const airfoilBdrySpacing = fineSpacing;
+    const offsetDist = airfoilBdrySpacing * 0.85;
+    const bufferPts = [];
+    for (let i = 0; i < nAirfoil; i++) {
+      const next = (i + 1) % nAirfoil;
+      // Midpoint on boundary
+      const mx = (airfoilPts[i].x + airfoilPts[next].x) * 0.5;
+      const my = (airfoilPts[i].y + airfoilPts[next].y) * 0.5;
+      // Average normal
+      const ni = airfoilNormal(i);
+      const nn = airfoilNormal(next);
+      const nx = (ni.nx + nn.nx) * 0.5, ny = (ni.ny + nn.ny) * 0.5;
+      const nlen = Math.sqrt(nx * nx + ny * ny) || 1e-12;
+      const ox = mx + (nx / nlen) * offsetDist;
+      const oy = my + (ny / nlen) * offsetDist;
+      if (pointInDomain(ox, oy, domainShape, extent, centerX) &&
+          !pointInPolygon(ox, oy, airfoilPts) &&
+          !isTooClose(ox, oy, airfoilBdrySpacing * 0.4)) {
+        bufferPts.push({ x: ox, y: oy });
+      }
+    }
+
+    // Place offset points along domain boundary (inward)
+    const domainBdrySpacing = coarseSpacing;
+    const domainOffsetDist = domainBdrySpacing * 0.85;
+    for (let i = 0; i < nDomain; i++) {
+      const next = (i + 1) % nDomain;
+      const mx = (domainPts[i].x + domainPts[next].x) * 0.5;
+      const my = (domainPts[i].y + domainPts[next].y) * 0.5;
+      // Inward normal: toward domain center
+      const toCx = centerX - mx, toCy = 0 - my;
+      const tLen = Math.sqrt(toCx * toCx + toCy * toCy) || 1e-12;
+      const ox = mx + (toCx / tLen) * domainOffsetDist;
+      const oy = my + (toCy / tLen) * domainOffsetDist;
+      if (pointInDomain(ox, oy, domainShape, extent, centerX) &&
+          !pointInPolygon(ox, oy, airfoilPts) &&
+          !isTooClose(ox, oy, domainBdrySpacing * 0.4)) {
+        bufferPts.push({ x: ox, y: oy });
+      }
+    }
+
+    // Insert buffer points into the disk and hash
+    for (const bp of bufferPts) {
+      const idx = diskPts.length;
+      diskPts.push(bp);
+      hashInsert(bp.x, bp.y, idx);
+    }
+
+    // Active list — Bridson's algorithm with variable radius
+    const active = [];
+    for (let i = 0; i < diskPts.length; i++) active.push(i);
+    const K = 30;        // candidates per active point
+    const maxPts = 80000; // safety cap
+
+    while (active.length > 0 && diskPts.length < maxPts) {
+      const ai = Math.floor(rng() * active.length);
+      const pi = active[ai];
+      const pt = diskPts[pi];
+      const r = localRadius(pt.x, pt.y);
+      let found = false;
+
+      for (let k = 0; k < K; k++) {
+        const angle = rng() * 2 * Math.PI;
+        const dist = r + rng() * r; // sample in annulus [r, 2r]
+        const cx = pt.x + dist * Math.cos(angle);
+        const cy = pt.y + dist * Math.sin(angle);
+
+        // Reject if outside domain or inside airfoil
+        if (!pointInDomain(cx, cy, domainShape, extent, centerX)) continue;
+        if (pointInPolygon(cx, cy, airfoilPts)) continue;
+
+        // Reject if too close to any existing point (using candidate's local radius)
+        const lr = localRadius(cx, cy);
+        if (isTooClose(cx, cy, lr)) continue;
+
+        const idx = diskPts.length;
+        diskPts.push({ x: cx, y: cy });
+        hashInsert(cx, cy, idx);
+        active.push(idx);
+        found = true;
+        break;
+      }
+
+      if (!found) {
+        // Remove exhausted point from active list (swap with last)
+        active[ai] = active[active.length - 1];
+        active.pop();
+      }
+    }
+
+    // Interior points are everything after the boundary seeds
+    const interiorPts = diskPts.slice(nAirfoil + nDomain);
+
+    // 4. Combine all points
+    const allPts = [...airfoilPts, ...domainPts, ...interiorPts];
+    const nTotal = allPts.length;
+    const coords = new Float64Array(nTotal * 2);
+    for (let i = 0; i < nTotal; i++) {
+      coords[2 * i] = allPts[i].x;
+      coords[2 * i + 1] = allPts[i].y;
+    }
+
+    // 5. Delaunay triangulation
+    const delaunay = new Delaunator(coords);
+
+    // 6. Filter triangles: remove those inside airfoil or outside domain
+    const triangles = [];
+    const nTri = delaunay.triangles.length / 3;
+    for (let t = 0; t < nTri; t++) {
+      const i0 = delaunay.triangles[3 * t];
+      const i1 = delaunay.triangles[3 * t + 1];
+      const i2 = delaunay.triangles[3 * t + 2];
+      // Centroid
+      const cx = (allPts[i0].x + allPts[i1].x + allPts[i2].x) / 3;
+      const cy = (allPts[i0].y + allPts[i1].y + allPts[i2].y) / 3;
+      if (pointInPolygon(cx, cy, airfoilPts)) continue;
+      if (!pointInDomain(cx, cy, domainShape, extent, centerX)) continue;
+      triangles.push([i0, i1, i2]);
+    }
+
+    // 7. Build vertex adjacency
+    const adjacency = new Array(nTotal);
+    for (let i = 0; i < nTotal; i++) adjacency[i] = new Set();
+    for (const [i0, i1, i2] of triangles) {
+      adjacency[i0].add(i1); adjacency[i0].add(i2);
+      adjacency[i1].add(i0); adjacency[i1].add(i2);
+      adjacency[i2].add(i0); adjacency[i2].add(i1);
+    }
+
+    // Identify boundary index ranges
+    const airfoilIndices = [];
+    for (let i = 0; i < nAirfoil; i++) airfoilIndices.push(i);
+    const domainIndices = [];
+    for (let i = nAirfoil; i < nAirfoil + nDomain; i++) domainIndices.push(i);
+
+    mesh = {
+      points: allPts,
+      coords,
+      triangles,
+      adjacency,
+      nAirfoil,
+      nDomain,
+      airfoilIndices,
+      domainIndices,
+      airfoilPoly: airfoilPts,
+      domainCornerIndices
+    };
+
+    meshInfo.textContent = `${nTotal} verts, ${triangles.length} tris`;
+
+    // Init field
+    initField();
+  }
+
+  // ===== Cross Field =====
+
+  function initField() {
+    if (!mesh) return;
+    const n = mesh.points.length;
+    fieldAngles = new Float64Array(n);
+    fieldConstrained = new Uint8Array(n);
+
+    energyHistory = [];
+    cachedStreamlines = null;
+    clearTopology();
+
+    // Apply boundary constraints if checkboxes are checked
+    if (constrainAirfoilCb.checked) applyAirfoilConstraints();
+    if (constrainDomainCb.checked) applyDomainConstraints();
+
+    // Apply selected initialization mode
+    applyInitMode();
+  }
+
+  function computeTangentAngle(pts, idx, count) {
+    // Tangent at boundary point idx from its neighbors in the boundary ring
+    const prev = (idx - 1 + count) % count;
+    const next = (idx + 1) % count;
+    const dx = pts[next].x - pts[prev].x;
+    const dy = pts[next].y - pts[prev].y;
+    return Math.atan2(dy, dx);
+  }
+
+  function applyAirfoilConstraints() {
+    if (!mesh) return;
+    const pts = mesh.points;
+    const n = mesh.nAirfoil;
+    for (let i = 0; i < n; i++) {
+      fieldConstrained[i] = 1;
+      fieldAngles[i] = computeTangentAngle(pts, i, n);
+    }
+  }
+
+  function releaseAirfoilConstraints() {
+    if (!mesh) return;
+    for (let i = 0; i < mesh.nAirfoil; i++) {
+      fieldConstrained[i] = 0;
+      fieldAngles[i] = 0;
+    }
+  }
+
+  function applyDomainConstraints() {
+    if (!mesh) return;
+    const pts = mesh.points;
+    const nA = mesh.nAirfoil;
+    const nD = mesh.nDomain;
+    const corners = new Set(mesh.domainCornerIndices || []);
+    for (let k = 0; k < nD; k++) {
+      if (corners.has(k)) continue; // leave corners unconstrained
+      const i = nA + k;
+      fieldConstrained[i] = 1;
+      fieldAngles[i] = computeTangentAngle(pts.slice(nA, nA + nD), k, nD);
+    }
+  }
+
+  function releaseDomainConstraints() {
+    if (!mesh) return;
+    const nA = mesh.nAirfoil;
+    const nD = mesh.nDomain;
+    for (let k = 0; k < nD; k++) {
+      const i = nA + k;
+      fieldConstrained[i] = 0;
+      fieldAngles[i] = 0;
+    }
+  }
+
+  function computeEnergy() {
+    // Dirichlet energy: E = Σ_{edges} (1 - cos(4(θ_i - θ_j)))
+    if (!mesh || !fieldAngles) return 0;
+    let energy = 0;
+    const pts = mesh.points;
+    const adj = mesh.adjacency;
+    const counted = new Set();
+    for (let i = 0; i < pts.length; i++) {
+      for (const j of adj[i]) {
+        if (j <= i) continue; // count each edge once
+        energy += 1 - Math.cos(4 * (fieldAngles[i] - fieldAngles[j]));
+      }
+    }
+    return energy;
+  }
+
+  function smoothField(iterations, recordEnergy) {
+    if (!mesh || !fieldAngles) return;
+    clearTopology();
+    const n = mesh.points.length;
+    const adj = mesh.adjacency;
+
+    if (recordEnergy) {
+      energyHistory = [];
+      energyHistory.push(computeEnergy());
+    }
+
+    for (let iter = 0; iter < iterations; iter++) {
+      const newAngles = new Float64Array(fieldAngles);
+      for (let i = 0; i < n; i++) {
+        if (fieldConstrained[i]) continue;
+        if (adj[i].size === 0) continue;
+        let sx = 0, sy = 0;
+        for (const j of adj[i]) {
+          sx += Math.cos(4 * fieldAngles[j]);
+          sy += Math.sin(4 * fieldAngles[j]);
+        }
+        newAngles[i] = Math.atan2(sy, sx) / 4;
+      }
+      fieldAngles = newAngles;
+      if (recordEnergy) energyHistory.push(computeEnergy());
+    }
+  }
+
+  // ===== BFS Propagation =====
+  // Each constrained vertex seeds a BFS front. Unconstrained vertices are
+  // claimed by the nearest (graph-distance) constrained vertex and inherit
+  // its angle, choosing the 4-symmetric representative closest to the
+  // propagating direction.
+
+  function bfsPropagate() {
+    if (!mesh || !fieldAngles || !fieldConstrained) return;
+    const n = mesh.points.length;
+    const adj = mesh.adjacency;
+    const visited = new Uint8Array(n);
+    const queue = [];
+
+    // Seed from all constrained vertices
+    for (let i = 0; i < n; i++) {
+      if (fieldConstrained[i]) {
+        visited[i] = 1;
+        queue.push(i);
+      }
+    }
+
+    // BFS
+    let head = 0;
+    while (head < queue.length) {
+      const cur = queue[head++];
+      const curAngle = fieldAngles[cur];
+      for (const nb of adj[cur]) {
+        if (visited[nb]) continue;
+        visited[nb] = 1;
+        // Pick the 4-symmetric representative of curAngle closest to
+        // the direction from cur to nb (geometric hint) or just closest
+        // to the parent's angle directly.
+        // Use the representation-space approach: inherit the parent angle,
+        // snapped to the nearest π/2 representative of whatever the
+        // neighbor currently has (which is 0 for zero-init).
+        fieldAngles[nb] = curAngle;
+        queue.push(nb);
+      }
+    }
+  }
+
+  // ===== Linear Solve =====
+  // Solves the linear 4-RoSy smoothness system:
+  //   For each free vertex i: Σ_j (r_i - r_j) = 0
+  // where r = (cos4θ, sin4θ) is the representation vector.
+  // This is a graph Laplacian system Lr = 0 with Dirichlet BCs
+  // at constrained vertices.  Solved via iterative Gauss-Seidel.
+
+  function solveLinear() {
+    if (!mesh || !fieldAngles || !fieldConstrained) return;
+    clearTopology();
+    const n = mesh.points.length;
+    const adj = mesh.adjacency;
+
+    // Work in (cos4θ, sin4θ) representation
+    const cx = new Float64Array(n);
+    const cy = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      cx[i] = Math.cos(4 * fieldAngles[i]);
+      cy[i] = Math.sin(4 * fieldAngles[i]);
+    }
+
+    // Gauss-Seidel iterations
+    const maxIter = 2000;
+    for (let iter = 0; iter < maxIter; iter++) {
+      let maxChange = 0;
+      for (let i = 0; i < n; i++) {
+        if (fieldConstrained[i]) continue;
+        if (adj[i].size === 0) continue;
+        let sx = 0, sy = 0;
+        for (const j of adj[i]) {
+          sx += cx[j];
+          sy += cy[j];
+        }
+        const len = Math.sqrt(sx * sx + sy * sy);
+        if (len < 1e-12) continue;
+        // Normalize to stay on the unit circle in rep space
+        const nx = sx / len, ny = sy / len;
+        const dx = Math.abs(nx - cx[i]) + Math.abs(ny - cy[i]);
+        if (dx > maxChange) maxChange = dx;
+        cx[i] = nx;
+        cy[i] = ny;
+      }
+      if (maxChange < 1e-8) break;
+    }
+
+    // Convert back to angles
+    for (let i = 0; i < n; i++) {
+      if (!fieldConstrained[i]) {
+        fieldAngles[i] = Math.atan2(cy[i], cx[i]) / 4;
+      }
+    }
+  }
+
+  function applyInitMode() {
+    if (!mesh) return;
+    clearTopology();
+    const mode = initModeSelect.value;
+    // Reset unconstrained vertices to zero
+    const n = mesh.points.length;
+    for (let i = 0; i < n; i++) {
+      if (!fieldConstrained[i]) fieldAngles[i] = 0;
+    }
+    if (mode === 'bfs') bfsPropagate();
+    cachedStreamlines = null;
+    energyHistory = [];
+  }
+
+  // ===== View Transform =====
+
+  function worldToScreen(wx, wy) {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    return {
+      sx: cw / 2 + (wx - viewCx) * viewScale,
+      sy: ch / 2 - (wy - viewCy) * viewScale
+    };
+  }
+
+  function screenToWorld(sx, sy) {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    return {
+      wx: viewCx + (sx - cw / 2) / viewScale,
+      wy: viewCy - (sy - ch / 2) / viewScale
+    };
+  }
+
+  function resetView() {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    viewCx = chordLength * 0.5; viewCy = 0.0;
+    const extent = domainSize + 0.3;
+    viewScale = Math.min(cw, ch) / (2.2 * extent);
+  }
+
+  // ===== Drawing =====
+
+  function drawAxes() {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+    ctx.lineWidth = 1;
+    const axisY = worldToScreen(0, 0);
+    if (axisY.sy > 0 && axisY.sy < ch) {
+      ctx.beginPath(); ctx.moveTo(0, axisY.sy); ctx.lineTo(cw, axisY.sy); ctx.stroke();
+    }
+    const axisX = worldToScreen(0, 0);
+    if (axisX.sx > 0 && axisX.sx < cw) {
+      ctx.beginPath(); ctx.moveTo(axisX.sx, 0); ctx.lineTo(axisX.sx, ch); ctx.stroke();
+    }
+  }
+
+  function drawMeshEdges() {
+    if (!mesh || !showMesh) return;
+    ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+    ctx.lineWidth = 0.5;
+    const pts = mesh.points;
+    ctx.beginPath();
+    for (const [i0, i1, i2] of mesh.triangles) {
+      const s0 = worldToScreen(pts[i0].x, pts[i0].y);
+      const s1 = worldToScreen(pts[i1].x, pts[i1].y);
+      const s2 = worldToScreen(pts[i2].x, pts[i2].y);
+      ctx.moveTo(s0.sx, s0.sy); ctx.lineTo(s1.sx, s1.sy);
+      ctx.moveTo(s1.sx, s1.sy); ctx.lineTo(s2.sx, s2.sy);
+      ctx.moveTo(s2.sx, s2.sy); ctx.lineTo(s0.sx, s0.sy);
+    }
+    ctx.stroke();
+  }
+
+  function drawAirfoilFill() {
+    if (!mesh) return;
+    const pts = mesh.points;
+    const n = mesh.nAirfoil;
+    ctx.fillStyle = 'rgba(44, 62, 80, 0.08)';
+    ctx.beginPath();
+    const s0 = worldToScreen(pts[0].x, pts[0].y);
+    ctx.moveTo(s0.sx, s0.sy);
+    for (let i = 1; i < n; i++) {
+      const s = worldToScreen(pts[i].x, pts[i].y);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function drawDomainBoundary() {
+    if (!mesh) return;
+    const pts = mesh.points;
+    const nA = mesh.nAirfoil, nD = mesh.nDomain;
+    ctx.strokeStyle = '#3498db';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const s0 = worldToScreen(pts[nA].x, pts[nA].y);
+    ctx.moveTo(s0.sx, s0.sy);
+    for (let i = 1; i < nD; i++) {
+      const s = worldToScreen(pts[nA + i].x, pts[nA + i].y);
+      ctx.lineTo(s.sx, s.sy);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  function drawCrosses() {
+    if (!mesh || !fieldAngles) return;
+    const pts = mesh.points;
+    const r = crossSize;
+    const n = pts.length;
+
+    for (let i = 0; i < n; i++) {
+      // Skip vertices with no mesh edges (isolated)
+      if (mesh.adjacency[i].size === 0) continue;
+
+      const s = worldToScreen(pts[i].x, pts[i].y);
+      const angle = fieldAngles[i];
+      const isCon = fieldConstrained[i];
+
+      ctx.strokeStyle = isCon ? '#e74c3c' : '#2c3e50';
+      ctx.lineWidth = isCon ? 1.5 : 1;
+      ctx.lineCap = 'round';
+
+      // Draw cross: two perpendicular lines
+      const c1 = Math.cos(angle), s1 = Math.sin(angle);
+      const c2 = Math.cos(angle + Math.PI / 2), s2 = Math.sin(angle + Math.PI / 2);
+
+      ctx.beginPath();
+      ctx.moveTo(s.sx + r * c1, s.sy - r * s1);
+      ctx.lineTo(s.sx - r * c1, s.sy + r * s1);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(s.sx + r * c2, s.sy - r * s2);
+      ctx.lineTo(s.sx - r * c2, s.sy + r * s2);
+      ctx.stroke();
+
+      if (isCon) {
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(s.sx, s.sy, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // ===== Streamline Tracing =====
+
+  // Find which triangle contains world point (wx, wy) and return barycentric coords
+  function findTriangle(wx, wy) {
+    if (!mesh) return null;
+    const pts = mesh.points;
+    for (let t = 0; t < mesh.triangles.length; t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const x0 = pts[i0].x, y0 = pts[i0].y;
+      const x1 = pts[i1].x, y1 = pts[i1].y;
+      const x2 = pts[i2].x, y2 = pts[i2].y;
+      const denom = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2);
+      if (Math.abs(denom) < 1e-15) continue;
+      const w0 = ((y1 - y2) * (wx - x2) + (x2 - x1) * (wy - y2)) / denom;
+      const w1 = ((y2 - y0) * (wx - x2) + (x0 - x2) * (wy - y2)) / denom;
+      const w2 = 1 - w0 - w1;
+      if (w0 >= -1e-6 && w1 >= -1e-6 && w2 >= -1e-6) {
+        return { tri: t, w0, w1, w2, i0, i1, i2 };
+      }
+    }
+    return null;
+  }
+
+  // Build spatial hash for fast triangle lookup
+  let triHash = null, triHashCell = 0;
+  function buildTriHash() {
+    if (!mesh) return;
+    const pts = mesh.points;
+    // Cell size ~ median edge length
+    let sumEdge = 0, countEdge = 0;
+    for (let t = 0; t < Math.min(mesh.triangles.length, 200); t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const dx01 = pts[i1].x - pts[i0].x, dy01 = pts[i1].y - pts[i0].y;
+      sumEdge += Math.sqrt(dx01 * dx01 + dy01 * dy01);
+      countEdge++;
+    }
+    triHashCell = (countEdge > 0 ? sumEdge / countEdge : 0.1) * 2;
+    triHash = new Map();
+    for (let t = 0; t < mesh.triangles.length; t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const minX = Math.min(pts[i0].x, pts[i1].x, pts[i2].x);
+      const maxX = Math.max(pts[i0].x, pts[i1].x, pts[i2].x);
+      const minY = Math.min(pts[i0].y, pts[i1].y, pts[i2].y);
+      const maxY = Math.max(pts[i0].y, pts[i1].y, pts[i2].y);
+      const gx0 = Math.floor(minX / triHashCell), gx1 = Math.floor(maxX / triHashCell);
+      const gy0 = Math.floor(minY / triHashCell), gy1 = Math.floor(maxY / triHashCell);
+      for (let gx = gx0; gx <= gx1; gx++) {
+        for (let gy = gy0; gy <= gy1; gy++) {
+          const k = gx + ',' + gy;
+          const b = triHash.get(k);
+          if (b) b.push(t); else triHash.set(k, [t]);
+        }
+      }
+    }
+  }
+
+  function findTriangleFast(wx, wy) {
+    if (!triHash || !mesh) return null;
+    const pts = mesh.points;
+    const gx = Math.floor(wx / triHashCell), gy = Math.floor(wy / triHashCell);
+    const bucket = triHash.get(gx + ',' + gy);
+    if (!bucket) return null;
+    for (const t of bucket) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const x0 = pts[i0].x, y0 = pts[i0].y;
+      const x1 = pts[i1].x, y1 = pts[i1].y;
+      const x2 = pts[i2].x, y2 = pts[i2].y;
+      const denom = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2);
+      if (Math.abs(denom) < 1e-15) continue;
+      const w0 = ((y1 - y2) * (wx - x2) + (x2 - x1) * (wy - y2)) / denom;
+      const w1 = ((y2 - y0) * (wx - x2) + (x0 - x2) * (wy - y2)) / denom;
+      const w2 = 1 - w0 - w1;
+      if (w0 >= -1e-6 && w1 >= -1e-6 && w2 >= -1e-6) {
+        return { tri: t, w0, w1, w2, i0, i1, i2 };
+      }
+    }
+    return null;
+  }
+
+  // Interpolate cross field angle at a point inside a triangle,
+  // picking the 4-symmetric representative closest to prevDir
+  function interpAngle(i0, i1, i2, w0, w1, w2, prevDir) {
+    // Interpolate in representation space (cos4θ, sin4θ)
+    const a0 = fieldAngles[i0], a1 = fieldAngles[i1], a2 = fieldAngles[i2];
+    const cx = w0 * Math.cos(4 * a0) + w1 * Math.cos(4 * a1) + w2 * Math.cos(4 * a2);
+    const cy = w0 * Math.sin(4 * a0) + w1 * Math.sin(4 * a1) + w2 * Math.sin(4 * a2);
+    const baseAngle = Math.atan2(cy, cx) / 4;
+
+    // Pick the representative closest to prevDir
+    if (prevDir === null) return baseAngle;
+    let best = baseAngle, bestDot = -Infinity;
+    for (let k = 0; k < 4; k++) {
+      const candidate = baseAngle + k * Math.PI / 2;
+      const dot = Math.cos(candidate) * Math.cos(prevDir) + Math.sin(candidate) * Math.sin(prevDir);
+      if (dot > bestDot) { bestDot = dot; best = candidate; }
+    }
+    return best;
+  }
+
+  // Trace a single streamline from a seed point
+  function traceStreamline(seedX, seedY, nSteps, stepSize) {
+    const line = [{ x: seedX, y: seedY }];
+    let px = seedX, py = seedY, prevDir = null;
+
+    // Forward
+    for (let s = 0; s < nSteps; s++) {
+      const loc = findTriangleFast(px, py);
+      if (!loc) break;
+      const angle = interpAngle(loc.i0, loc.i1, loc.i2, loc.w0, loc.w1, loc.w2, prevDir);
+      const dx = Math.cos(angle) * stepSize;
+      const dy = Math.sin(angle) * stepSize;
+      px += dx; py += dy;
+      prevDir = angle;
+      line.push({ x: px, y: py });
+    }
+
+    // Backward
+    px = seedX; py = seedY; prevDir = null;
+    const backLine = [];
+    for (let s = 0; s < nSteps; s++) {
+      const loc = findTriangleFast(px, py);
+      if (!loc) break;
+      const angle = interpAngle(loc.i0, loc.i1, loc.i2, loc.w0, loc.w1, loc.w2, prevDir !== null ? prevDir + Math.PI : null);
+      const dx = Math.cos(angle) * stepSize;
+      const dy = Math.sin(angle) * stepSize;
+      px += dx; py += dy;
+      prevDir = angle;
+      backLine.push({ x: px, y: py });
+    }
+    backLine.reverse();
+    return [...backLine, ...line];
+  }
+
+  function computeStreamlines() {
+    if (!mesh || !fieldAngles) { cachedStreamlines = null; return; }
+    buildTriHash();
+    const pts = mesh.points;
+    const lines = [];
+
+    // Estimate average edge length for step size
+    let sumEdge = 0, countEdge = 0;
+    for (let t = 0; t < Math.min(mesh.triangles.length, 500); t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const dx = pts[i1].x - pts[i0].x, dy = pts[i1].y - pts[i0].y;
+      sumEdge += Math.sqrt(dx * dx + dy * dy);
+      countEdge++;
+    }
+    const avgEdge = countEdge > 0 ? sumEdge / countEdge : 0.05;
+    const stepSize = avgEdge * 0.4;
+    const nSteps = streamLength;
+
+    // Seed at every triangle centroid — trace both directions of the cross
+    for (let t = 0; t < mesh.triangles.length; t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const cx = (pts[i0].x + pts[i1].x + pts[i2].x) / 3;
+      const cy = (pts[i0].y + pts[i1].y + pts[i2].y) / 3;
+      // Direction 1
+      lines.push(traceStreamline(cx, cy, nSteps, stepSize));
+      // Direction 2 (perpendicular) — rotate prevDir by π/2
+      // Re-trace with a π/2 offset seed direction
+      const loc = findTriangleFast(cx, cy);
+      if (loc) {
+        const baseAngle = interpAngle(loc.i0, loc.i1, loc.i2, loc.w0, loc.w1, loc.w2, null);
+        const line2 = [{ x: cx, y: cy }];
+        let px = cx, py = cy, prevDir = baseAngle + Math.PI / 2;
+        for (let s = 0; s < nSteps; s++) {
+          const loc2 = findTriangleFast(px, py);
+          if (!loc2) break;
+          const angle = interpAngle(loc2.i0, loc2.i1, loc2.i2, loc2.w0, loc2.w1, loc2.w2, prevDir);
+          px += Math.cos(angle) * stepSize;
+          py += Math.sin(angle) * stepSize;
+          prevDir = angle;
+          line2.push({ x: px, y: py });
+        }
+        // Backward
+        px = cx; py = cy; prevDir = baseAngle + Math.PI / 2 + Math.PI;
+        const back2 = [];
+        for (let s = 0; s < nSteps; s++) {
+          const loc2 = findTriangleFast(px, py);
+          if (!loc2) break;
+          const angle = interpAngle(loc2.i0, loc2.i1, loc2.i2, loc2.w0, loc2.w1, loc2.w2, prevDir);
+          px += Math.cos(angle) * stepSize;
+          py += Math.sin(angle) * stepSize;
+          prevDir = angle;
+          back2.push({ x: px, y: py });
+        }
+        back2.reverse();
+        lines.push([...back2, ...line2]);
+      }
+    }
+
+    cachedStreamlines = lines;
+  }
+
+  // ===== Singularity Detection =====
+
+  function detectSingularities() {
+    singularities = [];
+    separatrixData = [];
+    motorgraph = null;
+    blockBoundaries = [];
+    if (!mesh || !fieldAngles) return;
+    const pts = mesh.points;
+
+    for (let t = 0; t < mesh.triangles.length; t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const edges = [[i0, i1], [i1, i2], [i2, i0]];
+      let totalRot = 0;
+      for (const [a, b] of edges) {
+        let diff = fieldAngles[b] - fieldAngles[a];
+        diff = diff - Math.round(diff / (Math.PI / 2)) * (Math.PI / 2);
+        totalRot += diff;
+      }
+      const idx = Math.round(totalRot / (Math.PI / 2));
+      if (idx !== 0) {
+        const cx = (pts[i0].x + pts[i1].x + pts[i2].x) / 3;
+        const cy = (pts[i0].y + pts[i1].y + pts[i2].y) / 3;
+        singularities.push({ x: cx, y: cy, index: idx, triIdx: t });
+      }
+    }
+
+    const pos = singularities.filter(s => s.index > 0).length;
+    const neg = singularities.filter(s => s.index < 0).length;
+    meshInfo.textContent = `${singularities.length} singularities: ${pos} positive, ${neg} negative`;
+  }
+
+  // ===== Separatrix Extraction =====
+
+  function extractSeparatrices() {
+    separatrixData = [];
+    motorgraph = null;
+    blockBoundaries = [];
+    if (!mesh || !fieldAngles || singularities.length === 0) return;
+    buildTriHash();
+    const pts = mesh.points;
+
+    // Estimate step size from average edge length
+    let sumEdge = 0, countEdge = 0;
+    for (let t = 0; t < Math.min(mesh.triangles.length, 500); t++) {
+      const [i0, i1, i2] = mesh.triangles[t];
+      const dx = pts[i1].x - pts[i0].x, dy = pts[i1].y - pts[i0].y;
+      sumEdge += Math.sqrt(dx * dx + dy * dy);
+      countEdge++;
+    }
+    const avgEdge = countEdge > 0 ? sumEdge / countEdge : 0.05;
+    const step = avgEdge * 0.3;
+    const maxSteps = 800;
+
+    function traceForward(sx, sy, initDir, nSteps, dt) {
+      const line = [{ x: sx, y: sy }];
+      let px = sx, py = sy, pd = initDir;
+      for (let s = 0; s < nSteps; s++) {
+        const loc = findTriangleFast(px, py);
+        if (!loc) break;
+        const a = interpAngle(loc.i0, loc.i1, loc.i2, loc.w0, loc.w1, loc.w2, pd);
+        px += Math.cos(a) * dt;
+        py += Math.sin(a) * dt;
+        pd = a;
+        line.push({ x: px, y: py });
+      }
+      return line;
+    }
+
+    for (const sing of singularities) {
+      const [i0, i1, i2] = mesh.triangles[sing.triIdx];
+      const sx = sing.x, sy = sing.y;
+      const triVerts = [i0, i1, i2];
+      const edgeExits = [];
+
+      for (let e = 0; e < 3; e++) {
+        const va = triVerts[e], vb = triVerts[(e + 1) % 3];
+        const ax = pts[va].x, ay = pts[va].y;
+        const bx = pts[vb].x, by = pts[vb].y;
+        const nSamples = 40;
+        for (let si = 1; si < nSamples; si++) {
+          const t = si / nSamples;
+          const px = ax + t * (bx - ax);
+          const py = ay + t * (by - ay);
+          const dx = px - sx, dy = py - sy;
+          const dLen = Math.sqrt(dx * dx + dy * dy);
+          if (dLen < 1e-12) continue;
+          const dirToP = Math.atan2(dy, dx);
+
+          const aA = fieldAngles[va], aB = fieldAngles[vb];
+          const rc = (1 - t) * Math.cos(4 * aA) + t * Math.cos(4 * aB);
+          const rs = (1 - t) * Math.sin(4 * aA) + t * Math.sin(4 * aB);
+          const baseAngle = Math.atan2(rs, rc) / 4;
+
+          for (let k = 0; k < 4; k++) {
+            const arm = baseAngle + k * Math.PI / 2;
+            let angleDiff = arm - dirToP;
+            angleDiff = angleDiff - Math.round(angleDiff / (2 * Math.PI)) * 2 * Math.PI;
+            if (Math.abs(angleDiff) < Math.PI / nSamples * 1.5) {
+              edgeExits.push({ x: px, y: py, dir: arm });
+            }
+          }
+        }
+      }
+
+      // Deduplicate
+      const merged = [];
+      for (const ex of edgeExits) {
+        let dominated = false;
+        for (const m of merged) {
+          const dd = Math.sqrt((ex.x - m.x) ** 2 + (ex.y - m.y) ** 2);
+          if (dd < avgEdge * 0.3) { dominated = true; break; }
+        }
+        if (!dominated) merged.push(ex);
+      }
+
+      const expected = sing.index > 0 ? 3 : 5;
+      let exitPoints = merged;
+      if (exitPoints.length < expected) {
+        exitPoints = [];
+        const neighbors = [i0, i1, i2];
+        let avgCx = 0, avgCy = 0;
+        for (const ni of neighbors) {
+          avgCx += Math.cos(4 * fieldAngles[ni]);
+          avgCy += Math.sin(4 * fieldAngles[ni]);
+        }
+        const phaseOffset = Math.atan2(avgCy, avgCx) / 4;
+        for (let k = 0; k < expected; k++) {
+          const dir = phaseOffset + k * Math.PI * 2 / expected;
+          exitPoints.push({ x: sx + Math.cos(dir) * avgEdge * 0.5, y: sy + Math.sin(dir) * avgEdge * 0.5, dir });
+        }
+      }
+
+      for (const ex of exitPoints) {
+        const line = traceForward(ex.x, ex.y, ex.dir, maxSteps, step);
+        line.unshift({ x: sx, y: sy });
+        separatrixData.push({ points: line, fromSing: sing });
+      }
+    }
+
+    meshInfo.textContent = `Traced ${separatrixData.length} separatrices from ${singularities.length} singularities`;
+  }
+
+  // ===== Motorgraph Construction =====
+  // The motorgraph is a graph whose nodes are singularities and boundary intersection
+  // points of separatrices, and whose edges are the separatrix arcs connecting them.
+
+  function buildMotorgraph() {
+    motorgraph = null;
+    blockBoundaries = [];
+    if (!mesh || separatrixData.length === 0) return;
+
+    const pts = mesh.points;
+    const nA = mesh.nAirfoil, nD = mesh.nDomain;
+
+    // Collect boundary polylines for intersection testing
+    const airfoilPoly = [];
+    for (let i = 0; i < nA; i++) airfoilPoly.push({ x: pts[i].x, y: pts[i].y });
+    const domainPoly = [];
+    for (let i = 0; i < nD; i++) domainPoly.push({ x: pts[nA + i].x, y: pts[nA + i].y });
+
+    // Segment-segment intersection
+    function segIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
+      const denom = (bx - ax) * (dy - cy) - (by - ay) * (dx - cx);
+      if (Math.abs(denom) < 1e-15) return null;
+      const t = ((cx - ax) * (dy - cy) - (cy - ay) * (dx - cx)) / denom;
+      const u = ((cx - ax) * (by - ay) - (cy - ay) * (bx - ax)) / denom;
+      if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+        return { x: ax + t * (bx - ax), y: ay + t * (by - ay), t, u };
+      }
+      return null;
+    }
+
+    // Find first intersection of a polyline with a boundary polygon
+    function findBoundaryHit(line, poly) {
+      for (let li = 0; li < line.length - 1; li++) {
+        const lx0 = line[li].x, ly0 = line[li].y;
+        const lx1 = line[li + 1].x, ly1 = line[li + 1].y;
+        for (let pi = 0; pi < poly.length; pi++) {
+          const pj = (pi + 1) % poly.length;
+          const hit = segIntersect(lx0, ly0, lx1, ly1, poly[pi].x, poly[pi].y, poly[pj].x, poly[pj].y);
+          if (hit) return { x: hit.x, y: hit.y, lineIdx: li, segIdx: pi, boundaryType: poly === airfoilPoly ? 'airfoil' : 'domain' };
+        }
+      }
+      return null;
+    }
+
+    // Nodes: start with singularities
+    const nodes = [];
+    const nodeMap = new Map(); // key -> nodeIdx
+    for (let si = 0; si < singularities.length; si++) {
+      const s = singularities[si];
+      const key = s.x.toFixed(6) + ',' + s.y.toFixed(6);
+      nodes.push({ x: s.x, y: s.y, type: s.index > 0 ? 'pos' : 'neg', singIdx: si });
+      nodeMap.set(key, nodes.length - 1);
+    }
+
+    const edges = [];
+    const mergeRadius = (pts.length > 0) ? 0.03 * domainSize : 0.03;
+
+    function findOrCreateNode(x, y, type) {
+      // Check if close to existing node
+      for (let ni = 0; ni < nodes.length; ni++) {
+        const dx = nodes[ni].x - x, dy = nodes[ni].y - y;
+        if (Math.sqrt(dx * dx + dy * dy) < mergeRadius) return ni;
+      }
+      const idx = nodes.length;
+      nodes.push({ x, y, type, singIdx: -1 });
+      return idx;
+    }
+
+    // For each separatrix, find where it terminates: boundary, another singularity, or end of trace
+    for (let si = 0; si < separatrixData.length; si++) {
+      const sep = separatrixData[si];
+      const line = sep.points;
+      if (line.length < 2) continue;
+
+      // Start node = the singularity
+      const fromNode = findOrCreateNode(line[0].x, line[0].y, 'sing');
+
+      // Check for boundary hit (both airfoil and domain)
+      const airfoilHit = findBoundaryHit(line, airfoilPoly);
+      const domainHit = findBoundaryHit(line, domainPoly);
+
+      // Use the earlier hit
+      let hit = null;
+      if (airfoilHit && domainHit) {
+        hit = airfoilHit.lineIdx < domainHit.lineIdx ? airfoilHit : domainHit;
+      } else {
+        hit = airfoilHit || domainHit;
+      }
+
+      // Check for hitting another singularity
+      let singHit = null;
+      for (let sj = 0; sj < singularities.length; sj++) {
+        if (singularities[sj] === sep.fromSing) continue;
+        const sx = singularities[sj].x, sy = singularities[sj].y;
+        for (let li = 2; li < line.length; li++) {
+          const dx = line[li].x - sx, dy = line[li].y - sy;
+          if (Math.sqrt(dx * dx + dy * dy) < mergeRadius) {
+            if (!singHit || li < singHit.lineIdx) {
+              singHit = { x: sx, y: sy, lineIdx: li, singIdx: sj };
+            }
+            break;
+          }
+        }
+      }
+
+      // Pick earliest termination
+      let toNode, endIdx;
+      if (singHit && (!hit || singHit.lineIdx <= hit.lineIdx)) {
+        toNode = findOrCreateNode(singHit.x, singHit.y, 'sing');
+        endIdx = singHit.lineIdx;
+      } else if (hit) {
+        toNode = findOrCreateNode(hit.x, hit.y, 'boundary_' + hit.boundaryType);
+        endIdx = hit.lineIdx + 1;
+      } else {
+        // End of trace — create a boundary node at the end
+        const last = line[line.length - 1];
+        toNode = findOrCreateNode(last.x, last.y, 'endpoint');
+        endIdx = line.length - 1;
+      }
+
+      edges.push({
+        from: fromNode,
+        to: toNode,
+        sepIdx: si,
+        trimmedPoints: line.slice(0, endIdx + 1)
+      });
+    }
+
+    motorgraph = { nodes, edges };
+    meshInfo.textContent = `Motorgraph: ${nodes.length} nodes, ${edges.length} edges`;
+  }
+
+  // ===== Block Boundary Extraction =====
+  // Walk the motorgraph + boundary arcs to identify closed regions (blocks).
+
+  function extractBlocks() {
+    blockBoundaries = [];
+    if (!motorgraph || !mesh) return;
+
+    const pts = mesh.points;
+    const nA = mesh.nAirfoil, nD = mesh.nDomain;
+    const { nodes, edges } = motorgraph;
+
+    // Build adjacency: for each node, list edges and their angular direction
+    const nodeAdj = new Array(nodes.length).fill(null).map(() => []);
+    for (let ei = 0; ei < edges.length; ei++) {
+      const e = edges[ei];
+      if (e.trimmedPoints.length < 2) continue;
+      // Forward direction
+      const p1f = e.trimmedPoints[1];
+      const angFwd = Math.atan2(p1f.y - nodes[e.from].y, p1f.x - nodes[e.from].x);
+      nodeAdj[e.from].push({ edgeIdx: ei, toNode: e.to, angle: angFwd, forward: true });
+      // Backward direction
+      const pLen = e.trimmedPoints.length;
+      const p1b = e.trimmedPoints[pLen - 2];
+      const angBwd = Math.atan2(p1b.y - nodes[e.to].y, p1b.x - nodes[e.to].x);
+      nodeAdj[e.to].push({ edgeIdx: ei, toNode: e.from, angle: angBwd, forward: false });
+    }
+
+    // Sort adjacency lists by angle at each node
+    for (const adj of nodeAdj) {
+      adj.sort((a, b) => a.angle - b.angle);
+    }
+
+    // Walk faces using the "next edge turning left" rule
+    const usedHalfEdges = new Set();
+    const blockColors = [
+      'rgba(231, 76, 60, 0.12)',
+      'rgba(46, 204, 113, 0.12)',
+      'rgba(52, 152, 219, 0.12)',
+      'rgba(155, 89, 182, 0.12)',
+      'rgba(241, 196, 15, 0.12)',
+      'rgba(230, 126, 34, 0.12)',
+      'rgba(26, 188, 156, 0.12)',
+      'rgba(192, 57, 43, 0.12)',
+    ];
+
+    for (let startEi = 0; startEi < edges.length; startEi++) {
+      for (const startFwd of [true, false]) {
+        const heKey0 = startEi + (startFwd ? '+' : '-');
+        if (usedHalfEdges.has(heKey0)) continue;
+
+        const polygon = [];
+        const corners = []; // polygon indices where motorgraph nodes sit
+        let curEdgeIdx = startEi;
+        let curForward = startFwd;
+        let steps = 0;
+        const maxFaceSteps = edges.length * 2 + 2;
+
+        do {
+          const heKey = curEdgeIdx + (curForward ? '+' : '-');
+          if (usedHalfEdges.has(heKey)) break;
+          usedHalfEdges.add(heKey);
+
+          // Record corner at start of this edge segment
+          corners.push(polygon.length);
+
+          // Add points along this edge
+          const e = edges[curEdgeIdx];
+          const edgePts = curForward ? e.trimmedPoints : [...e.trimmedPoints].reverse();
+          for (let pi = 0; pi < edgePts.length - 1; pi++) {
+            polygon.push(edgePts[pi]);
+          }
+
+          // Arrive at node
+          const arriveNode = curForward ? e.to : e.from;
+          const adj = nodeAdj[arriveNode];
+          if (adj.length < 2) break;
+
+          // Find the edge we arrived on in the adjacency list
+          const arrivalAngle = Math.atan2(
+            (curForward ? e.trimmedPoints[e.trimmedPoints.length - 2] : e.trimmedPoints[1]).y - nodes[arriveNode].y,
+            (curForward ? e.trimmedPoints[e.trimmedPoints.length - 2] : e.trimmedPoints[1]).x - nodes[arriveNode].x
+          );
+
+          // Find the next edge turning right (clockwise)
+          // Arrival direction points INTO the node; we want the next CCW edge from the arrival direction
+          let bestIdx = -1, bestAngleDiff = Infinity;
+          for (let ai = 0; ai < adj.length; ai++) {
+            if (adj[ai].edgeIdx === curEdgeIdx && adj[ai].forward !== curForward) continue; // skip the reverse of the edge we came from
+            // Same half-edge we arrived on
+            if (adj[ai].edgeIdx === curEdgeIdx && adj[ai].forward === curForward) continue;
+            let diff = adj[ai].angle - arrivalAngle;
+            // Normalize to (0, 2π) — next CW from arrival
+            diff = ((diff % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+            if (diff < 1e-10) diff += 2 * Math.PI;
+            if (diff < bestAngleDiff) { bestAngleDiff = diff; bestIdx = ai; }
+          }
+
+          if (bestIdx < 0) break;
+          curEdgeIdx = adj[bestIdx].edgeIdx;
+          curForward = adj[bestIdx].forward;
+          steps++;
+        } while ((curEdgeIdx !== startEi || curForward !== startFwd) && steps < maxFaceSteps);
+
+        if (polygon.length >= 3 && steps >= 2) {
+          // Compute signed area to filter out the outer (infinite) face
+          let area = 0;
+          for (let i = 0; i < polygon.length; i++) {
+            const j = (i + 1) % polygon.length;
+            area += polygon[i].x * polygon[j].y - polygon[j].x * polygon[i].y;
+          }
+          area /= 2;
+          // Keep only finite-area faces (skip the unbounded exterior)
+          if (Math.abs(area) < domainSize * domainSize * 20) {
+            blockBoundaries.push({ polygon, corners });
+          }
+        }
+      }
+    }
+
+    meshInfo.textContent = `Extracted ${blockBoundaries.length} blocks from motorgraph`;
+  }
+
+  // ===== Quad Mesh Generation via TFI =====
+
+  function generateQuadMesh() {
+    quadMesh = null;
+    if (blockBoundaries.length === 0) return;
+
+    const allQuads = [];
+    let totalQuads = 0;
+
+    for (const block of blockBoundaries) {
+      const { polygon, corners } = block;
+      const nSides = corners.length;
+      if (nSides < 3 || nSides > 5) continue;
+
+      // Extract sides: each side is the polygon segment between consecutive corners
+      const sides = [];
+      for (let s = 0; s < nSides; s++) {
+        const c0 = corners[s];
+        const c1 = s + 1 < nSides ? corners[s + 1] : polygon.length;
+        const side = [];
+        for (let i = c0; i < c1; i++) side.push(polygon[i]);
+        // Add the last point (first point of next side, or wrap to polygon[0])
+        if (s + 1 < nSides) side.push(polygon[corners[s + 1]]);
+        else side.push(polygon[corners[0]] || polygon[0]);
+        sides.push(side);
+      }
+
+      // Resample each side to have uniform spacing based on targetH
+      function resampleSide(side, nPts) {
+        if (nPts < 2) nPts = 2;
+        // Compute cumulative arc length
+        const arcLen = [0];
+        for (let i = 1; i < side.length; i++) {
+          const dx = side[i].x - side[i - 1].x, dy = side[i].y - side[i - 1].y;
+          arcLen.push(arcLen[i - 1] + Math.sqrt(dx * dx + dy * dy));
+        }
+        const totalLen = arcLen[arcLen.length - 1];
+        if (totalLen < 1e-12) return side.slice(0, nPts);
+
+        const resampled = [];
+        for (let i = 0; i < nPts; i++) {
+          const t = i / (nPts - 1);
+          const targetArc = t * totalLen;
+          // Find segment
+          let seg = 0;
+          while (seg < arcLen.length - 2 && arcLen[seg + 1] < targetArc) seg++;
+          const segLen = arcLen[seg + 1] - arcLen[seg];
+          const localT = segLen > 1e-15 ? (targetArc - arcLen[seg]) / segLen : 0;
+          resampled.push({
+            x: side[seg].x + localT * (side[seg + 1].x - side[seg].x),
+            y: side[seg].y + localT * (side[seg + 1].y - side[seg].y)
+          });
+        }
+        return resampled;
+      }
+
+      function sideLength(side) {
+        let len = 0;
+        for (let i = 1; i < side.length; i++) {
+          const dx = side[i].x - side[i - 1].x, dy = side[i].y - side[i - 1].y;
+          len += Math.sqrt(dx * dx + dy * dy);
+        }
+        return len;
+      }
+
+      if (nSides === 4) {
+        // Standard TFI on 4-sided block
+        // sides[0]=bottom (ξ, η=0), sides[1]=right (η, ξ=1),
+        // sides[2]=top (ξ reversed, η=1), sides[3]=left (η reversed, ξ=0)
+        const lenXi = (sideLength(sides[0]) + sideLength(sides[2])) / 2;
+        const lenEta = (sideLength(sides[1]) + sideLength(sides[3])) / 2;
+        const nXi = Math.max(2, Math.round(lenXi / targetH) + 1);
+        const nEta = Math.max(2, Math.round(lenEta / targetH) + 1);
+
+        const bottom = resampleSide(sides[0], nXi);
+        const right = resampleSide(sides[1], nEta);
+        const top = resampleSide([...sides[2]].reverse(), nXi);
+        const left = resampleSide([...sides[3]].reverse(), nEta);
+
+        // TFI: P(i,j) = (1-η)*bottom[i] + η*top[i] + (1-ξ)*left[j] + ξ*right[j]
+        //              - corners
+        const grid = [];
+        for (let j = 0; j < nEta; j++) {
+          const row = [];
+          const eta = j / (nEta - 1);
+          for (let i = 0; i < nXi; i++) {
+            const xi = i / (nXi - 1);
+            const x = (1 - eta) * bottom[i].x + eta * top[i].x
+                    + (1 - xi) * left[j].x + xi * right[j].x
+                    - (1 - xi) * (1 - eta) * bottom[0].x - xi * (1 - eta) * bottom[nXi - 1].x
+                    - (1 - xi) * eta * top[0].x - xi * eta * top[nXi - 1].x;
+            const y = (1 - eta) * bottom[i].y + eta * top[i].y
+                    + (1 - xi) * left[j].y + xi * right[j].y
+                    - (1 - xi) * (1 - eta) * bottom[0].y - xi * (1 - eta) * bottom[nXi - 1].y
+                    - (1 - xi) * eta * top[0].y - xi * eta * top[nXi - 1].y;
+            row.push({ x, y });
+          }
+          grid.push(row);
+        }
+
+        for (let j = 0; j < nEta - 1; j++) {
+          for (let i = 0; i < nXi - 1; i++) {
+            allQuads.push([grid[j][i], grid[j][i + 1], grid[j + 1][i + 1], grid[j + 1][i]]);
+            totalQuads++;
+          }
+        }
+
+      } else if (nSides === 3) {
+        // Degenerate TFI: collapse one side to a point
+        // Treat as 4-sided with side[3] (left) collapsed to a single point
+        const lenS0 = sideLength(sides[0]);
+        const lenS1 = sideLength(sides[1]);
+        const lenS2 = sideLength(sides[2]);
+        const lenXi = (lenS0 + lenS2) / 2;
+        const lenEta = lenS1;
+        const nXi = Math.max(2, Math.round(lenXi / targetH) + 1);
+        const nEta = Math.max(2, Math.round(lenEta / targetH) + 1);
+
+        // side0 = bottom, side1 = right, side2 = top(reversed) -> left is collapsed to corner
+        const bottom = resampleSide(sides[0], nXi);
+        const right = resampleSide(sides[1], nEta);
+        const top = resampleSide([...sides[2]].reverse(), nXi);
+        // Left side is the degenerate point = top[0] = bottom[0]
+        const cornerPt = bottom[0];
+
+        const grid = [];
+        for (let j = 0; j < nEta; j++) {
+          const row = [];
+          const eta = j / (nEta - 1);
+          for (let i = 0; i < nXi; i++) {
+            const xi = i / (nXi - 1);
+            // Degenerate TFI: left side is just the corner point for all η
+            const x = (1 - eta) * bottom[i].x + eta * top[i].x
+                    + (1 - xi) * cornerPt.x + xi * right[j].x
+                    - (1 - xi) * (1 - eta) * bottom[0].x - xi * (1 - eta) * bottom[nXi - 1].x
+                    - (1 - xi) * eta * top[0].x - xi * eta * top[nXi - 1].x;
+            const y = (1 - eta) * bottom[i].y + eta * top[i].y
+                    + (1 - xi) * cornerPt.y + xi * right[j].y
+                    - (1 - xi) * (1 - eta) * bottom[0].y - xi * (1 - eta) * bottom[nXi - 1].y
+                    - (1 - xi) * eta * top[0].y - xi * eta * top[nXi - 1].y;
+            row.push({ x, y });
+          }
+          grid.push(row);
+        }
+
+        for (let j = 0; j < nEta - 1; j++) {
+          for (let i = 0; i < nXi - 1; i++) {
+            allQuads.push([grid[j][i], grid[j][i + 1], grid[j + 1][i + 1], grid[j + 1][i]]);
+            totalQuads++;
+          }
+        }
+
+      } else if (nSides === 5) {
+        // Split a 5-sided block into two 4-sided blocks by connecting
+        // the midpoint of the longest side to the opposite corner
+        // For now, skip — would need more sophisticated splitting
+        continue;
+      }
+    }
+
+    quadMesh = { quads: allQuads };
+    meshInfo.textContent = `Generated ${totalQuads} quads via TFI across ${blockBoundaries.length} blocks`;
+  }
+
+  // ===== Drawing: Separatrices, Singularities, Motorgraph, Blocks =====
+
+  function drawSeparatrices() {
+    if (separatrixData.length === 0) return;
+    ctx.strokeStyle = 'rgba(231, 76, 60, 0.85)';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const sep of separatrixData) {
+      const line = sep.points;
+      if (line.length < 2) continue;
+      ctx.beginPath();
+      const s0 = worldToScreen(line[0].x, line[0].y);
+      ctx.moveTo(s0.sx, s0.sy);
+      for (let i = 1; i < line.length; i++) {
+        const s = worldToScreen(line[i].x, line[i].y);
+        ctx.lineTo(s.sx, s.sy);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function drawSingularities() {
+    for (const sg of singularities) {
+      const s = worldToScreen(sg.x, sg.y);
+      ctx.fillStyle = sg.index > 0 ? '#e74c3c' : '#8e44ad';
+      ctx.beginPath();
+      ctx.arc(s.sx, s.sy, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sg.index > 0 ? '+1' : '-1', s.sx, s.sy);
+    }
+  }
+
+  function drawMotorgraph() {
+    if (!motorgraph) return;
+    const { nodes, edges } = motorgraph;
+
+    // Draw trimmed edges
+    ctx.strokeStyle = 'rgba(231, 76, 60, 0.9)';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const e of edges) {
+      const line = e.trimmedPoints;
+      if (!line || line.length < 2) continue;
+      ctx.beginPath();
+      const s0 = worldToScreen(line[0].x, line[0].y);
+      ctx.moveTo(s0.sx, s0.sy);
+      for (let i = 1; i < line.length; i++) {
+        const s = worldToScreen(line[i].x, line[i].y);
+        ctx.lineTo(s.sx, s.sy);
+      }
+      ctx.stroke();
+    }
+
+    // Draw nodes
+    for (const nd of nodes) {
+      const s = worldToScreen(nd.x, nd.y);
+      if (nd.type === 'pos' || nd.type === 'neg' || nd.type === 'sing') {
+        ctx.fillStyle = nd.type === 'neg' ? '#8e44ad' : '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(s.sx, s.sy, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 9px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nd.type === 'neg' ? '-1' : '+1', s.sx, s.sy);
+      } else {
+        // Boundary node
+        ctx.fillStyle = '#2c3e50';
+        ctx.beginPath();
+        ctx.arc(s.sx, s.sy, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawBlocks() {
+    if (blockBoundaries.length === 0) return;
+    ctx.strokeStyle = 'rgba(231, 76, 60, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    for (const block of blockBoundaries) {
+      const poly = block.polygon;
+      if (poly.length < 3) continue;
+      ctx.beginPath();
+      const s0 = worldToScreen(poly[0].x, poly[0].y);
+      ctx.moveTo(s0.sx, s0.sy);
+      for (let i = 1; i < poly.length; i++) {
+        const s = worldToScreen(poly[i].x, poly[i].y);
+        ctx.lineTo(s.sx, s.sy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  function drawQuadMesh() {
+    if (!quadMesh) return;
+    ctx.strokeStyle = 'rgba(39, 174, 96, 0.7)';
+    ctx.lineWidth = 1;
+    ctx.lineJoin = 'round';
+    for (const q of quadMesh.quads) {
+      ctx.beginPath();
+      const s0 = worldToScreen(q[0].x, q[0].y);
+      ctx.moveTo(s0.sx, s0.sy);
+      for (let i = 1; i < 4; i++) {
+        const s = worldToScreen(q[i].x, q[i].y);
+        ctx.lineTo(s.sx, s.sy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  function drawStreamlines() {
+    if (!showStreamlines || !cachedStreamlines) return;
+    ctx.strokeStyle = 'rgba(41, 128, 185, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const line of cachedStreamlines) {
+      if (line.length < 2) continue;
+      ctx.beginPath();
+      const s0 = worldToScreen(line[0].x, line[0].y);
+      ctx.moveTo(s0.sx, s0.sy);
+      for (let i = 1; i < line.length; i++) {
+        const s = worldToScreen(line[i].x, line[i].y);
+        ctx.lineTo(s.sx, s.sy);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function draw() {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    ctx.clearRect(0, 0, cw, ch);
+
+    drawAxes();
+    drawBlocks();
+    drawMeshEdges();
+    drawStreamlines();
+    drawQuadMesh();
+    drawSeparatrices();
+    drawAirfoilFill();
+    drawDomainBoundary();
+    drawCrosses();
+    if (motorgraph) drawMotorgraph();
+    else drawSingularities();
+  }
+
+  // ===== Energy Chart =====
+
+  function resizeEnergyCanvas() {
+    const container = document.getElementById('energy-chart-container');
+    const w = container.clientWidth;
+    energyCanvas.width = w * devicePixelRatio;
+    energyCanvas.height = 180 * devicePixelRatio;
+    ectx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+
+  function drawEnergyChart() {
+    const w = energyCanvas.width / devicePixelRatio;
+    const h = energyCanvas.height / devicePixelRatio;
+    ectx.clearRect(0, 0, w, h);
+
+    if (energyHistory.length < 2) {
+      energyStatus.textContent = energyHistory.length === 1
+        ? `E = ${energyHistory[0].toFixed(2)}`
+        : '';
+      return;
+    }
+
+    const pad = { top: 28, right: 16, bottom: 32, left: 60 };
+    const pw = w - pad.left - pad.right;
+    const ph = h - pad.top - pad.bottom;
+
+    const n = energyHistory.length;
+    const eMin = Math.min(...energyHistory);
+    const eMax = Math.max(...energyHistory);
+    const eRange = eMax - eMin || 1;
+
+    // Map data to plot coords
+    function toPlot(i, e) {
+      return {
+        px: pad.left + (i / (n - 1)) * pw,
+        py: pad.top + (1 - (e - eMin) / eRange) * ph
+      };
+    }
+
+    // Grid lines and y-axis labels
+    ectx.strokeStyle = 'rgba(0,0,0,0.07)';
+    ectx.lineWidth = 1;
+    ectx.fillStyle = 'var(--bs-secondary-color, #6c757d)';
+    ectx.font = '10px monospace';
+    ectx.textAlign = 'right';
+    const nTicks = 5;
+    for (let t = 0; t <= nTicks; t++) {
+      const e = eMin + (t / nTicks) * eRange;
+      const { py } = toPlot(0, e);
+      ectx.beginPath();
+      ectx.moveTo(pad.left, py);
+      ectx.lineTo(w - pad.right, py);
+      ectx.stroke();
+      ectx.fillText(e.toFixed(1), pad.left - 6, py + 3.5);
+    }
+
+    // x-axis labels
+    ectx.textAlign = 'center';
+    const xTicks = Math.min(5, n - 1);
+    for (let t = 0; t <= xTicks; t++) {
+      const i = Math.round(t * (n - 1) / xTicks);
+      const { px } = toPlot(i, eMin);
+      ectx.fillText(i.toString(), px, h - pad.bottom + 14);
+    }
+
+    // Axis labels
+    ectx.fillStyle = 'var(--bs-secondary-color, #6c757d)';
+    ectx.font = '11px sans-serif';
+    ectx.textAlign = 'center';
+    ectx.fillText('iteration', pad.left + pw / 2, h - 4);
+
+    // Energy line
+    ectx.strokeStyle = '#2c3e50';
+    ectx.lineWidth = 2;
+    ectx.lineJoin = 'round';
+    ectx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const { px, py } = toPlot(i, energyHistory[i]);
+      if (i === 0) ectx.moveTo(px, py);
+      else ectx.lineTo(px, py);
+    }
+    ectx.stroke();
+
+    // Start/end markers
+    const s0 = toPlot(0, energyHistory[0]);
+    const sN = toPlot(n - 1, energyHistory[n - 1]);
+    ectx.fillStyle = '#e74c3c';
+    ectx.beginPath(); ectx.arc(s0.px, s0.py, 3, 0, Math.PI * 2); ectx.fill();
+    ectx.fillStyle = '#27ae60';
+    ectx.beginPath(); ectx.arc(sN.px, sN.py, 3, 0, Math.PI * 2); ectx.fill();
+
+    energyStatus.textContent = `E: ${energyHistory[0].toFixed(2)} → ${energyHistory[n-1].toFixed(2)}  (${n-1} iters)`;
+  }
+
+  // ===== Sizing =====
+
+  function resizeCanvas() {
+    const container = document.getElementById('airfoil-container');
+    const w = container.clientWidth;
+    const h = Math.min(w * 0.6, window.innerHeight * 0.65);
+    canvas.width = w * devicePixelRatio;
+    canvas.height = h * devicePixelRatio;
+    canvas.style.height = h + 'px';
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+
+  // ===== NACA code <-> slider sync =====
+
+  let updatingFromCode = false, updatingFromSliders = false;
+
+  function syncCodeFromSliders() {
+    if (updatingFromCode) return;
+    updatingFromSliders = true;
+    const m = parseInt(camberSlider.value);
+    const p = parseInt(camberPosSlider.value);
+    const t = parseInt(thicknessSlider.value);
+    nacaCodeInput.value = '' + m + p + (t < 10 ? '0' : '') + t;
+    updatingFromSliders = false;
+  }
+
+  function syncSlidersFromCode() {
+    if (updatingFromSliders) return;
+    updatingFromCode = true;
+    const code = nacaCodeInput.value.padEnd(4, '0');
+    const m = parseInt(code[0]) || 0;
+    const p = parseInt(code[1]) || 0;
+    const t = parseInt(code.substring(2)) || 0;
+    camberSlider.value = m;
+    camberPosSlider.value = p;
+    thicknessSlider.value = Math.max(1, Math.min(30, t));
+    camberValEl.textContent = m + '%';
+    camberPosValEl.textContent = p;
+    thicknessValEl.textContent = Math.max(1, Math.min(30, t)) + '%';
+    maxCamber = m / 100;
+    camberPosition = p / 10;
+    thickness = Math.max(1, Math.min(30, t)) / 100;
+    updatingFromCode = false;
+  }
+
+  // ===== Rebuild mesh + field =====
+
+  let rebuildTimer = null;
+  function scheduleRebuild() {
+    if (rebuildTimer) clearTimeout(rebuildTimer);
+    rebuildTimer = setTimeout(() => {
+      generateMesh();
+      resetView();
+      draw();
+      drawEnergyChart();
+    }, 80);
+  }
+
+  // ===== Interaction =====
+
+  function findNearestVertex(sx, sy, maxDist) {
+    if (!mesh) return -1;
+    let bestIdx = -1, bestDist = maxDist * maxDist;
+    for (let i = 0; i < mesh.points.length; i++) {
+      if (mesh.adjacency[i].size === 0) continue;
+      const s = worldToScreen(mesh.points[i].x, mesh.points[i].y);
+      const dx = s.sx - sx, dy = s.sy - sy;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < bestDist) { bestDist = d2; bestIdx = i; }
+    }
+    return bestIdx;
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    canvas.setPointerCapture(e.pointerId);
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+
+    if (viewLocked) {
+      // In locked mode: find nearest vertex to start constraining
+      const idx = findNearestVertex(sx, sy, 25);
+      if (idx >= 0 && fieldAngles) {
+        constrainDragIdx = idx;
+        fieldConstrained[idx] = 1;
+        // Set angle toward mouse position
+        const w = screenToWorld(sx, sy);
+        fieldAngles[idx] = Math.atan2(w.wy - mesh.points[idx].y, w.wx - mesh.points[idx].x);
+        draw();
+      }
+    } else {
+      // Normal pan mode
+      isDragging = true;
+      dragMoved = false;
+      dragStartX = sx;
+      dragStartY = sy;
+      dragStartCx = viewCx;
+      dragStartCy = viewCy;
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+    const w = screenToWorld(sx, sy);
+    coordDisplay.textContent = `(${w.wx.toFixed(3)}, ${w.wy.toFixed(3)})`;
+
+    if (viewLocked) {
+      // In locked mode: rotate the constrained cross to follow mouse
+      if (constrainDragIdx >= 0 && fieldAngles && mesh) {
+        const pt = mesh.points[constrainDragIdx];
+        fieldAngles[constrainDragIdx] = Math.atan2(w.wy - pt.y, w.wx - pt.x);
+        draw();
+      }
+    } else if (isDragging) {
+      const dx = sx - dragStartX, dy = sy - dragStartY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+      if (dragMoved) {
+        canvas.classList.add('grabbing');
+        viewCx = dragStartCx - dx / viewScale;
+        viewCy = dragStartCy + dy / viewScale;
+        draw();
+      }
+    }
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    if (viewLocked) {
+      // Release the constrained vertex drag (it stays constrained at its angle)
+      constrainDragIdx = -1;
+    } else {
+      const wasDrag = dragMoved;
+      isDragging = false;
+      dragMoved = false;
+      canvas.classList.remove('grabbing');
+
+      if (!wasDrag) {
+        // Click — toggle nearest vertex constraint
+        const rect = canvas.getBoundingClientRect();
+        const sx = e.clientX - rect.left;
+        const sy = e.clientY - rect.top;
+        const idx = findNearestVertex(sx, sy, 20);
+        if (idx >= 0 && fieldConstrained && fieldAngles) {
+          if (fieldConstrained[idx]) {
+            fieldConstrained[idx] = 0;
+          } else {
+            fieldConstrained[idx] = 1;
+          }
+          draw();
+        }
+      }
+    }
+  });
+
+  canvas.addEventListener('wheel', (e) => {
+    if (viewLocked) return; // no zoom when view is locked
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+    const worldBefore = screenToWorld(sx, sy);
+    const zoomFactor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    viewScale *= zoomFactor;
+    viewScale = Math.max(10, Math.min(viewScale, 50000));
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    viewCx = worldBefore.wx - (sx - cw / 2) / viewScale;
+    viewCy = worldBefore.wy + (sy - ch / 2) / viewScale;
+    draw();
+  }, { passive: false });
+
+  // ===== Settings =====
+
+  // Geometry changes → rebuild mesh
+  thicknessSlider.addEventListener('input', () => {
+    thickness = parseInt(thicknessSlider.value) / 100;
+    thicknessValEl.textContent = parseInt(thicknessSlider.value) + '%';
+    syncCodeFromSliders(); scheduleRebuild();
+  });
+  camberSlider.addEventListener('input', () => {
+    maxCamber = parseInt(camberSlider.value) / 100;
+    camberValEl.textContent = parseInt(camberSlider.value) + '%';
+    syncCodeFromSliders(); scheduleRebuild();
+  });
+  camberPosSlider.addEventListener('input', () => {
+    camberPosition = parseInt(camberPosSlider.value) / 10;
+    camberPosValEl.textContent = parseInt(camberPosSlider.value);
+    syncCodeFromSliders(); scheduleRebuild();
+  });
+  nacaCodeInput.addEventListener('input', () => {
+    syncSlidersFromCode(); scheduleRebuild();
+  });
+  chordSlider.addEventListener('input', () => {
+    chordLength = parseInt(chordSlider.value) / 10;
+    chordValEl.textContent = chordLength.toFixed(1);
+    scheduleRebuild();
+  });
+  aoaSlider.addEventListener('input', () => {
+    aoaDeg = parseInt(aoaSlider.value);
+    aoaValEl.innerHTML = aoaDeg + '&deg;';
+    scheduleRebuild();
+  });
+  domainShapeSelect.addEventListener('change', () => {
+    domainShape = domainShapeSelect.value;
+    scheduleRebuild();
+  });
+  domainSizeSlider.addEventListener('input', () => {
+    domainSize = parseInt(domainSizeSlider.value) / 10;
+    domainSizeValEl.textContent = domainSize.toFixed(1);
+    scheduleRebuild();
+  });
+  meshSpacingSlider.addEventListener('input', () => {
+    meshSpacing = parseInt(meshSpacingSlider.value) / 100;
+    meshSpacingValEl.textContent = meshSpacing.toFixed(2) + 'c';
+    scheduleRebuild();
+  });
+  airfoilRefineSlider.addEventListener('input', () => {
+    airfoilRefine = parseInt(airfoilRefineSlider.value);
+    airfoilRefineValEl.textContent = airfoilRefine + 'x';
+    scheduleRebuild();
+  });
+
+  // Constraint toggles
+  constrainAirfoilCb.addEventListener('change', () => {
+    if (!mesh) return;
+    if (constrainAirfoilCb.checked) applyAirfoilConstraints();
+    else releaseAirfoilConstraints();
+    draw();
+  });
+  constrainDomainCb.addEventListener('change', () => {
+    if (!mesh) return;
+    if (constrainDomainCb.checked) applyDomainConstraints();
+    else releaseDomainConstraints();
+    draw();
+  });
+
+  // Init & solve
+  applyInitBtn.addEventListener('click', () => {
+    if (!mesh) return;
+    applyInitMode();
+    if (showStreamlines) computeStreamlines();
+    draw();
+    drawEnergyChart();
+  });
+  solveLinearBtn.addEventListener('click', () => {
+    if (!mesh) return;
+    energyHistory = [];
+    energyHistory.push(computeEnergy());
+    solveLinear();
+    energyHistory.push(computeEnergy());
+    cachedStreamlines = null;
+    if (showStreamlines) computeStreamlines();
+    draw();
+    drawEnergyChart();
+  });
+
+  // Smoothing
+  smoothItersSlider.addEventListener('input', () => {
+    smoothIterations = parseInt(smoothItersSlider.value);
+    smoothItersValEl.textContent = smoothIterations;
+  });
+  runSmoothBtn.addEventListener('click', () => {
+    if (!mesh) return;
+    smoothField(smoothIterations, true);
+    if (showStreamlines) computeStreamlines();
+    draw();
+    drawEnergyChart();
+  });
+
+  // Topology buttons
+  detectSingBtn.addEventListener('click', () => {
+    if (!mesh || !fieldAngles) return;
+    detectSingularities();
+    draw();
+  });
+  extractBlocksBtn.addEventListener('click', () => {
+    if (!mesh || !fieldAngles) return;
+    if (singularities.length === 0) detectSingularities();
+    buildTriHash();
+    extractSeparatrices();
+    buildMotorgraph();
+    extractBlocks();
+    draw();
+  });
+
+  // Quad mesh
+  targetHSlider.addEventListener('input', () => {
+    targetH = parseInt(targetHSlider.value) / 100;
+    targetHValEl.textContent = targetH.toFixed(2);
+  });
+  genQuadBtn.addEventListener('click', () => {
+    if (!mesh || !fieldAngles) return;
+    if (blockBoundaries.length === 0) {
+      if (singularities.length === 0) detectSingularities();
+      buildTriHash();
+      extractSeparatrices();
+      buildMotorgraph();
+      extractBlocks();
+    }
+    generateQuadMesh();
+    draw();
+  });
+
+  // Display
+  showMeshCb.addEventListener('change', () => { showMesh = showMeshCb.checked; draw(); });
+  crossSizeSlider.addEventListener('input', () => {
+    crossSize = parseInt(crossSizeSlider.value);
+    crossSizeValEl.textContent = crossSize;
+    draw();
+  });
+  showStreamlinesCb.addEventListener('change', () => {
+    showStreamlines = showStreamlinesCb.checked;
+    if (showStreamlines && !cachedStreamlines) computeStreamlines();
+    draw();
+  });
+  streamLengthSlider.addEventListener('input', () => {
+    streamLength = parseInt(streamLengthSlider.value);
+    streamLengthValEl.textContent = streamLength;
+    if (showStreamlines) { computeStreamlines(); draw(); }
+  });
+
+  // Buttons
+  resetFieldBtn.addEventListener('click', () => { initField(); draw(); drawEnergyChart(); });
+  resetViewBtn.addEventListener('click', () => { resetView(); draw(); });
+  lockViewBtn.addEventListener('click', () => {
+    viewLocked = !viewLocked;
+    lockViewBtn.textContent = viewLocked ? 'Unlock view' : 'Lock view';
+    if (viewLocked) {
+      lockViewBtn.classList.add('active');
+      canvas.style.cursor = 'crosshair';
+    } else {
+      lockViewBtn.classList.remove('active');
+      canvas.style.cursor = 'grab';
+      constrainDragIdx = -1;
+    }
+  });
+
+  // ===== Init =====
+  resizeCanvas();
+  resizeEnergyCanvas();
+  resetView();
+  generateMesh();
+  draw();
+  drawEnergyChart();
+  window.addEventListener('resize', () => {
+    resizeCanvas(); resizeEnergyCanvas(); resetView(); draw(); drawEnergyChart();
+  });
+})();
+</script>
+<section id="how-it-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-works">How it works</h3>
+<ul>
+<li><strong>Mesh generation</strong>: points are placed on the airfoil surface (cosine-spaced), the domain boundary, and a regular interior grid. Points inside the airfoil or outside the domain are rejected. <a href="https://github.com/mapbox/delaunator">Delaunator</a> computes the Delaunay triangulation; triangles whose centroid falls inside the airfoil or outside the domain are removed.</li>
+<li><strong>Cross field</strong>: each vertex carries an angle. The 4-RoSy Laplacian smoother averages <code>cos 4θ / sin 4θ</code> over mesh neighbors — the same representation used in frame field papers.</li>
+<li><strong>Constrain airfoil</strong>: pins airfoil-surface vertices to the local tangent direction.</li>
+<li><strong>Constrain domain</strong>: pins far-field boundary vertices to the local tangent direction.</li>
+<li><strong>Click to constrain</strong>: click any vertex to pin/release it at its current angle.</li>
+<li><strong>Run smoother</strong>: executes the specified number of Jacobi iterations and records the Dirichlet energy at each step.</li>
+<li><strong>Energy chart</strong>: shows E = Σ<sub>edges</sub> (1 − cos 4(θ<sub>i</sub> − θ<sub>j</sub>)) per iteration. Red dot = initial energy, green dot = final. The curve should decay monotonically toward the smooth equilibrium.</li>
+<li><strong>Iterations</strong> slider goes up to 2000 for observing long-tail convergence.</li>
+<li><strong>Detect singularities</strong>: computes the Poincaré index (angle defect) around each triangle. Non-zero index means a singularity: +1 (3-valent, red) or -1 (5-valent, purple).</li>
+<li><strong>Trace separatrices</strong>: from each singularity, traces streamlines outward along cross field arms. These are the red curves that form potential block partition boundaries.</li>
+<li><strong>Build motorgraph</strong>: constructs a graph whose nodes are singularities and boundary intersection points, and whose edges are the separatrix arcs connecting them. This is the topological skeleton of the block decomposition.</li>
+<li><strong>Extract blocks</strong>: walks the motorgraph to identify closed regions (blocks) and fills them with distinct colors. Each block is a candidate for structured (transfinite interpolation) meshing.</li>
+<li>Geometry changes (NACA code, AoA, domain, spacing) regenerate the mesh and reset the field. Click <strong>Run smoother</strong> again to re-solve.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/marvyn\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
