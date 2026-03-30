@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Interactive Cross Field – On Smooth Frame Field Design</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-dbc92dda8186f57fa2e333fbb71d6a9d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-541339af9b91407e63a3907001525c6c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-9a3770f4adf38b4d24ab576211a11ae0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-541339af9b91407e63a3907001525c6c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">On Smooth Frame Field Design</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../frame_theory.html"> 
+<span class="menu-text">Frame Theory</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../gallery.html"> 
+<span class="menu-text">Gallery</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../assets/on_smooth_frame_field_design.pdf"> <i class="bi bi-file-pdf" role="img">
+</i> 
+<span class="menu-text">Original Paper</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Interactive Cross Field</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Interactive Cross Field</h1>
+<p class="subtitle lead">Constrain crosses and watch the field respond</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="../gallery.html">← Back to Gallery</a></p>
+<p>Click crosses to <strong>constrain</strong> them. Click a constrained cross to <strong>release</strong> it. Drag to constrain many at once.</p>
+<style>
+#cross-field-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+#cross-canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 6px;
+  cursor: crosshair;
+  background: var(--bs-body-bg, #fff);
+}
+.settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.4rem;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.settings-row:first-child {
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.settings-row:last-of-type {
+  border-radius: 0 0 6px 6px;
+  margin-bottom: 0.8rem;
+}
+.settings-row.single-row {
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+}
+.settings-row label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+.settings-row input[type="range"] {
+  width: 100px;
+}
+.settings-row input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.settings-row select {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  background: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #212529);
+  font-size: 0.85rem;
+}
+.settings-row button {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  background: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #212529);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.settings-row button:hover {
+  background: var(--bs-primary, #2c3e50);
+  color: #fff;
+}
+.settings-row button.active {
+  background: var(--bs-primary, #2c3e50);
+  color: #fff;
+}
+.sep {
+  width: 1px;
+  height: 1.2rem;
+  background: var(--bs-border-color, #dee2e6);
+}
+.settings-label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color, #6c757d);
+}
+</style>
+
+<div id="cross-field-container">
+
+  <div class="settings-row">
+    <span class="settings-label">Grid</span>
+    <label>Size: <input type="range" id="grid-size" min="5" max="40" value="16"> <span id="grid-size-val">16x16</span></label>
+    <label>Cross size: <input type="range" id="cross-size" min="4" max="30" value="12"> <span id="cross-size-val">12</span></label>
+    <label>Width: <input type="range" id="line-width" min="1" max="6" value="2"> <span id="line-width-val">2</span></label>
+    <label>Color: <input type="color" id="cross-color" value="#2c3e50"></label>
+    <label>Constrained: <input type="color" id="constrained-color" value="#e74c3c"></label>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Constraints</span>
+    <label>Mode:
+      <select id="constraint-mode">
+        <option value="follow-mouse">Follow mouse</option>
+        <option value="auto-orbit">Auto orbit</option>
+        <option value="fixed">Fixed angle</option>
+      </select>
+    </label>
+    <label id="fixed-angle-group" style="display:none;">Angle: <input type="range" id="fixed-angle" min="0" max="314" value="0"> <span id="fixed-angle-val">0°</span></label>
+    <label id="orbit-speed-group" style="display:none;">Speed: <input type="range" id="orbit-speed" min="1" max="20" value="5"> <span id="orbit-speed-val">5</span></label>
+    <div class="sep"></div>
+    <button id="boundary-btn">Constrain boundary</button>
+    <button id="reset-btn">Reset all</button>
+  </div>
+
+  <div class="settings-row">
+    <span class="settings-label">Smoothing</span>
+    <label><input type="checkbox" id="show-smooth"> Enable</label>
+    <label>Iterations: <input type="range" id="smooth-iters" min="1" max="100" value="20"> <span id="smooth-iters-val">20</span></label>
+  </div>
+
+  <canvas id="cross-canvas"></canvas>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('cross-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Element refs
+  const gridSlider = document.getElementById('grid-size');
+  const crossSizeSlider = document.getElementById('cross-size');
+  const lineWidthSlider = document.getElementById('line-width');
+  const crossColorInput = document.getElementById('cross-color');
+  const constrainedColorInput = document.getElementById('constrained-color');
+  const smoothCheckbox = document.getElementById('show-smooth');
+  const smoothItersSlider = document.getElementById('smooth-iters');
+  const smoothItersVal = document.getElementById('smooth-iters-val');
+  const resetBtn = document.getElementById('reset-btn');
+  const boundaryBtn = document.getElementById('boundary-btn');
+  const gridSizeVal = document.getElementById('grid-size-val');
+  const crossSizeVal = document.getElementById('cross-size-val');
+  const lineWidthVal = document.getElementById('line-width-val');
+  const constraintModeSelect = document.getElementById('constraint-mode');
+  const fixedAngleGroup = document.getElementById('fixed-angle-group');
+  const fixedAngleSlider = document.getElementById('fixed-angle');
+  const fixedAngleVal = document.getElementById('fixed-angle-val');
+  const orbitSpeedGroup = document.getElementById('orbit-speed-group');
+  const orbitSpeedSlider = document.getElementById('orbit-speed');
+  const orbitSpeedVal = document.getElementById('orbit-speed-val');
+
+  // State
+  let gridN = 16;
+  let crossRadius = 12;
+  let lineWidth = 2;
+  let crossColor = '#2c3e50';
+  let constrainedColor = '#e74c3c';
+  let smoothField = false;
+  let smoothIterations = 20;
+  let constraintMode = 'follow-mouse'; // 'follow-mouse' | 'auto-orbit' | 'fixed'
+  let fixedAngle = 0;
+  let orbitSpeed = 5;
+  let boundaryConstrained = false;
+
+  let angles = [];
+  let constrained = [];
+  let mouseDown = false;
+  let lastMouseX = 0, lastMouseY = 0;
+  let cellW, cellH;
+  let time = 0;
+  let animId = null;
+
+  function initGrid() {
+    angles = [];
+    constrained = [];
+    for (let i = 0; i < gridN; i++) {
+      angles[i] = [];
+      constrained[i] = [];
+      for (let j = 0; j < gridN; j++) {
+        angles[i][j] = 0;
+        constrained[i][j] = false;
+      }
+    }
+    boundaryConstrained = false;
+    boundaryBtn.classList.remove('active');
+    boundaryBtn.textContent = 'Constrain boundary';
+  }
+
+  function isBoundary(i, j) {
+    return i === 0 || j === 0 || i === gridN - 1 || j === gridN - 1;
+  }
+
+  function setBoundaryConstraints(on) {
+    for (let i = 0; i < gridN; i++) {
+      for (let j = 0; j < gridN; j++) {
+        if (isBoundary(i, j)) {
+          constrained[i][j] = on;
+          if (on) {
+            // Boundary angle: align with nearest edge direction
+            if (i === 0 || i === gridN - 1) angles[i][j] = Math.PI / 2; // vertical
+            if (j === 0 || j === gridN - 1) angles[i][j] = 0;           // horizontal
+            // Corners: pick horizontal
+            if ((i === 0 || i === gridN - 1) && (j === 0 || j === gridN - 1)) angles[i][j] = 0;
+          } else {
+            angles[i][j] = 0;
+          }
+        }
+      }
+    }
+  }
+
+  function resizeCanvas() {
+    const container = document.getElementById('cross-field-container');
+    const w = container.clientWidth;
+    const h = Math.min(w * 0.7, window.innerHeight * 0.65);
+    canvas.width = w * devicePixelRatio;
+    canvas.height = h * devicePixelRatio;
+    canvas.style.height = h + 'px';
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    cellW = w / gridN;
+    cellH = h / gridN;
+  }
+
+  function getCellFromMouse(ex, ey) {
+    const rect = canvas.getBoundingClientRect();
+    const x = ex - rect.left;
+    const y = ey - rect.top;
+    const i = Math.floor(x / cellW);
+    const j = Math.floor(y / cellH);
+    if (i >= 0 && i < gridN && j >= 0 && j < gridN) return [i, j];
+    return null;
+  }
+
+  function angleToCellFromPoint(px, py, ci, cj) {
+    // px, py in canvas-local coords
+    const cx = (ci + 0.5) * cellW;
+    const cy = (cj + 0.5) * cellH;
+    return Math.atan2(py - cy, px - cx);
+  }
+
+  function angleToCell(ex, ey, ci, cj) {
+    const rect = canvas.getBoundingClientRect();
+    return angleToCellFromPoint(ex - rect.left, ey - rect.top, ci, cj);
+  }
+
+  function smoothAngles(iterations) {
+    for (let iter = 0; iter < iterations; iter++) {
+      const newAngles = angles.map(row => row.slice());
+      for (let i = 0; i < gridN; i++) {
+        for (let j = 0; j < gridN; j++) {
+          if (constrained[i][j]) continue;
+          let sx = 0, sy = 0;
+          const neighbors = [[i-1,j],[i+1,j],[i,j-1],[i,j+1]];
+          for (const [ni, nj] of neighbors) {
+            if (ni >= 0 && ni < gridN && nj >= 0 && nj < gridN) {
+              sx += Math.cos(4 * angles[ni][nj]);
+              sy += Math.sin(4 * angles[ni][nj]);
+            }
+          }
+          newAngles[i][j] = Math.atan2(sy, sx) / 4;
+        }
+      }
+      angles = newAngles;
+    }
+  }
+
+  function drawCross(cx, cy, angle, isConstrained) {
+    const r = crossRadius;
+    ctx.strokeStyle = isConstrained ? constrainedColor : crossColor;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+
+    ctx.beginPath();
+    ctx.moveTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+    ctx.lineTo(cx - r * Math.cos(angle), cy - r * Math.sin(angle));
+    ctx.stroke();
+
+    const a2 = angle + Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + r * Math.cos(a2), cy + r * Math.sin(a2));
+    ctx.lineTo(cx - r * Math.cos(a2), cy - r * Math.sin(a2));
+    ctx.stroke();
+
+    if (isConstrained) {
+      ctx.fillStyle = constrainedColor;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function draw() {
+    const w = canvas.width / devicePixelRatio;
+    const h = canvas.height / devicePixelRatio;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < gridN; i++) {
+      for (let j = 0; j < gridN; j++) {
+        drawCross((i + 0.5) * cellW, (j + 0.5) * cellH, angles[i][j], constrained[i][j]);
+      }
+    }
+  }
+
+  function updateConstrainedAngles() {
+    const w = canvas.width / devicePixelRatio;
+    const h = canvas.height / devicePixelRatio;
+
+    if (constraintMode === 'follow-mouse') {
+      // Already updated in mousemove
+      return;
+    }
+
+    if (constraintMode === 'auto-orbit') {
+      const mx = w * 0.5 + w * 0.35 * Math.cos(time * 0.7);
+      const my = h * 0.5 + h * 0.3 * Math.sin(time * 1.1);
+      for (let i = 0; i < gridN; i++) {
+        for (let j = 0; j < gridN; j++) {
+          if (constrained[i][j] && !(boundaryConstrained && isBoundary(i, j))) {
+            angles[i][j] = angleToCellFromPoint(mx, my, i, j);
+          }
+        }
+      }
+    }
+
+    if (constraintMode === 'fixed') {
+      for (let i = 0; i < gridN; i++) {
+        for (let j = 0; j < gridN; j++) {
+          if (constrained[i][j] && !(boundaryConstrained && isBoundary(i, j))) {
+            angles[i][j] = fixedAngle;
+          }
+        }
+      }
+    }
+  }
+
+  function updateAndDraw() {
+    updateConstrainedAngles();
+    if (smoothField) smoothAngles(smoothIterations);
+    draw();
+  }
+
+  // Animation loop (for auto-orbit mode or smoothing)
+  function needsAnimation() {
+    return constraintMode === 'auto-orbit';
+  }
+
+  function animLoop() {
+    time += 0.015 * orbitSpeed;
+    updateAndDraw();
+    if (needsAnimation()) {
+      animId = requestAnimationFrame(animLoop);
+    } else {
+      animId = null;
+    }
+  }
+
+  function startAnimIfNeeded() {
+    if (needsAnimation() && !animId) {
+      animLoop();
+    }
+  }
+
+  function stopAnim() {
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+  }
+
+  // --- Mouse events ---
+  canvas.addEventListener('mousedown', (e) => {
+    mouseDown = true;
+    const cell = getCellFromMouse(e.clientX, e.clientY);
+    if (cell) {
+      const [i, j] = cell;
+      if (constrained[i][j] && !e.shiftKey) {
+        constrained[i][j] = false;
+        angles[i][j] = 0;
+      } else {
+        constrained[i][j] = true;
+        if (constraintMode === 'follow-mouse') {
+          angles[i][j] = angleToCell(e.clientX, e.clientY, i, j);
+        } else if (constraintMode === 'fixed') {
+          angles[i][j] = fixedAngle;
+        }
+      }
+      updateAndDraw();
+    }
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+
+    if (mouseDown) {
+      const cell = getCellFromMouse(e.clientX, e.clientY);
+      if (cell) {
+        const [i, j] = cell;
+        constrained[i][j] = true;
+        if (constraintMode === 'follow-mouse') {
+          angles[i][j] = angleToCell(e.clientX, e.clientY, i, j);
+        } else if (constraintMode === 'fixed') {
+          angles[i][j] = fixedAngle;
+        }
+      }
+    }
+
+    if (constraintMode === 'follow-mouse') {
+      let needsRedraw = false;
+      for (let i = 0; i < gridN; i++) {
+        for (let j = 0; j < gridN; j++) {
+          if (constrained[i][j]) {
+            const newAngle = angleToCell(e.clientX, e.clientY, i, j);
+            if (Math.abs(angles[i][j] - newAngle) > 0.001) {
+              angles[i][j] = newAngle;
+              needsRedraw = true;
+            }
+          }
+        }
+      }
+      if (needsRedraw) updateAndDraw();
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => { mouseDown = false; });
+  canvas.addEventListener('mouseleave', () => { mouseDown = false; });
+
+  // Touch
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const t = e.touches[0];
+    canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: t.clientX, clientY: t.clientY }));
+  }, { passive: false });
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const t = e.touches[0];
+    canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: t.clientX, clientY: t.clientY }));
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => {
+    canvas.dispatchEvent(new MouseEvent('mouseup'));
+  });
+
+  // --- Settings ---
+  gridSlider.addEventListener('input', () => {
+    gridN = parseInt(gridSlider.value);
+    gridSizeVal.textContent = gridN + 'x' + gridN;
+    initGrid(); resizeCanvas(); updateAndDraw();
+  });
+  crossSizeSlider.addEventListener('input', () => {
+    crossRadius = parseInt(crossSizeSlider.value);
+    crossSizeVal.textContent = crossRadius;
+    updateAndDraw();
+  });
+  lineWidthSlider.addEventListener('input', () => {
+    lineWidth = parseInt(lineWidthSlider.value);
+    lineWidthVal.textContent = lineWidth;
+    updateAndDraw();
+  });
+  crossColorInput.addEventListener('input', () => { crossColor = crossColorInput.value; updateAndDraw(); });
+  constrainedColorInput.addEventListener('input', () => { constrainedColor = constrainedColorInput.value; updateAndDraw(); });
+
+  smoothCheckbox.addEventListener('change', () => {
+    smoothField = smoothCheckbox.checked;
+    updateAndDraw();
+  });
+  smoothItersSlider.addEventListener('input', () => {
+    smoothIterations = parseInt(smoothItersSlider.value);
+    smoothItersVal.textContent = smoothIterations;
+    updateAndDraw();
+  });
+
+  constraintModeSelect.addEventListener('change', () => {
+    constraintMode = constraintModeSelect.value;
+    fixedAngleGroup.style.display = constraintMode === 'fixed' ? '' : 'none';
+    orbitSpeedGroup.style.display = constraintMode === 'auto-orbit' ? '' : 'none';
+    stopAnim();
+    startAnimIfNeeded();
+    updateAndDraw();
+  });
+
+  fixedAngleSlider.addEventListener('input', () => {
+    fixedAngle = parseInt(fixedAngleSlider.value) / 100 * (Math.PI / 2);
+    fixedAngleVal.innerHTML = Math.round(fixedAngle * 180 / Math.PI) + '&deg;';
+    updateAndDraw();
+  });
+
+  orbitSpeedSlider.addEventListener('input', () => {
+    orbitSpeed = parseInt(orbitSpeedSlider.value);
+    orbitSpeedVal.textContent = orbitSpeed;
+  });
+
+  boundaryBtn.addEventListener('click', () => {
+    boundaryConstrained = !boundaryConstrained;
+    setBoundaryConstraints(boundaryConstrained);
+    boundaryBtn.classList.toggle('active', boundaryConstrained);
+    boundaryBtn.textContent = boundaryConstrained ? 'Release boundary' : 'Constrain boundary';
+    updateAndDraw();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    initGrid();
+    stopAnim(); startAnimIfNeeded();
+    updateAndDraw();
+  });
+
+  // Init
+  initGrid(); resizeCanvas(); updateAndDraw();
+  startAnimIfNeeded();
+  window.addEventListener('resize', () => { resizeCanvas(); updateAndDraw(); });
+})();
+</script>
+<section id="how-it-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-works">How it works</h3>
+<ul>
+<li><strong>Constraint modes:</strong>
+<ul>
+<li><strong>Follow mouse</strong> — constrained crosses continuously point toward your cursor.</li>
+<li><strong>Auto orbit</strong> — a virtual point orbits the canvas and constrained crosses track it automatically. Adjust the speed slider to control how fast it moves.</li>
+<li><strong>Fixed angle</strong> — all constrained crosses lock to a single angle you choose with the slider.</li>
+</ul></li>
+<li><strong>Constrain boundary</strong> toggles all edge crosses as constrained, aligned to their nearest boundary edge (horizontal on top/bottom, vertical on left/right). These stay fixed even in orbit/follow modes — only interior constrained crosses move.</li>
+<li><strong>Smoothing iterations</strong> controls how many Laplacian relaxation passes run per frame. Low values (1-5) give a soft local effect; high values (50-100) propagate constraints across the whole field.</li>
+<li>The smoothing uses 4-symmetry averaging (<code>cos 4&amp;theta;</code>, <code>sin 4&amp;theta;</code>) to respect the cross’s rotational symmetry — the same representation used in the paper’s frame field optimization.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/marvyn\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Generated with Paper Explainer — Quarto + Julia</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
