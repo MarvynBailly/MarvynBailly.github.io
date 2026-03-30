@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/admin/Documents/GitHub/MarvynBailly.github.io/blog//**)",
+      "Read(//c/Users/admin/Documents/GitHub/MarvynBailly.github.io/about//**)"
+    ]
+  }
+}

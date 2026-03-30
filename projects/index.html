@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Projects by Marvyn Bailly - interactive tools, visualizations, and software.">
+    <title>Projects - Marvyn Bailly</title>
+    <link rel="stylesheet" href="../blog/style.css">
+    <style>
+        /* Gallery-style project cards with images */
+        .project-list {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.15);
+            border-color: var(--color-primary);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: var(--color-code-bg);
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .project-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .project-list {
+                padding: 30px 20px;
+                gap: 20px;
+            }
+
+            .card-image {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Unified Header -->
+    <header class="unified-header">
+        <div class="brand">
+            <h1>Marvyn Bailly</h1>
+            <p class="subtitle">PhD Candidate in Applied Mathematics & Scientific Computation</p>
+        </div>
+
+        <nav class="nav-buttons">
+            <a href="../index.html" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+            <a href="./" class="nav-link"
+                style="background: rgba(0, 217, 255, 0.1); border-color: var(--color-primary);">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                Projects
+            </a>
+            <a href="../blog/" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" />
+                    <polyline points="3 7 12 13 21 7" />
+                </svg>
+                Blog
+            </a>
+            <a href="../research/" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Research
+            </a>
+            <a href="../about/" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                About Me
+            </a>
+            <a href="/old_website/" class="nav-link" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+                Old Website
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="project-list">
+        <header class="post-header">
+            <h1>Projects</h1>
+            <p class="subtitle">Interactive tools and software I've built</p>
+        </header>
+
+        <!-- RefGraph -->
+        <a href="https://marvynbailly.github.io/ReferenceGraph/app/" class="project-card" target="_blank">
+            <div class="card-image">
+                <img src="images/refgraph.png" alt="RefGraph citation network visualization">
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">RefGraph</h2>
+                <p class="card-desc">
+                    An interactive citation network explorer built with React and D3.js. Input a DOI or connect
+                    your Zotero library to visualize reference graphs, timelines, and relationship trees
+                    recursively.
+                </p>
+                <span class="read-more">View Project</span>
+            </div>
+        </a>
+
+    </main>
+
+    <footer class="blog-footer">
+        <p>&copy; 2026 Marvyn Bailly</p>
+    </footer>
+
+</body>
+
+</html>
