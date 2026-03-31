@@ -1,4 +1,4 @@
-# Welcome to Marvyn Bailly's Website
+# Welcome to my Website
 
 Welcome! This is my personal website featuring my blog, research, and old website. Please enjoy my content!
 
