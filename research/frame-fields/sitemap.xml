@@ -1,35 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://marvyn.com/frame_theory_slides.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/index.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/demos/cross_field.html</loc>
-    <lastmod>2026-03-27T16:24:49.551Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/frame_theory.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/pde_block_split.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/demos/naca_airfoil.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marvyn.com/gallery.html</loc>
-    <lastmod>2026-03-27T16:24:49.552Z</lastmod>
+    <loc>https://marvyn.com/bommes2013_math_reference.html</loc>
+    <lastmod>2026-04-01T16:10:28.325Z</lastmod>
   </url>
   <url>
     <loc>https://marvyn.com/EXPLAINER_GUIDE.html</loc>
-    <lastmod>2026-03-27T16:24:49.433Z</lastmod>
+    <lastmod>2026-04-01T16:10:28.056Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/integer_grid_maps.html</loc>
+    <lastmod>2026-04-01T16:10:28.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/demos/cross_field.html</loc>
+    <lastmod>2026-04-01T16:10:28.325Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/frame_theory.html</loc>
+    <lastmod>2026-04-01T16:10:28.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/pde_block_split.html</loc>
+    <lastmod>2026-04-01T16:10:28.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/miq_parameterization.html</loc>
+    <lastmod>2026-04-01T16:10:28.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/demos/naca_airfoil.html</loc>
+    <lastmod>2026-04-01T16:10:28.325Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/gallery.html</loc>
+    <lastmod>2026-04-01T16:10:28.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/index.html</loc>
+    <lastmod>2026-04-01T16:10:28.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marvyn.com/frame_theory_slides.html</loc>
+    <lastmod>2026-04-01T16:10:28.326Z</lastmod>
   </url>
 </urlset>
