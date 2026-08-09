@@ -8,6 +8,7 @@
  */
 
 import { SimulationManager } from './core/SimulationManager.js';
+import { LoadingScreen } from './ui/LoadingScreen.js';
 import { Config } from './config.js';
 
 // Global state
@@ -22,7 +23,7 @@ let frametimeDisplay = null;
  */
 async function init() {
     const canvas = document.getElementById('fluid-canvas');
-    const loading = document.getElementById('loading');
+    const loading = new LoadingScreen(document.getElementById('loading'));
 
     try {
         // Resize canvas to fill window
@@ -34,11 +35,9 @@ async function init() {
         // Create simulation
         simulation = new SimulationManager(canvas, config);
 
-        // Initialize (loads shaders, creates FBOs, etc.)
-        await simulation.init();
-
-        // Hide loading indicator
-        loading.classList.add('hidden');
+        // Initialize (loads shaders, creates FBOs, etc.), reporting progress
+        // to whichever loading concept was picked for this visit
+        await simulation.init((progress) => loading.setProgress(progress));
 
         // Setup UI
         setupUI();
@@ -49,15 +48,18 @@ async function init() {
             simulation.resize();
         });
 
-        // Start render loop
+        // Start render loop before the handoff so the sim is already running
+        // by the time the loading screen fades away
         lastTime = performance.now();
         requestAnimationFrame(render);
+
+        await loading.finish();
 
         console.log('Fluid simulation initialized successfully!');
 
     } catch (error) {
         console.error('Failed to initialize simulation:', error);
-        loading.querySelector('p').textContent = `Error: ${error.message}`;
+        loading.error(`Error: ${error.message}`);
     }
 }
 

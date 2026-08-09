@@ -73,7 +73,7 @@ export class SimulationManager {
     /**
      * Initialize WebGL context, shaders, and modules
      */
-    async init() {
+    async init(onProgress = () => { }) {
         // Initialize WebGL
         this.webglManager = new WebGLContextManager(this.canvas);
         this.gl = this.webglManager.getContext();
@@ -93,11 +93,16 @@ export class SimulationManager {
         );
         this.fboManager = new FBOManager(this.gl);
 
+        // Stage thresholds match STAGES in src/ui/loading/stages.js
+        onProgress(0.10);
+
         // Load and compile shaders
-        await this._loadShaders();
+        await this._loadShaders(onProgress);
+        onProgress(0.82);
 
         // Initialize FBOs
         this._initFramebuffers();
+        onProgress(0.92);
 
         // Initialize physics modules
         this.advectionModule = new AdvectionModule(this.gl, this.programs, this.fboManager, this.obstacle);
@@ -119,35 +124,58 @@ export class SimulationManager {
 
         // Initial splats for visual interest
         this.interactionManager.generateRandomSplats(this.velocity, this.dye, 5, this.aspectRatio);
+        onProgress(1);
 
         this.initialized = true;
     }
 
     /**
      * Load and compile all shaders
-     * 
+     *
+     * Sources are fetched concurrently - loading them one after another cost a
+     * full round trip per file, which dominated startup on a cold visit.
+     *
+     * @param {function(number): void} [onProgress] - Reports progress in [0.10, 0.70]
      * @private
      */
-    async _loadShaders() {
+    async _loadShaders(onProgress = () => { }) {
         // Load shader source code
-        const baseVertex = await this._loadShaderFile('/src/shaders/vertex/baseVertex.glsl');
-        const blurVertex = await this._loadShaderFile('/src/shaders/vertex/blurVertex.glsl');
+        const sources = await this._loadShaderSources({
+            baseVertex: '/src/shaders/vertex/baseVertex.glsl',
+            blurVertex: '/src/shaders/vertex/blurVertex.glsl',
+            advection: '/src/shaders/fragment/advection.glsl',
+            divergence: '/src/shaders/fragment/divergence.glsl',
+            pressure: '/src/shaders/fragment/pressure.glsl',
+            gradientSubtract: '/src/shaders/fragment/gradientSubtract.glsl',
+            curl: '/src/shaders/fragment/curl.glsl',
+            vorticity: '/src/shaders/fragment/vorticity.glsl',
+            splat: '/src/shaders/fragment/splat.glsl',
+            display: '/src/shaders/fragment/display.glsl',
+            copy: '/src/shaders/fragment/utils/copy.glsl',
+            clear: '/src/shaders/fragment/utils/clear.glsl',
+            bloomPrefilter: '/src/shaders/fragment/bloomPrefilter.glsl',
+            bloomBlur: '/src/shaders/fragment/bloomBlur.glsl',
+            bloomFinal: '/src/shaders/fragment/bloomFinal.glsl',
+            sunraysMask: '/src/shaders/fragment/sunraysMask.glsl',
+            sunrays: '/src/shaders/fragment/sunrays.glsl',
+        }, onProgress);
 
-        const advectionFrag = await this._loadShaderFile('/src/shaders/fragment/advection.glsl');
-        const divergenceFrag = await this._loadShaderFile('/src/shaders/fragment/divergence.glsl');
-        const pressureFrag = await this._loadShaderFile('/src/shaders/fragment/pressure.glsl');
-        const gradientSubtractFrag = await this._loadShaderFile('/src/shaders/fragment/gradientSubtract.glsl');
-        const curlFrag = await this._loadShaderFile('/src/shaders/fragment/curl.glsl');
-        const vorticityFrag = await this._loadShaderFile('/src/shaders/fragment/vorticity.glsl');
-        const splatFrag = await this._loadShaderFile('/src/shaders/fragment/splat.glsl');
-        const displayFrag = await this._loadShaderFile('/src/shaders/fragment/display.glsl');
-        const copyFrag = await this._loadShaderFile('/src/shaders/fragment/utils/copy.glsl');
-        const clearFrag = await this._loadShaderFile('/src/shaders/fragment/utils/clear.glsl');
-        const bloomPrefilterFrag = await this._loadShaderFile('/src/shaders/fragment/bloomPrefilter.glsl');
-        const bloomBlurFrag = await this._loadShaderFile('/src/shaders/fragment/bloomBlur.glsl');
-        const bloomFinalFrag = await this._loadShaderFile('/src/shaders/fragment/bloomFinal.glsl');
-        const sunraysMaskFrag = await this._loadShaderFile('/src/shaders/fragment/sunraysMask.glsl');
-        const sunraysFrag = await this._loadShaderFile('/src/shaders/fragment/sunrays.glsl');
+        const { baseVertex, blurVertex } = sources;
+        const advectionFrag = sources.advection;
+        const divergenceFrag = sources.divergence;
+        const pressureFrag = sources.pressure;
+        const gradientSubtractFrag = sources.gradientSubtract;
+        const curlFrag = sources.curl;
+        const vorticityFrag = sources.vorticity;
+        const splatFrag = sources.splat;
+        const displayFrag = sources.display;
+        const copyFrag = sources.copy;
+        const clearFrag = sources.clear;
+        const bloomPrefilterFrag = sources.bloomPrefilter;
+        const bloomBlurFrag = sources.bloomBlur;
+        const bloomFinalFrag = sources.bloomFinal;
+        const sunraysMaskFrag = sources.sunraysMask;
+        const sunraysFrag = sources.sunrays;
 
         // Compile vertex shaders
         const baseVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, baseVertex);
@@ -237,6 +265,28 @@ export class SimulationManager {
      * @param {string} url - Shader file URL
      * @returns {Promise<string>} Shader source code
      */
+    /**
+     * Fetch a set of named shader sources concurrently.
+     *
+     * @param {Object<string, string>} paths - Map of name to shader URL
+     * @param {function(number): void} onProgress - Reports progress in [0.10, 0.70]
+     * @returns {Promise<Object<string, string>>} Map of name to source text
+     * @private
+     */
+    async _loadShaderSources(paths, onProgress) {
+        const names = Object.keys(paths);
+        const sources = {};
+        let loaded = 0;
+
+        await Promise.all(names.map(async (name) => {
+            sources[name] = await this._loadShaderFile(paths[name]);
+            loaded++;
+            onProgress(0.10 + 0.60 * (loaded / names.length));
+        }));
+
+        return sources;
+    }
+
     async _loadShaderFile(url) {
         const response = await fetch(url);
         if (!response.ok) {
