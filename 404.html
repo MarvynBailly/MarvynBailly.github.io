@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>404 - Marvyn Bailly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Root-absolute throughout: GitHub Pages serves this file for a miss at
+         any depth, so relative paths would break on /a/b/c -->
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* The panel lets pointer events through so the fluid can still be
+           smeared behind it; only the links capture input. */
+        .fluid-404 {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+            width: min(460px, 88vw);
+            max-height: calc(100dvh - 32px);
+            overflow-y: auto;
+            padding: 34px 34px 30px;
+            background: var(--color-surface);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .fluid-404::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 2px;
+            background: var(--color-primary);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .f-code {
+            font-size: clamp(58px, 15vw, 88px);
+            font-weight: 700;
+            letter-spacing: -0.045em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .f-title {
+            margin-top: 6px;
+            font-size: 0.8rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--color-text-dim);
+        }
+
+        .f-path {
+            margin-top: 18px;
+            padding: 9px 12px;
+            background: var(--color-code-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--color-text);
+            word-break: break-all;
+        }
+
+        .f-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 22px;
+        }
+
+        .f-nav .nav-link {
+            pointer-events: auto;
+        }
+
+        .f-hint {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: var(--color-text-dim);
+        }
+
+        .f-hint span {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- data-on-error dismisses this overlay if WebGL fails, so a visitor who
+         cannot run the simulation still gets the 404 and its links -->
+    <div id="loading" class="loading" data-on-error="dismiss">
+        <p class="loading-message">Initializing WebGL...</p>
+    </div>
+
+    <canvas id="fluid-canvas"></canvas>
+
+    <main class="fluid-404">
+        <h1 class="f-code">404</h1>
+        <p class="f-title">resource not found</p>
+        <p class="f-path" id="path">/</p>
+
+        <nav class="f-nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/blog/" class="nav-link">Blog</a>
+            <a href="/research/" class="nav-link">Research</a>
+            <a href="/about/" class="nav-link">About</a>
+        </nav>
+
+        <p class="f-hint"><span>»</span> drag anywhere to disturb the fluid</p>
+    </main>
+
+    <script>
+        // textContent, never innerHTML - the path is attacker-controllable
+        document.getElementById('path').textContent = location.pathname + location.search;
+    </script>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

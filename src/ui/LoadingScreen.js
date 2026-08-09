@@ -121,10 +121,21 @@ export class LoadingScreen {
     /**
      * Replace the animation with an error message and stop rendering.
      *
+     * Pages where the simulation is decoration rather than the point - the 404
+     * page, for example - can set data-on-error="dismiss" on the #loading
+     * element. The overlay then gets out of the way instead of covering that
+     * page's own content with an error the visitor cannot act on.
+     *
      * @param {string} message - Message to display
      */
     error(message) {
         this._stop();
+
+        if (this.root.dataset.onError === 'dismiss') {
+            this.root.classList.add('hidden');
+            return;
+        }
+
         this.root.classList.remove('hidden');
         const p = document.createElement('p');
         p.className = 'loading-message';
