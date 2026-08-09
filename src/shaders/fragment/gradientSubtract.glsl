@@ -61,7 +61,7 @@ void main () {
     
     // Subtract pressure gradient: v = v - ∇p
     // ∇p = ((p_right - p_left) / 2, (p_top - p_bottom) / 2)
-    velocity.xy -= vec2(R - L, T - B);
+    velocity.xy -= 0.5 * vec2(R - L, T - B);
     
     gl_FragColor = vec4(velocity, 0.0, 1.0);
 }

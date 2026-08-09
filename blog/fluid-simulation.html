@@ -510,6 +510,80 @@ gl_FragColor = vec4(color, 1.0);</code></pre>
             </div>
         </section>
 
+        <section id="bug-fixes">
+            <h2>Bug Fixes & Improvements (April 2026)</h2>
+
+            <p>
+                After a thorough code review, several bugs and improvements were identified across the simulation pipeline.
+                Here's a summary of the fixes applied:
+            </p>
+
+            <h3>Gradient Subtraction Scaling Fix</h3>
+            <p>
+                The pressure projection step had an inconsistency: the divergence shader correctly used
+                central differences with a <code>0.5</code> factor (<code>div = 0.5 * (R - L + T - B)</code>),
+                but the gradient subtraction shader omitted it. This made the pressure correction twice as strong
+                as intended, causing over-correction artifacts. The fix:
+            </p>
+            <div class="code-block">
+<pre><code>// Before (incorrect)
+velocity.xy -= vec2(R - L, T - B);
+
+// After (correct - matches divergence scaling)
+velocity.xy -= 0.5 * vec2(R - L, T - B);</code></pre>
+            </div>
+
+            <h3>Dissipation Formula Upgrade</h3>
+            <p>
+                The advection shader used a first-order Taylor approximation for dissipation:
+                <code>result / (1.0 + dissipation * dt)</code>. This is inaccurate for larger dissipation
+                values and doesn't model true exponential decay. Replaced with the physically correct formula:
+            </p>
+            <div class="code-block">
+<pre><code>// Before (approximation)
+float decay = 1.0 + dissipation * dt;
+gl_FragColor = result / decay;
+
+// After (exact exponential decay)
+gl_FragColor = result * exp(-dissipation * dt);</code></pre>
+            </div>
+
+            <h3>Pressure Solver Convergence</h3>
+            <p>
+                The Jacobi pressure solver defaulted to 20 iterations, which is insufficient for a 256x256 grid
+                to reach adequate convergence. Residual divergence was leaving compressibility artifacts in the
+                velocity field. Increased the default to 40 iterations, which roughly halves the residual error
+                without excessive GPU cost.
+            </p>
+
+            <h3>Timestep Double-Clamping</h3>
+            <p>
+                Delta time was being clamped to 16ms in both the render loop (<code>main.js</code>) and inside
+                <code>SimulationManager.update()</code>. The redundant clamp was removed. At low frame rates
+                (e.g., 30 FPS), the double-clamp was causing the simulation to appear to run at half real-time speed.
+            </p>
+
+            <h3>Touch Pointer Memory Leak</h3>
+            <p>
+                The <code>PointerManager</code> tracked multi-touch pointers by adding entries to an array on
+                <code>touchstart</code>, but never removed them on <code>touchend</code> &mdash; only setting
+                <code>down = false</code>. Over extended touch-heavy sessions, the array grew unboundedly.
+                Stale pointers are now cleaned up when touches end.
+            </p>
+
+            <h3>Other Fixes</h3>
+            <ul>
+                <li><strong>Duplicate method removed</strong>: <code>_loadShaderFile</code> was defined twice in
+                    <code>SimulationManager</code> due to a copy-paste error.</li>
+                <li><strong>FBO buffer references</strong>: The full-screen quad's vertex and index buffers are now
+                    stored as <code>quadVBO</code>/<code>quadIBO</code> so they can be properly cleaned up on
+                    WebGL context loss.</li>
+                <li><strong>Color loop cleanup</strong>: The pointer color transition's <code>requestAnimationFrame</code>
+                    loop now stores its ID and exposes a <code>destroy()</code> method, preventing it from running
+                    indefinitely after the simulation is torn down.</li>
+            </ul>
+        </section>
+
         <section id="conclusion">
             <h2>Conclusion</h2>
             <p>

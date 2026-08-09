@@ -392,21 +392,6 @@ export class SimulationManager {
 
 
     /**
-     * Load shader file from URL
-     * 
-     * @private
-     * @param {string} url - Shader file URL
-     * @returns {Promise<string>} Shader source code
-     */
-    async _loadShaderFile(url) {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to load shader: ${url}`);
-        }
-        return await response.text();
-    }
-
-    /**
      * Initialize framebuffers
      * 
      * @private
@@ -483,9 +468,6 @@ export class SimulationManager {
      */
     update(dt) {
         if (!this.initialized || this.config.PAUSED) return;
-
-        // Clamp dt to prevent instability
-        dt = Math.min(dt, 0.016); // Max 16ms (60 FPS)
 
         // 1. Apply user interaction
         this.interactionManager.applyPointerForces(this.velocity, this.dye, this.aspectRatio);

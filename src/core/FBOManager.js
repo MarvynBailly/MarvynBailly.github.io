@@ -28,7 +28,8 @@ export class FBOManager {
 
         // Create vertex buffer for full-screen quad
         // Positions: [-1, -1], [-1, 1], [1, 1], [1, -1]
-        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        this.quadVBO = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]),
@@ -36,7 +37,8 @@ export class FBOManager {
         );
 
         // Create element buffer for indices
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+        this.quadIBO = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.quadIBO);
         gl.bufferData(
             gl.ELEMENT_ARRAY_BUFFER,
             new Uint16Array([0, 1, 2, 0, 2, 3]),

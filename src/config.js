@@ -17,10 +17,10 @@ export class Config {
         this.CAPTURE_RESOLUTION = 512;  // Resolution for screenshots
 
         // Physics Parameters
-        this.DENSITY_DISSIPATION = 1.0;     // How fast dye fades (1.0 = no fade)
+        this.DENSITY_DISSIPATION = 1.0;     // How fast dye fades (0 = no fade, higher = faster)
         this.VELOCITY_DISSIPATION = 0.2;    // Viscosity (0 = inviscid, higher = more viscous)
         this.PRESSURE = 0.8;                 // Pressure multiplier
-        this.PRESSURE_ITERATIONS = 20;       // Accuracy of pressure solve (higher = more accurate)
+        this.PRESSURE_ITERATIONS = 40;       // Accuracy of pressure solve (higher = more accurate)
         this.CURL = 30;                      // Vorticity confinement strength
 
         // Interaction Parameters

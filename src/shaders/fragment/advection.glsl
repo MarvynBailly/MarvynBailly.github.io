@@ -55,7 +55,6 @@ void main () {
         vec4 result = texture2D(uSource, coord);
     #endif
     
-    // Apply dissipation
-    float decay = 1.0 + dissipation * dt;
-    gl_FragColor = result / decay;
+    // Apply dissipation (exponential decay for physically correct attenuation)
+    gl_FragColor = result * exp(-dissipation * dt);
 }

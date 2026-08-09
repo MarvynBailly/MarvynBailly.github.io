@@ -67,6 +67,7 @@ export class PointerManager {
             pointer.transitionStart = 0;
         }
 
+        this._colorLoopId = null;
         const updateColors = (timestamp) => {
             if (this.config.CONTINUOUS_COLOR_CHANGE) {
                 const transitionDuration = this.config.COLOR_CHANGE_SPEED;
@@ -96,10 +97,20 @@ export class PointerManager {
                     }
                 }
             }
-            requestAnimationFrame(updateColors);
+            this._colorLoopId = requestAnimationFrame(updateColors);
         };
 
-        requestAnimationFrame(updateColors);
+        this._colorLoopId = requestAnimationFrame(updateColors);
+    }
+
+    /**
+     * Stop the color change loop and clean up event listeners
+     */
+    destroy() {
+        if (this._colorLoopId != null) {
+            cancelAnimationFrame(this._colorLoopId);
+            this._colorLoopId = null;
+        }
     }
 
     /**
@@ -231,6 +242,9 @@ export class PointerManager {
                 pointer.down = false;
             }
         }
+
+        // Remove stale touch pointers to prevent unbounded array growth
+        this.pointers = this.pointers.filter(p => p.id === 0 || p.down);
     }
 
     /**
