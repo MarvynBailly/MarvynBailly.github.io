@@ -27,7 +27,7 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^29.7.0",
     "jimp": "^1.6.0",
-    "vite": "^5.0.0"
+    "vite": "^8.2.1"
   },
   "jest": {
     "testEnvironment": "jsdom",
