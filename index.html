@@ -132,9 +132,9 @@
         <div class='panel-content'>
             <div class='settings-section'>
                 <h3>Visual Effects</h3>
-                <label class='checkbox-label'><input type='checkbox' id='bloom-toggle' checked>
+                <label class='checkbox-label'><input type='checkbox' id='bloom-toggle'>
                     <span>Bloom</span></label>
-                <label class='checkbox-label'><input type='checkbox' id='sunrays-toggle' checked>
+                <label class='checkbox-label'><input type='checkbox' id='sunrays-toggle'>
                     <span>Sunrays</span></label>
                 <label class='checkbox-label'><input type='checkbox' id='shading-toggle' checked>
                     <span>Shading</span></label>
@@ -142,15 +142,11 @@
                     <span>Show Obstacles</span></label>
             </div>
             <div class='settings-section'>
-                <h3>Obstacles</h3>
+                <h3>Scene</h3>
                 <div class='slider-control'>
-                    <label>Preset Shape:
-                        <select id='obstacle-preset'>
-                            <option value='geometric-m'>Geometric M</option>
-                            <option value='cursive-m'>Cursive M</option>
-                            <option value='circle'>Circle</option>
-                            <option value='none'>None</option>
-                        </select>
+                    <label>Preset:
+                        <!-- Populated from src/scenes/index.js -->
+                        <select id='scene-preset'></select>
                     </label>
                 </div>
             </div>
@@ -163,10 +159,12 @@
                             id='den-diss-value'>1.0</span></label><input type='range' id='density-dissipation' min='0'
                         max='4' value='1.0' step='0.1'></div>
                 <div class='slider-control'><label>Vorticity Strength: <span id='curl-value'>30</span></label><input
-                        type='range' id='curl-strength' min='0' max='50' value='30' value='1'></div>
+                        type='range' id='curl-strength' min='0' max='50' value='30' step='1'></div>
                 <div class='slider-control'><label>Pressure Iterations: <span
-                            id='pressure-value'>20</span></label><input type='range' id='pressure-iterations' min='1'
-                        max='50' value='20' step='1'></div>
+                            id='pressure-value'>40</span></label><input type='range' id='pressure-iterations' min='1'
+                        max='60' value='40' step='1'></div>
+                <div class='slider-control'><label>Wall Slip: <span id='wall-slip-value'>0.94</span></label><input
+                        type='range' id='wall-slip' min='0' max='1' value='0.94' step='0.02'></div>
             </div>
             <div class='settings-section'>
                 <h3>Wind Tunnel</h3>

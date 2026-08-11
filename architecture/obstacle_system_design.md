@@ -1,5 +1,26 @@
 # Obstacle System Architecture Design
 
+> **Amendment — the mask is now a distance field.** The module layout below still
+> describes the shipping system, but the texture it passes around changed. Each
+> texel stores the signed distance to the nearest surface, clamped to
+> `OBSTACLE_SDF_RANGE` texels and encoded as `0.5 - distance / (2 * range)`, so
+> the `> 0.5` solid test every shader already used still holds. What that buys:
+> sub-texel surface positions for the advection back-trace, wall normals from
+> the field gradient (used for no-penetration and friction in
+> `gradientSubtract.glsl`), and a silhouette resolved at screen resolution
+> instead of grid resolution. Obstacles are also declared in a square design
+> space mapped to the shorter screen axis, so shapes no longer stretch with the
+> window, and the field lives on its own grid at `OBSTACLE_SUPERSAMPLE` times
+> the simulation resolution. See `src/core/ObstacleManager.js` and
+> `src/core/ObstacleField.js`.
+>
+> One caveat the distance representation carries: the field is the union of its
+> primitives, taken as `min(distance)`. That is exact outside every shape and on
+> the surface, but inside a *union of overlapping* primitives it reports the
+> distance to the nearest primitive rather than to the union's own boundary.
+> Shapes are therefore best authored as outlines — `ObstacleManager.addPolygon`
+> takes concave polygons directly — rather than as overlapping triangle soups.
+
 ## Executive Summary
 
 This document specifies the architecture for adding obstacle support to the fluid simulation. It defines data structures, class interfaces, module interactions, and integration points based on the research and codebase analysis completed in Phases 1-2.

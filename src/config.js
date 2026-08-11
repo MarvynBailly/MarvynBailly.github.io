@@ -9,6 +9,8 @@
  * - technical_analysis.md - Configuration Parameters
  */
 
+import { geometricM } from './geometry/monogram.js';
+
 export class Config {
     constructor() {
         // Simulation Resolution
@@ -56,7 +58,39 @@ export class Config {
         // Obstacle Configuration
         this.OBSTACLES_ENABLED = true;
         this.SHOW_OBSTACLES = true;
-        this.OBSTACLE_COLOR = { r: 0.0, g: 0.6, b: 0.8 };  // Bright cyan
+
+        // Obstacle field resolution as a multiple of the simulation grid. The
+        // field is a distance field, so the physics reads correct distances at
+        // any multiple; the extra resolution only sharpens corners on screen.
+        this.OBSTACLE_SUPERSAMPLE = 2;
+        this.OBSTACLE_SDF_RANGE = 12;   // Distance stored either side of a surface, texels
+
+        // Matches the site palette: --color-code-bg body, --color-primary edge
+        this.OBSTACLE_FILL = { r: 0.043, g: 0.051, b: 0.071 };
+        this.OBSTACLE_EDGE = { r: 0.498, g: 0.690, b: 0.788 };
+
+        // Wall interaction
+        this.WALL_SLIP = 0.94;   // 1 = free slip, 0 = no slip
+        this.WALL_BAND = 1.5;    // Cells over which wall corrections fade in
+
+        // Scene features. Scenes patch these; the defaults are all "off" so a
+        // scene that does not mention one gets the plain simulation back.
+        this.PALETTE_POINTER = false;   // Draw pointer colour from the site palette
+        this.POINTER_FAMILY = 'either'; // Which ink when it does: 'cool', 'warm' or 'either'
+        this.CHANNEL_INLET = 0;         // Inlet speed, cells/second; 0 disables the channel
+        this.BUOYANCY = 0;              // Vertical force per unit dye
+        this.BUOYANCY_WEIGHTS = { r: 1, g: 1, b: 1 };
+        this.PALETTE_RAMP = false;      // Map density through a palette in the display shader
+        // Ramp stops at density 0, 0.35, 0.7 and 1. Empty water is the exact
+        // page background, so an empty canvas is indistinguishable from no canvas.
+        this.PALETTE_RAMP_COLORS = [
+            { r: 0.063, g: 0.075, b: 0.102 },   // #10131a
+            { r: 0.176, g: 0.231, b: 0.322 },   // #2d3b52
+            { r: 0.309, g: 0.428, b: 0.489 },   // primary at 62%
+            { r: 0.433, g: 0.332, b: 0.196 }    // secondary at 55%
+        ];
+        this.VORTEX_RATE = 0;           // Rotational body force, radians/second
+        this.VORTEX_FALLOFF = 0.55;     // Radius at which the swirl dies out
 
         // Interaction Options
         this.SPLAT_ON_MOVE = true;          // Splat follows mouse without clicking
@@ -68,73 +102,11 @@ export class Config {
         this.WIND_TUNNEL_FORCE = 20;        // Strength of wind tunnel force
         this.OUTFLOW_BOUNDARY = false;      // Allow flow to exit on right edge (non-reflecting)
 
-        // M Logo Configuration
-        // Auto-generated from reference image using image-to-polygon.js
-        // Algorithm: Moore-Neighbor contour tracing + RDP simplification + Earcut triangulation
-        // Source: m_logo_reference_1767962130028.png (epsilon=5, scale=0.35)
-
-        this.DEFAULT_OBSTACLES = [
-            {
-                type: 'triangle',
-                v0: { x: 0.5584, y: 0.5328 },
-                v1: { x: 0.5694, y: 0.3954 },
-                v2: { x: 0.6162, y: 0.3961 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.6162, y: 0.3961 },
-                v1: { x: 0.5981, y: 0.6005 },
-                v2: { x: 0.5557, y: 0.6005 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5, y: 0.5079 },
-                v1: { x: 0.4439, y: 0.6005 },
-                v2: { x: 0.4016, y: 0.6001 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.4016, y: 0.6001 },
-                v1: { x: 0.4306, y: 0.3961 },
-                v2: { x: 0.4405, y: 0.5332 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5584, y: 0.5328 },
-                v1: { x: 0.6162, y: 0.3961 },
-                v2: { x: 0.5557, y: 0.6005 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5, y: 0.5079 },
-                v1: { x: 0.4016, y: 0.6001 },
-                v2: { x: 0.4405, y: 0.5332 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5034, y: 0.446 },
-                v1: { x: 0.5584, y: 0.5328 },
-                v2: { x: 0.5557, y: 0.6005 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5, y: 0.5079 },
-                v1: { x: 0.4405, y: 0.5332 },
-                v2: { x: 0.5034, y: 0.446 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.5034, y: 0.446 },
-                v1: { x: 0.5557, y: 0.6005 },
-                v2: { x: 0.5, y: 0.5079 }
-            },
-            {
-                type: 'triangle',
-                v0: { x: 0.3834, y: 0.3961 },
-                v1: { x: 0.4016, y: 0.6001 },
-                v2: { x: 0.4306, y: 0.3961 }
-            }
-        ];
+        // Monogram
+        // The letterform is generated from typographic parameters rather than
+        // traced from an image, so its strokes stay monolinear and its joints
+        // stay exact at any resolution. See geometry/monogram.js.
+        this.DEFAULT_OBSTACLES = geometricM();
     }
 
     /**

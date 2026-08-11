@@ -10,6 +10,41 @@
  */
 
 import { generateColor } from '../utils/math.js';
+import { pigment } from '../utils/palette.js';
+
+/**
+ * Pick a colour for a pointer
+ *
+ * Random HSL across all 360 degrees is the stock behaviour and stays the
+ * default. A scene can set PALETTE_POINTER to draw from the site's own inks
+ * instead, so a considered scene is not undercut by a rainbow cursor.
+ *
+ * POINTER_FAMILY pins which ink. That matters wherever a scene draws in the
+ * palette itself: Probe Traverse distinguishes the machine from the visitor by
+ * colour, and a coin flip would have made half the visitor's strokes
+ * indistinguishable from the ghost's.
+ *
+ * @param {Config} config - Configuration
+ * @returns {Object} RGB colour
+ */
+function pointerColor(config) {
+    if (!config || !config.PALETTE_POINTER) return generateColor();
+
+    const family = config.POINTER_FAMILY === 'either'
+        ? (Math.random() < 0.5 ? 'cool' : 'warm')
+        : config.POINTER_FAMILY;
+
+    return pigment(family, 0.42, 0.12);
+}
+
+/**
+ * Monotonic clock, falling back where performance is unavailable
+ *
+ * @returns {number} Milliseconds
+ */
+function now() {
+    return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
 
 /**
  * Pointer data structure
@@ -26,6 +61,7 @@ class Pointer {
         this.down = false;
         this.moved = false;
         this.color = generateColor();
+        this.lastInput = -Infinity;   // nobody has touched this pointer yet
     }
 
     updatePosition(x, y) {
@@ -33,9 +69,37 @@ class Pointer {
         this.py = this.y;
         this.x = x;
         this.y = y;
+
         this.dx = this.x - this.px;
         this.dy = this.y - this.py;
         this.moved = Math.abs(this.dx) > 0 || Math.abs(this.dy) > 0;
+        this.lastInput = now();
+    }
+
+    /**
+     * Seconds since this pointer last reported input
+     *
+     * Scenes use this to decide whether anyone is actually there. A large value
+     * on first call is intentional: a visitor who has not touched the canvas
+     * counts as idle from the start.
+     *
+     * @returns {number} Idle time in seconds
+     */
+    idleFor() {
+        return (now() - this.lastInput) / 1000;
+    }
+
+    /**
+     * Mark the accumulated movement as spent
+     *
+     * Called once the simulation has turned it into force. Without this a
+     * pointer that stops moving keeps reporting its last delta, because no
+     * further events arrive to clear it.
+     */
+    consumeMovement() {
+        this.moved = false;
+        this.dx = 0;
+        this.dy = 0;
     }
 }
 
@@ -63,7 +127,7 @@ export class PointerManager {
         // Initialize color transition state for each pointer
         for (const pointer of this.pointers) {
             pointer.currentColor = { ...pointer.color };
-            pointer.targetColor = generateColor();
+            pointer.targetColor = pointerColor(this.config);
             pointer.transitionStart = 0;
         }
 
@@ -92,7 +156,7 @@ export class PointerManager {
                     // When transition completes, set new target
                     if (progress >= 1.0) {
                         pointer.currentColor = { ...pointer.targetColor };
-                        pointer.targetColor = generateColor();
+                        pointer.targetColor = pointerColor(this.config);
                         pointer.transitionStart = timestamp;
                     }
                 }
@@ -155,7 +219,7 @@ export class PointerManager {
         const coords = this._normalizeCoords(e.clientX, e.clientY);
         this.pointers[0].down = true;
         this.pointers[0].updatePosition(coords.x, coords.y);
-        this.pointers[0].color = generateColor();
+        this.pointers[0].color = pointerColor(this.config);
     }
 
     /**
@@ -196,14 +260,14 @@ export class PointerManager {
                 pointer = new Pointer(touch.identifier);
                 // Initialize color transition state
                 pointer.currentColor = { ...pointer.color };
-                pointer.targetColor = generateColor();
+                pointer.targetColor = pointerColor(this.config);
                 pointer.transitionStart = 0;
                 this.pointers.push(pointer);
             }
 
             pointer.down = true;
             pointer.updatePosition(coords.x, coords.y);
-            pointer.color = generateColor();
+            pointer.color = pointerColor(this.config);
         }
     }
 

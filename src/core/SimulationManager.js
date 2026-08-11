@@ -14,6 +14,7 @@ import { WebGLContextManager } from './WebGLContextManager.js';
 import { ShaderManager, Material, Program } from './ShaderManager.js';
 import { TextureManager } from './TextureManager.js';
 import { ObstacleManager } from './ObstacleManager.js';
+import { ObstacleField } from './ObstacleField.js';
 import { FBOManager } from './FBOManager.js';
 import { AdvectionModule } from '../physics/AdvectionModule.js';
 import { PressureSolverModule } from '../physics/PressureSolverModule.js';
@@ -25,6 +26,8 @@ import { DisplayModule } from '../rendering/DisplayModule.js';
 import { createDitheringTexture } from '../rendering/DitheringTexture.js';
 import { PointerManager } from '../interaction/PointerManager.js';
 import { InteractionManager } from '../interaction/InteractionManager.js';
+import { SceneManager } from '../scenes/SceneManager.js';
+import { geometricM } from '../geometry/monogram.js';
 import { Config } from '../config.js';
 import { isMobile } from '../utils/browser.js';
 
@@ -36,6 +39,11 @@ export class SimulationManager {
     constructor(canvas, config = new Config()) {
         this.canvas = canvas;
         this.config = config;
+
+        // Every value a scene is allowed to patch, as it was before any scene
+        // touched it. Scenes are re-applied on top of this rather than on top of
+        // each other, so switching scenes cannot accumulate leftovers.
+        this.baseConfig = { ...config };
 
         // Will be initialized in init()
         this.webglManager = null;
@@ -50,6 +58,10 @@ export class SimulationManager {
         this.pressure = null;
         this.divergence = null;
         this.curl = null;
+
+        // Obstacles
+        this.obstacleManager = null;
+        this.obstacleField = null;
 
         // Modules
         this.advectionModule = null;
@@ -68,6 +80,10 @@ export class SimulationManager {
         // State
         this.aspectRatio = 1.0;
         this.initialized = false;
+
+        // Drawing buffer size the current framebuffers were built for
+        this.builtWidth = 0;
+        this.builtHeight = 0;
     }
 
     /**
@@ -100,15 +116,19 @@ export class SimulationManager {
         await this._loadShaders(onProgress);
         onProgress(0.82);
 
+        // The obstacle field is created before the framebuffers and never
+        // replaced, only re-uploaded, so every module can hold onto it.
+        this.obstacleField = new ObstacleField(this.gl, this.webglManager.supportsWebGL2());
+
         // Initialize FBOs
-        this._initFramebuffers();
+        this._updateFramebuffers();
         onProgress(0.92);
 
         // Initialize physics modules
-        this.advectionModule = new AdvectionModule(this.gl, this.programs, this.fboManager, this.obstacle);
-        this.pressureModule = new PressureSolverModule(this.gl, this.programs, this.fboManager, this.textureManager, this.obstacle);
-        this.vorticityModule = new VorticityModule(this.gl, this.programs, this.fboManager, this.obstacle);
-        this.forcesModule = new ForcesModule(this.gl, this.programs, this.fboManager, this.obstacle);
+        this.advectionModule = new AdvectionModule(this.gl, this.programs, this.fboManager, this.obstacleField);
+        this.pressureModule = new PressureSolverModule(this.gl, this.programs, this.fboManager, this.obstacleField, this.config);
+        this.vorticityModule = new VorticityModule(this.gl, this.programs, this.fboManager, this.obstacleField, this.config);
+        this.forcesModule = new ForcesModule(this.gl, this.programs, this.fboManager, this.obstacleField);
 
         // Initialize rendering modules
         this.bloomModule = new BloomModule(this.gl, this.programs, this.fboManager, this.textureManager, this.config);
@@ -121,6 +141,9 @@ export class SimulationManager {
         // Initialize interaction
         this.pointerManager = new PointerManager(this.canvas, this.config);
         this.interactionManager = new InteractionManager(this.pointerManager, this.forcesModule, this.config);
+
+        // Scenes drive the simulation from the hook the wind tunnel used to own
+        this.sceneManager = new SceneManager(this);
 
         // Initial splats for visual interest
         this.interactionManager.generateRandomSplats(this.velocity, this.dye, 5, this.aspectRatio);
@@ -150,6 +173,8 @@ export class SimulationManager {
             curl: '/src/shaders/fragment/curl.glsl',
             vorticity: '/src/shaders/fragment/vorticity.glsl',
             splat: '/src/shaders/fragment/splat.glsl',
+            buoyancy: '/src/shaders/fragment/buoyancy.glsl',
+            vortexForce: '/src/shaders/fragment/vortexForce.glsl',
             display: '/src/shaders/fragment/display.glsl',
             copy: '/src/shaders/fragment/utils/copy.glsl',
             clear: '/src/shaders/fragment/utils/clear.glsl',
@@ -181,9 +206,13 @@ export class SimulationManager {
         const baseVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, baseVertex);
         const blurVertexShader = this.shaderManager.compileShader(this.gl.VERTEX_SHADER, blurVertex);
 
-        // Store shaders that need dynamic recompilation
-        this.divergenceFragSource = divergenceFrag;
-        this.gradientSubtractFragSource = gradientSubtractFrag;
+        // Sources for the three shaders that carry the boundary conditions and
+        // therefore have to be recompiled when the boundary mode changes
+        this.boundarySources = {
+            divergence: divergenceFrag,
+            pressure: pressureFrag,
+            gradientSubtract: gradientSubtractFrag
+        };
         this.baseVertexShader = baseVertexShader;
 
         // Create programs
@@ -195,13 +224,9 @@ export class SimulationManager {
                 baseVertexShader,
                 this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, advectionFrag, advectionKeywords)
             ),
-            divergence: this._compileDivergenceShader(divergenceFrag, baseVertexShader),
-            pressure: new Program(
-                this.gl,
-                baseVertexShader,
-                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, pressureFrag)
-            ),
-            gradientSubtract: this._compileGradientSubtractShader(gradientSubtractFrag, baseVertexShader),
+            divergence: this._compileBoundaryProgram('divergence'),
+            pressure: this._compileBoundaryProgram('pressure'),
+            gradientSubtract: this._compileBoundaryProgram('gradientSubtract'),
             curl: new Program(
                 this.gl,
                 baseVertexShader,
@@ -216,6 +241,16 @@ export class SimulationManager {
                 this.gl,
                 baseVertexShader,
                 this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, splatFrag)
+            ),
+            buoyancy: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.buoyancy)
+            ),
+            vortexForce: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.vortexForce)
             ),
             copy: new Program(
                 this.gl,
@@ -296,161 +331,197 @@ export class SimulationManager {
     }
 
     /**
-     * Compile divergence shader with appropriate keywords
-     * 
+     * Which boundary keyword the current config calls for
+     *
+     * A channel supersedes a plain outflow edge: it already has an outlet, and
+     * a reference pressure to go with it.
+     *
      * @private
-     * @param {string} fragSource - Fragment shader source
-     * @param {WebGLShader} vertexShader - Compiled vertex shader
-     * @returns {Program} Compiled divergence program
+     * @returns {string[]} Keywords to compile with
      */
-    _compileDivergenceShader(fragSource, vertexShader) {
-        const keywords = [];
-        if (this.config.OUTFLOW_BOUNDARY) {
-            keywords.push('OUTFLOW_BOUNDARY');
-        }
-
-        const fragmentShader = this.shaderManager.compileShader(
-            this.gl.FRAGMENT_SHADER,
-            fragSource,
-            keywords
-        );
-
-        return new Program(this.gl, vertexShader, fragmentShader);
+    _boundaryKeywords() {
+        if (this.config.CHANNEL_INLET > 0) return ['CHANNEL_BC'];
+        if (this.config.OUTFLOW_BOUNDARY) return ['OUTFLOW_BOUNDARY'];
+        return [];
     }
 
     /**
-     * Compile gradient subtraction shader with appropriate keywords
-     * 
+     * Compile one of the boundary-carrying shaders for the current mode
+     *
      * @private
-     * @param {string} fragSource - Fragment shader source
-     * @param {WebGLShader} vertexShader - Compiled vertex shader
-     * @returns {Program} Compiled gradient subtraction program
+     * @param {string} name - 'divergence', 'pressure' or 'gradientSubtract'
+     * @returns {Program} Compiled program
      */
-    _compileGradientSubtractShader(fragSource, vertexShader) {
-        const keywords = [];
-        if (this.config.OUTFLOW_BOUNDARY) {
-            keywords.push('OUTFLOW_BOUNDARY');
-        }
-
+    _compileBoundaryProgram(name) {
         const fragmentShader = this.shaderManager.compileShader(
             this.gl.FRAGMENT_SHADER,
-            fragSource,
-            keywords
+            this.boundarySources[name],
+            this._boundaryKeywords()
         );
-
-        return new Program(this.gl, vertexShader, fragmentShader);
+        return new Program(this.gl, this.baseVertexShader, fragmentShader);
     }
 
+    /**
+     * Rebuild the boundary shaders for the current mode
+     *
+     * Modules read these out of this.programs every frame, so replacing them
+     * here is all that is needed to switch the boundary.
+     */
+    updateBoundaryShaders() {
+        if (!this.boundarySources || !this.baseVertexShader) return;
+
+        for (const name of ['divergence', 'pressure', 'gradientSubtract']) {
+            this.gl.deleteProgram(this.programs[name].program);
+            this.programs[name] = this._compileBoundaryProgram(name);
+        }
+    }
 
     /**
-     * Update shaders when outflow boundary setting changes
+     * @deprecated Use updateBoundaryShaders. Kept for the settings panel toggle.
      */
     updateOutflowShaders() {
-        if (this.divergenceFragSource && this.baseVertexShader) {
-            // Recompile divergence shader
-            this.programs.divergence = this._compileDivergenceShader(
-                this.divergenceFragSource,
-                this.baseVertexShader
-            );
+        this.updateBoundaryShaders();
+    }
 
-            // Recompile gradient subtraction shader
-            this.programs.gradientSubtract = this._compileGradientSubtractShader(
-                this.gradientSubtractFragSource,
-                this.baseVertexShader
-            );
+    /**
+     * Activate a scene: its config, its geometry, and its emitters
+     *
+     * @param {Object} scene - Scene module from scenes/index.js
+     * @returns {Promise<void>}
+     */
+    async loadScene(scene) {
+        if (!scene) return;
 
-            // Update the pressure solver module's references
-            if (this.pressureSolverModule) {
-                this.pressureSolverModule.divergenceProgram = this.programs.divergence;
-                this.pressureSolverModule.gradientSubtractProgram = this.programs.gradientSubtract;
+        const before = this._boundaryKeywords().join();
+
+        // Start from the untouched defaults so scenes never inherit each other
+        Object.assign(this.config, this.baseConfig, scene.config || {});
+
+        if (this._boundaryKeywords().join() !== before) {
+            this.updateBoundaryShaders();
+        }
+
+        this.loadObstaclePreset(await this._resolveObstacles(scene.obstacles));
+        this.sceneManager.setScene(scene);
+        this.activeScene = scene;
+    }
+
+    /**
+     * Turn a scene's obstacle spec into obstacle definitions
+     *
+     * Accepts the monogram by name, a preset file by name, a literal list, a
+     * function returning one, or any nesting of those.
+     *
+     * @private
+     * @param {*} spec - Obstacle specification
+     * @returns {Promise<Array>} Obstacle definitions
+     */
+    async _resolveObstacles(spec) {
+        if (!spec) return [];
+
+        if (typeof spec === 'function') {
+            return this._resolveObstacles(spec());
+        }
+
+        if (typeof spec === 'string') {
+            return spec === 'monogram' ? geometricM() : [];
+        }
+
+        if (Array.isArray(spec)) {
+            const resolved = [];
+            for (const entry of spec) {
+                if (typeof entry === 'string' || typeof entry === 'function' || Array.isArray(entry)) {
+                    resolved.push(...await this._resolveObstacles(entry));
+                } else if (entry && entry.preset) {
+                    resolved.push(...await this._loadPreset(entry.preset));
+                } else if (entry) {
+                    resolved.push(entry);
+                }
             }
+            return resolved;
+        }
+
+        if (spec.preset) return this._loadPreset(spec.preset);
+
+        return [spec];
+    }
+
+    /**
+     * Read obstacle geometry from a preset file
+     *
+     * @private
+     * @param {string} name - Preset name, without extension
+     * @returns {Promise<Array>} Obstacle definitions
+     */
+    async _loadPreset(name) {
+        try {
+            const response = await fetch(`/presets/${name}.json`);
+            if (!response.ok) throw new Error(response.statusText);
+            const preset = await response.json();
+            return preset.obstacles || [];
+        } catch (error) {
+            console.warn(`Could not load obstacle preset "${name}":`, error.message);
+            return [];
         }
     }
 
     /**
-     * Load obstacle preset
-     * 
+     * Replace the current obstacles
+     *
      * @param {Array} obstacles - Array of obstacle definitions
      */
     loadObstaclePreset(obstacles) {
-        if (!this.obstacleManager || !this.obstacle) {
-            console.warn('Obstacles not enabled or not initialized');
+        if (!this.obstacleManager) {
+            console.warn('Obstacles not initialized');
             return;
         }
 
-        // Clear existing obstacles
         this.obstacleManager.clear();
 
-        // Load new obstacles
         if (Array.isArray(obstacles)) {
             for (const obstacle of obstacles) {
                 this.obstacleManager.addObstacle(obstacle);
             }
         }
 
-        // Get obstacle data and texture dimensions
-        const obstacleData = this.obstacleManager.getObstacleData();
-        const width = this.obstacleManager.width;
-        const height = this.obstacleManager.height;
-
-        // Convert Float32Array to Uint8Array
-        const uint8Data = new Uint8Array(width * height);
-        for (let i = 0; i < obstacleData.length; i++) {
-            uint8Data[i] = obstacleData[i] > 0.5 ? 255 : 0;
-        }
-
-        // Determine format based on WebGL version
-        const isWebGL2 = this.webglManager.supportsWebGL2();
-        let uploadData = uint8Data;
-        let format = this.gl.RED;
-
-        // If using WebGL1, expand to RGBA
-        if (!isWebGL2) {
-            uploadData = new Uint8Array(width * height * 4);
-            for (let i = 0; i < uint8Data.length; i++) {
-                uploadData[i * 4] = uint8Data[i];      // R channel
-                uploadData[i * 4 + 1] = 0;             // G
-                uploadData[i * 4 + 2] = 0;             // B
-                uploadData[i * 4 + 3] = 255;           // A
-            }
-            format = this.gl.RGBA;
-        }
-
-        // Update texture with proper alignment
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.obstacle.texture);
-
-        // Set pixel unpack alignment to 1 for single-channel textures
-        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
-
-        this.gl.texSubImage2D(
-            this.gl.TEXTURE_2D,
-            0,  // mip level
-            0, 0,  // x, y offset
-            width,
-            height,
-            format,
-            this.gl.UNSIGNED_BYTE,
-            uploadData
-        );
-
-        // Restore default alignment
-        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 4);
-
-        console.log(`Loaded ${obstacles.length} obstacles (${width}x${height}, WebGL${isWebGL2 ? '2' : '1'})`);
+        this._uploadObstacleField();
     }
 
-
-
     /**
-     * Initialize framebuffers
-     * 
+     * Push the current obstacle field to the GPU
+     *
      * @private
      */
-    _initFramebuffers() {
+    _uploadObstacleField() {
+        const manager = this.obstacleManager;
+
+        this.obstacleField.upload(
+            manager.width,
+            manager.height,
+            manager.getField(),
+            {
+                range: manager.range,
+                texelsPerCell: this.config.OBSTACLE_SUPERSAMPLE
+            }
+        );
+    }
+
+    /**
+     * Create the framebuffers, or resize them to match the current canvas
+     *
+     * Velocity and dye are carried across a resize rather than reallocated from
+     * scratch, so dragging a window edge does not wipe the fluid. Everything
+     * else is derived state that the next step recomputes anyway.
+     *
+     * @private
+     */
+    _updateFramebuffers() {
         const simRes = this.textureManager.getResolution(this.config.SIM_RESOLUTION);
         const dyeRes = this.textureManager.getResolution(this.config.DYE_RESOLUTION);
 
         this.aspectRatio = this.canvas.width / this.canvas.height;
+        this.builtWidth = this.canvas.width;
+        this.builtHeight = this.canvas.height;
 
         const texType = this.textureManager.halfFloatTexType;
         const rgba = this.textureManager.supportedFormats.formatRGBA;
@@ -458,57 +529,95 @@ export class SimulationManager {
         const r = this.textureManager.supportedFormats.formatR;
         const filtering = this.webglManager.supportsLinearFiltering() ? this.gl.LINEAR : this.gl.NEAREST;
 
-        // Create velocity field (lower resolution, 2-channel)
-        this.velocity = this.textureManager.createDoubleFBO(
-            simRes.width, simRes.height,
-            rg.internalFormat, rg.format,
-            texType, filtering
+        // Velocity field (simulation resolution, 2-channel)
+        this.velocity = this._makeDoubleFBO(
+            this.velocity, simRes.width, simRes.height,
+            rg.internalFormat, rg.format, texType, filtering
         );
 
-        // Create dye field (higher resolution, 4-channel)
-        this.dye = this.textureManager.createDoubleFBO(
-            dyeRes.width, dyeRes.height,
-            rgba.internalFormat, rgba.format,
-            texType, filtering
+        // Dye field (higher resolution, 4-channel)
+        this.dye = this._makeDoubleFBO(
+            this.dye, dyeRes.width, dyeRes.height,
+            rgba.internalFormat, rgba.format, texType, filtering
         );
 
-        // Create pressure field (single FBO with ping-pong for iterations)
-        const pressureDoubleFBO = this.textureManager.createDoubleFBO(
-            simRes.width, simRes.height,
-            r.internalFormat, r.format,
-            texType, this.gl.NEAREST
-        );
-        this.pressure = pressureDoubleFBO;
-
-        // Create divergence field
-        this.divergence = this.textureManager.createFBO(
-            simRes.width, simRes.height,
-            r.internalFormat, r.format,
-            texType, this.gl.NEAREST
+        // Pressure field (ping-ponged across Jacobi iterations)
+        this.pressure = this._makeDoubleFBO(
+            this.pressure, simRes.width, simRes.height,
+            r.internalFormat, r.format, texType, this.gl.NEAREST, false
         );
 
-        // Create curl field
-        this.curl = this.textureManager.createFBO(
-            simRes.width, simRes.height,
-            r.internalFormat, r.format,
-            texType, this.gl.NEAREST
+        // Divergence and curl are rewritten from scratch every step
+        this.divergence = this._makeFBO(
+            this.divergence, simRes.width, simRes.height,
+            r.internalFormat, r.format, texType, this.gl.NEAREST
+        );
+        this.curl = this._makeFBO(
+            this.curl, simRes.width, simRes.height,
+            r.internalFormat, r.format, texType, this.gl.NEAREST
         );
 
-        // NEW: Create obstacle manager with aspect-ratio-corrected dimensions
-        if (this.config.OBSTACLES_ENABLED) {
-            this.obstacleManager = new ObstacleManager(
-                simRes.width,   // Use aspect-ratio-corrected width
-                simRes.height,  // Use aspect-ratio-corrected height
-                this.config
-            );
+        // Obstacle field, at a multiple of the simulation grid
+        const supersample = this.config.OBSTACLE_SUPERSAMPLE;
+        const fieldWidth = simRes.width * supersample;
+        const fieldHeight = simRes.height * supersample;
 
-            const obstacleData = this.obstacleManager.getObstacleData();
-            this.obstacle = this.textureManager.createObstacleTexture(
-                simRes.width,
-                simRes.height,
-                obstacleData
-            );
+        if (!this.obstacleManager) {
+            this.obstacleManager = new ObstacleManager(fieldWidth, fieldHeight, this.config);
+            if (!this.config.OBSTACLES_ENABLED) this.obstacleManager.clear();
+        } else {
+            // Keep whatever obstacles are loaded; only the grid changes
+            this.obstacleManager.setResolution(fieldWidth, fieldHeight);
         }
+
+        this._uploadObstacleField();
+    }
+
+    /**
+     * Create an FBO, or replace one whose size no longer matches
+     *
+     * @private
+     */
+    _makeFBO(existing, width, height, internalFormat, format, type, filter) {
+        if (existing && existing.width === width && existing.height === height) {
+            return existing;
+        }
+        if (existing) this.textureManager.deleteFBO(existing);
+        return this.textureManager.createFBO(width, height, internalFormat, format, type, filter);
+    }
+
+    /**
+     * Create a double FBO, or resize one whose size no longer matches
+     *
+     * @private
+     * @param {boolean} [preserve] - Copy the old contents into the new buffer
+     */
+    _makeDoubleFBO(existing, width, height, internalFormat, format, type, filter, preserve = true) {
+        if (existing && existing.width === width && existing.height === height) {
+            return existing;
+        }
+
+        const next = this.textureManager.createDoubleFBO(
+            width, height, internalFormat, format, type, filter
+        );
+
+        if (existing) {
+            if (preserve) this._copy(existing.read, next.read);
+            this.textureManager.deleteDoubleFBO(existing);
+        }
+
+        return next;
+    }
+
+    /**
+     * Blit one texture into another framebuffer
+     *
+     * @private
+     */
+    _copy(source, target) {
+        this.programs.copy.bind();
+        this.gl.uniform1i(this.programs.copy.uniforms.uTexture, source.attach(0));
+        this.fboManager.blit(target);
     }
 
     /**
@@ -527,13 +636,17 @@ export class SimulationManager {
             this.forcesModule.applySplat(
                 this.velocity,
                 0.5, 0.5,  // Center of screen
-                this.config.WIND_TUNNEL_FORCE, 0,  // Force pointing right
-                { r: 0, g: 0, b: 0 },  // No color
+                // Scaled by dt against a 60fps reference: the force used to be
+                // added per frame, which made the wind twice as strong on a
+                // 120Hz display as on a 60Hz one.
+                this.config.WIND_TUNNEL_FORCE * dt * 60.0, 0,
                 100.0,  // Very large radius to cover entire screen
-                this.aspectRatio,
-                false  // Additive (accumulate)
+                this.aspectRatio
             );
         }
+
+        // 2b. Run the active scene's emitters
+        this.sceneManager.update(dt);
 
         // 3. Advect velocity
         this.advectionModule.advect(
@@ -541,23 +654,38 @@ export class SimulationManager {
             this.velocity.read,
             dt,
             this.config.VELOCITY_DISSIPATION,
-            this.velocity.write,
-            true  // isVelocity = true
+            this.velocity.write
         );
         this.velocity.swap();
 
-        // 3. Advect dye
+        // 4. Advect dye
         this.advectionModule.advect(
             this.dye.read,
             this.velocity.read,
             dt,
             this.config.DENSITY_DISSIPATION,
-            this.dye.write,
-            false  // isVelocity = false
+            this.dye.write
         );
         this.dye.swap();
 
-        // 4. Apply vorticity confinement (if enabled)
+        // 5. Body forces a scene has asked for. Both run before the projection
+        // so the pressure solve gets to respond to what they added.
+        if (this.config.BUOYANCY > 0) {
+            this.forcesModule.applyBuoyancy(
+                this.velocity, this.dye,
+                this.config.BUOYANCY, this.config.BUOYANCY_WEIGHTS, dt
+            );
+        }
+
+        if (this.config.VORTEX_RATE > 0) {
+            this.forcesModule.applyVortex(
+                this.velocity,
+                { rate: this.config.VORTEX_RATE, falloff: this.config.VORTEX_FALLOFF },
+                this.aspectRatio, dt
+            );
+        }
+
+        // 6. Apply vorticity confinement (if enabled)
         if (this.config.CURL > 0) {
             this.vorticityModule.apply(
                 this.velocity,
@@ -568,7 +696,7 @@ export class SimulationManager {
             this.velocity.swap();
         }
 
-        // 5. Pressure projection (enforce incompressibility)
+        // 7. Pressure projection (enforce incompressibility)
         this.pressureModule.project(
             this.velocity,
             this.pressure,
@@ -604,34 +732,31 @@ export class SimulationManager {
             sunrays: this.config.SUNRAYS,
             sunraysTexture: sunraysTexture,
             ditheringTexture: this.ditheringTexture,
+            paletteRamp: this.config.PALETTE_RAMP,
+            rampColors: this.config.PALETTE_RAMP_COLORS,
             showObstacles: this.config.SHOW_OBSTACLES,
-            obstacleTexture: this.obstacle,
-            obstacleColor: this.config.OBSTACLE_COLOR
+            obstacleField: this.obstacleField,
+            obstacleFill: this.config.OBSTACLE_FILL,
+            obstacleEdge: this.config.OBSTACLE_EDGE
         });
     }
 
     /**
-     * Resize canvas and framebuffers
+     * Rebuild framebuffers for the current canvas size
+     *
+     * The canvas itself is sized by the caller, which owns the device pixel
+     * ratio; this only reacts to the drawing buffer it is handed.
      */
     resize() {
-        const displayWidth = this.canvas.clientWidth;
-        const displayHeight = this.canvas.clientHeight;
-
-        if (this.canvas.width !== displayWidth || this.canvas.height !== displayHeight) {
-            this.canvas.width = displayWidth;
-            this.canvas.height = displayHeight;
-
-            if (this.initialized) {
-                this._initFramebuffers();
-
-                // Resize visual effects modules
-                if (this.bloomModule) {
-                    this.bloomModule.resize();
-                }
-                if (this.sunraysModule) {
-                    this.sunraysModule.resize();
-                }
-            }
+        if (!this.initialized) return;
+        if (this.canvas.width === this.builtWidth && this.canvas.height === this.builtHeight) {
+            return;
         }
+
+        this._updateFramebuffers();
+
+        // Resize visual effects modules
+        if (this.bloomModule) this.bloomModule.resize();
+        if (this.sunraysModule) this.sunraysModule.resize();
     }
 }

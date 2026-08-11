@@ -14,13 +14,13 @@ export class AdvectionModule {
      * @param {WebGLRenderingContext} gl - WebGL context
      * @param {Object} programs - Compiled shader programs
      * @param {FBOManager} fboManager - FBO manager
-     * @param {Object} obstacleTexture - Obstacle texture (optional)
+     * @param {ObstacleField} obstacleField - Obstacle distance field
      */
-    constructor(gl, programs, fboManager, obstacleTexture = null) {
+    constructor(gl, programs, fboManager, obstacleField) {
         this.gl = gl;
         this.advectionProgram = programs.advection;
         this.fboManager = fboManager;
-        this.obstacleTexture = obstacleTexture;
+        this.obstacleField = obstacleField;
     }
 
     /**
@@ -31,9 +31,8 @@ export class AdvectionModule {
      * @param {number} dt - Time step
      * @param {number} dissipation - Dissipation factor
      * @param {Object} target - Target FBO to write to
-     * @param {boolean} isVelocity - Whether advecting velocity (same resolution) or dye (different resolution)
      */
-    advect(source, velocity, dt, dissipation, target, isVelocity = false) {
+    advect(source, velocity, dt, dissipation, target) {
         const gl = this.gl;
 
         this.advectionProgram.bind();
@@ -45,21 +44,22 @@ export class AdvectionModule {
             1.0 / velocity.height
         );
 
-        if (isVelocity) {
-            // Advecting velocity: source and velocity same resolution
-            gl.uniform2f(
-                this.advectionProgram.uniforms.dyeTexelSize,
-                1.0 / source.width,
-                1.0 / source.height
-            );
-        } else {
-            // Advecting dye: potentially different resolution
-            gl.uniform2f(
-                this.advectionProgram.uniforms.dyeTexelSize,
-                1.0 / source.width,
-                1.0 / source.height
-            );
-        }
+        // Source resolution: the same grid when advecting velocity, the dye grid
+        // otherwise. Only the manual-filtering path reads it.
+        gl.uniform2f(
+            this.advectionProgram.uniforms.dyeTexelSize,
+            1.0 / source.width,
+            1.0 / source.height
+        );
+
+        // Obstacle field geometry, so the shader can measure the back-trace
+        // against the distances stored in the field
+        gl.uniform2f(
+            this.advectionProgram.uniforms.uObstacleSize,
+            this.obstacleField.width,
+            this.obstacleField.height
+        );
+        gl.uniform1f(this.advectionProgram.uniforms.uObstacleRange, this.obstacleField.range2);
 
         gl.uniform1f(this.advectionProgram.uniforms.dt, dt);
         gl.uniform1f(this.advectionProgram.uniforms.dissipation, dissipation);
@@ -67,11 +67,7 @@ export class AdvectionModule {
         // Bind textures
         gl.uniform1i(this.advectionProgram.uniforms.uVelocity, velocity.attach(0));
         gl.uniform1i(this.advectionProgram.uniforms.uSource, source.attach(1));
-
-        // NEW: Bind obstacle texture if available
-        if (this.obstacleTexture && this.advectionProgram.uniforms.uObstacles !== undefined) {
-            gl.uniform1i(this.advectionProgram.uniforms.uObstacles, this.obstacleTexture.attach(2));
-        }
+        gl.uniform1i(this.advectionProgram.uniforms.uObstacles, this.obstacleField.attach(2));
 
         // Render
         this.fboManager.blit(target);

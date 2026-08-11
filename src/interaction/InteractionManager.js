@@ -36,14 +36,19 @@ export class InteractionManager {
             const shouldApplyForce = pointer.moved && (this.config.SPLAT_ON_MOVE || pointer.down);
 
             if (shouldApplyForce) {
+                // A drag reads as movement across the screen, so the delta has
+                // to be corrected for the canvas shape before it becomes force,
+                // or the same gesture pushes harder along the long axis.
+                const dx = pointer.dx * (aspectRatio < 1 ? aspectRatio : 1);
+                const dy = pointer.dy * (aspectRatio > 1 ? 1 / aspectRatio : 1);
+
                 // Apply velocity splat
                 this.forcesModule.applySplat(
                     velocity,
                     pointer.x,
                     pointer.y,
-                    pointer.dx * this.config.SPLAT_FORCE,
-                    pointer.dy * this.config.SPLAT_FORCE,
-                    pointer.color,
+                    dx * this.config.SPLAT_FORCE,
+                    dy * this.config.SPLAT_FORCE,
                     this.config.SPLAT_RADIUS / 100.0,
                     aspectRatio
                 );
@@ -58,6 +63,12 @@ export class InteractionManager {
                     aspectRatio
                 );
             }
+
+            // Consume the movement. Pointer events only fire while the pointer
+            // is actually moving, so leaving this set meant a mouse that had
+            // come to rest kept injecting its last delta on every frame,
+            // forever.
+            pointer.consumeMovement();
         }
     }
 
@@ -82,7 +93,7 @@ export class InteractionManager {
             };
 
             this.forcesModule.applySplat(
-                velocity, x, y, dx, dy, color,
+                velocity, x, y, dx, dy,
                 this.config.SPLAT_RADIUS / 100.0,
                 aspectRatio
             );

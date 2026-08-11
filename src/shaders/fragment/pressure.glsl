@@ -34,6 +34,17 @@ float samplePressure(vec2 coords, float fallback) {
 }
 
 void main () {
+#ifdef CHANNEL_BC
+    // A reference pressure at the outlet. Without one, every wall is Neumann,
+    // the Poisson problem is singular, and no net through-flow is admissible:
+    // the projection converts an inlet into recirculation. vR leaves the domain
+    // only on the last column, so this needs no extra uniform.
+    if (vR.x > 1.0) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+    }
+#endif
+
     // Check if current cell is obstacle
     float obstacle = texture2D(uObstacles, vUv).r;
     

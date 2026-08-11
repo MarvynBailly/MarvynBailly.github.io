@@ -230,32 +230,25 @@ export class TextureManager {
     }
 
     /**
-     * Resize a double FBO
-     * 
-     * @param {Object} doubleFBO - Existing double FBO
-     * @param {number} width - New width
-     * @param {number} height - New height
-     * @param {number} internalFormat - Internal format
-     * @param {number} format - Format
-     * @param {number} type - Data type
-     * @param {number} filter - Filtering mode
-     * @returns {Object} New double FBO
+     * Release an FBO and its texture
+     *
+     * @param {Object} fbo - FBO created by createFBO
      */
-    resizeDoubleFBO(doubleFBO, width, height, internalFormat, format, type, filter) {
-        const gl = this.gl;
+    deleteFBO(fbo) {
+        if (!fbo) return;
+        this.gl.deleteFramebuffer(fbo.fbo);
+        this.gl.deleteTexture(fbo.texture);
+    }
 
-        // Delete old FBOs
-        if (doubleFBO.read) {
-            gl.deleteFramebuffer(doubleFBO.read.fbo);
-            gl.deleteTexture(doubleFBO.read.texture);
-        }
-        if (doubleFBO.write) {
-            gl.deleteFramebuffer(doubleFBO.write.fbo);
-            gl.deleteTexture(doubleFBO.write.texture);
-        }
-
-        // Create new FBOs
-        return this.createDoubleFBO(width, height, internalFormat, format, type, filter);
+    /**
+     * Release both halves of a double FBO
+     *
+     * @param {Object} doubleFBO - Double FBO created by createDoubleFBO
+     */
+    deleteDoubleFBO(doubleFBO) {
+        if (!doubleFBO) return;
+        this.deleteFBO(doubleFBO.read);
+        this.deleteFBO(doubleFBO.write);
     }
 
     /**
@@ -281,108 +274,5 @@ export class TextureManager {
                 height: Math.floor(resolution)
             };
         }
-    }
-
-    /**
-     * Create obstacle texture from data
-     * 
-     * @param {number} width - Texture width
-     * @param {number} height - Texture height
-     * @param {Float32Array} data - Obstacle mask data (0.0 = fluid, 1.0 = obstacle)
-     * @returns {Object} Texture object with attach method
-     */
-    createObstacleTexture(width, height, data) {
-        const gl = this.gl;
-
-
-        // Choose format based on WebGL version
-        // Use R8 for WebGL2 (single channel, 8-bit unsigned normalized)
-        // Use RGBA8 for WebGL1 (fallback)
-        // NOTE: We explicitly use R8/RGBA8 instead of supportedFormats.formatR
-        // because formatR is configured for half-float render targets (R16F),
-        // which is incompatible with UNSIGNED_BYTE data
-        let internalFormat, format, type;
-
-        if (this.isWebGL2) {
-            // WebGL 2: Use R8 format (8-bit single channel)
-            internalFormat = gl.R8;
-            format = gl.RED;
-            type = gl.UNSIGNED_BYTE;
-        } else {
-            // WebGL 1: Use RGBA8 format (no single channel support)
-            internalFormat = gl.RGBA;
-            format = gl.RGBA;
-            type = gl.UNSIGNED_BYTE;
-        }
-
-        const useR8 = this.isWebGL2;
-
-        // Convert Float32Array to Uint8Array
-        const uint8Data = new Uint8Array(width * height);
-        for (let i = 0; i < data.length; i++) {
-            uint8Data[i] = data[i] > 0.5 ? 255 : 0;  // Binary: 0 or 255
-        }
-
-        // If using RGBA, expand to 4 channels
-        let uploadData = uint8Data;
-        if (!useR8) {
-            uploadData = new Uint8Array(width * height * 4);
-            for (let i = 0; i < uint8Data.length; i++) {
-                uploadData[i * 4] = uint8Data[i];      // R channel
-                uploadData[i * 4 + 1] = 0;             // G
-                uploadData[i * 4 + 2] = 0;             // B
-                uploadData[i * 4 + 3] = 255;           // A
-            }
-        }
-
-        // Create texture
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        // CRITICAL: Set pixel unpack alignment to 1 for single-channel textures
-        // WebGL defaults to 4-byte row alignment, but our RED/UNSIGNED_BYTE data
-        // is 1 byte per pixel. For widths not divisible by 4 (common with dynamic
-        // aspect ratio calculations), we must use 1-byte alignment.
-        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-
-        gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, uploadData);
-
-        // Restore default alignment for other texture operations
-        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-
-        // DEBUG: Log texture creation details
-        console.log(`[TextureManager] Obstacle texture: ${width}x${height}, WebGL${this.isWebGL2 ? '2' : '1'}, format=${useR8 ? 'R8' : 'RGBA'}, dataLength=${uploadData.length}, expected=${width * height * (useR8 ? 1 : 4)}`);
-
-        // DEBUG: Sample a few pixels to verify data integrity
-        const samplePixels = [];
-        for (let i = 0; i < Math.min(10, uploadData.length); i++) {
-            samplePixels.push(uploadData[i]);
-        }
-        console.log(`[TextureManager] First 10 bytes:`, samplePixels);
-
-        // Return texture object with utility method
-        return {
-            texture,
-            width,
-            height,
-            attach(id) {
-                gl.activeTexture(gl.TEXTURE0 + id);
-                gl.bindTexture(gl.TEXTURE_2D, texture);
-                return id;
-            },
-            // Compatibility with FBO interface
-            read: {
-                texture,
-                attach(id) {
-                    gl.activeTexture(gl.TEXTURE0 + id);
-                    gl.bindTexture(gl.TEXTURE_2D, texture);
-                    return id;
-                }
-            }
-        };
     }
 }

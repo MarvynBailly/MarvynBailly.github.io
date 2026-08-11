@@ -19,17 +19,31 @@ varying highp vec2 vT;
 varying highp vec2 vB;
 uniform sampler2D uVelocity;
 uniform sampler2D uObstacles;
+uniform float uInletSpeed;
 
 /**
  * Sample velocity component with boundary handling
  * Handles both domain boundaries and obstacles
  */
 float sampleVelocity(vec2 coords, float currentComponent, float normalSample) {
-    // Check domain boundary
-    if (coords.x < 0.0 || coords.y < 0.0 || coords.y > 1.0) {
-        return -currentComponent;  // No-slip on left/top/bottom
+#ifdef CHANNEL_BC
+    // Inlet: a ghost chosen so the interpolated face velocity is exactly the
+    // inlet speed. Imposing it here rather than by writing cells is the whole
+    // difference between a channel and a box with a fan in it - a value written
+    // into the field is simply removed again by the next projection.
+    if (coords.x < 0.0) {
+        return 2.0 * uInletSpeed - currentComponent;
     }
-    
+
+    // Outlet: zero gradient, so fluid leaves instead of reflecting
+    if (coords.x > 1.0) {
+        return currentComponent;
+    }
+#else
+    if (coords.x < 0.0) {
+        return -currentComponent;  // No-slip on the left
+    }
+
     #ifdef OUTFLOW_BOUNDARY
         // Outflow on right edge: allow flow to exit
         if (coords.x > 1.0) {
@@ -41,6 +55,13 @@ float sampleVelocity(vec2 coords, float currentComponent, float normalSample) {
             return -currentComponent;
         }
     #endif
+#endif
+
+    // Top and bottom. Only the wall-normal component reaches this stencil, so
+    // reflecting it is what free slip and no slip have in common.
+    if (coords.y < 0.0 || coords.y > 1.0) {
+        return -currentComponent;
+    }
     
     // Check obstacle
     if (texture2D(uObstacles, coords).r > 0.5) {

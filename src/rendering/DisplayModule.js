@@ -31,8 +31,9 @@ export class DisplayModule {
      * @param {boolean} options.showObstacles - Enable obstacle rendering
      * @param {Object} options.bloomTexture - Bloom texture (if bloom enabled)
      * @param {Object} options.sunraysTexture - Sunrays texture (if sunrays enabled)
-     * @param {Object} options.obstacleTexture - Obstacle texture (if obstacles enabled)
-     * @param {Object} options.obstacleColor - Obstacle color {r, g, b}
+     * @param {ObstacleField} options.obstacleField - Obstacle distance field
+     * @param {Object} options.obstacleFill - Obstacle body color {r, g, b}
+     * @param {Object} options.obstacleEdge - Obstacle contour color {r, g, b}
      * @param {Object} options.ditheringTexture - Dithering texture
      */
     render(dye, options = {}) {
@@ -43,7 +44,8 @@ export class DisplayModule {
         if (options.shading) keywords.push('SHADING');
         if (options.bloom && options.bloomTexture) keywords.push('BLOOM');
         if (options.sunrays && options.sunraysTexture) keywords.push('SUNRAYS');
-        if (options.showObstacles && options.obstacleTexture) keywords.push('SHOW_OBSTACLES');
+        if (options.showObstacles && options.obstacleField) keywords.push('SHOW_OBSTACLES');
+        if (options.paletteRamp) keywords.push('PALETTE_RAMP');
 
         // Set material keywords (compiles variant if needed)
         this.displayMaterial.setKeywords(keywords);
@@ -70,17 +72,29 @@ export class DisplayModule {
             );
         }
 
-        // Bind obstacle texture and color if enabled
-        if (options.showObstacles && options.obstacleTexture) {
-            gl.uniform1i(this.displayMaterial.uniforms.uObstacles, options.obstacleTexture.attach(4));
-            if (options.obstacleColor) {
-                gl.uniform3f(
-                    this.displayMaterial.uniforms.uObstacleColor,
-                    options.obstacleColor.r,
-                    options.obstacleColor.g,
-                    options.obstacleColor.b
-                );
-            }
+        // Bind the obstacle field, its colors, and the numbers the shader needs
+        // to turn stored distance into device pixels
+        if (options.showObstacles && options.obstacleField) {
+            const field = options.obstacleField;
+            const fill = options.obstacleFill;
+            const edge = options.obstacleEdge;
+
+            gl.uniform1i(this.displayMaterial.uniforms.uObstacles, field.attach(4));
+            gl.uniform3f(this.displayMaterial.uniforms.uObstacleFill, fill.r, fill.g, fill.b);
+            gl.uniform3f(this.displayMaterial.uniforms.uObstacleEdge, edge.r, edge.g, edge.b);
+            gl.uniform2f(
+                this.displayMaterial.uniforms.uObstacleParams,
+                field.range2,
+                gl.drawingBufferHeight / field.height
+            );
+        }
+
+        // Palette ramp stops, darkest first
+        if (options.paletteRamp && options.rampColors) {
+            options.rampColors.slice(0, 4).forEach((stop, i) => {
+                const location = this.displayMaterial.uniforms[`uRamp${i}`];
+                if (location) gl.uniform3f(location, stop.r, stop.g, stop.b);
+            });
         }
 
         // Set texel size for shading
