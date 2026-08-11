@@ -56,22 +56,55 @@ class Pointer {
         this.y = 0;
         this.px = 0;  // Previous x
         this.py = 0;  // Previous y
-        this.dx = 0;  // Delta x
+        this.dx = 0;  // Delta x, accumulated since the simulation last read it
         this.dy = 0;  // Delta y
+        this.ax = 0;  // Where the path since that read began
+        this.ay = 0;
         this.down = false;
         this.moved = false;
         this.color = generateColor();
         this.lastInput = -Infinity;   // nobody has touched this pointer yet
     }
 
+    /**
+     * Start a fresh path here
+     *
+     * A press begins a new stroke. Without this the first splat of the press
+     * would be swept from wherever the pointer happened to have been left.
+     *
+     * @param {number} x - Normalized x
+     * @param {number} y - Normalized y
+     */
+    begin(x, y) {
+        this.x = this.px = this.ax = x;
+        this.y = this.py = this.ay = y;
+        this.dx = 0;
+        this.dy = 0;
+        this.moved = false;
+        this.lastInput = now();
+    }
+
     updatePosition(x, y) {
+        // The first report a pointer ever gets is a position, not a movement:
+        // there is no earlier point to have traveled from, and treating the
+        // origin as one would drag a stroke in from the corner of the screen.
+        if (this.lastInput === -Infinity) {
+            this.begin(x, y);
+            return;
+        }
+
         this.px = this.x;
         this.py = this.y;
         this.x = x;
         this.y = y;
 
-        this.dx = this.x - this.px;
-        this.dy = this.y - this.py;
+        // Accumulate rather than replace. Pointer events arrive at the device's
+        // rate, not the frame rate: a 125 Hz mouse fires roughly twice between
+        // two frames and a gaming mouse sixteen times, and keeping only the
+        // last delta threw away everything but the final fraction of the
+        // gesture - measured at 6% of the momentum at 16 events per frame.
+        this.dx += this.x - this.px;
+        this.dy += this.y - this.py;
         this.moved = Math.abs(this.dx) > 0 || Math.abs(this.dy) > 0;
         this.lastInput = now();
     }
@@ -100,6 +133,8 @@ class Pointer {
         this.moved = false;
         this.dx = 0;
         this.dy = 0;
+        this.ax = this.x;   // the next stroke starts where this one ended
+        this.ay = this.y;
     }
 }
 
@@ -218,7 +253,7 @@ export class PointerManager {
     _onMouseDown(e) {
         const coords = this._normalizeCoords(e.clientX, e.clientY);
         this.pointers[0].down = true;
-        this.pointers[0].updatePosition(coords.x, coords.y);
+        this.pointers[0].begin(coords.x, coords.y);
         this.pointers[0].color = pointerColor(this.config);
     }
 
@@ -266,7 +301,7 @@ export class PointerManager {
             }
 
             pointer.down = true;
-            pointer.updatePosition(coords.x, coords.y);
+            pointer.begin(coords.x, coords.y);
             pointer.color = pointerColor(this.config);
         }
     }

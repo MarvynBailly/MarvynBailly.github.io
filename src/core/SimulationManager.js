@@ -331,17 +331,22 @@ export class SimulationManager {
     }
 
     /**
-     * Which boundary keyword the current config calls for
+     * Which boundary keywords the current config calls for
      *
      * A channel supersedes a plain outflow edge: it already has an outlet, and
-     * a reference pressure to go with it.
+     * an inlet to go with it.
+     *
+     * OUTLET_BC is the whole of a plain outflow edge: the last column leaves
+     * the domain and holds the reference pressure that makes the Poisson
+     * problem solvable. CHANNEL_BC adds an inlet on top of it, which is the
+     * only thing a channel has that an outflow edge does not.
      *
      * @private
      * @returns {string[]} Keywords to compile with
      */
     _boundaryKeywords() {
-        if (this.config.CHANNEL_INLET > 0) return ['CHANNEL_BC'];
-        if (this.config.OUTFLOW_BOUNDARY) return ['OUTFLOW_BOUNDARY'];
+        if (this.config.CHANNEL_INLET > 0) return ['CHANNEL_BC', 'OUTLET_BC'];
+        if (this.config.OUTFLOW_BOUNDARY) return ['OUTLET_BC'];
         return [];
     }
 
@@ -402,8 +407,44 @@ export class SimulationManager {
         }
 
         this.loadObstaclePreset(await this._resolveObstacles(scene.obstacles));
+        this._bringToRest();
         this.sceneManager.setScene(scene);
         this.activeScene = scene;
+    }
+
+    /**
+     * Stop the fluid before handing it to a new scene
+     *
+     * The config above is rebuilt from baseConfig every switch precisely so
+     * that one scene cannot inherit another's settings. The velocity field was
+     * the one thing that still did, and it carries far more state than any
+     * setting: leaving a driven channel handed the next scene a screen-wide
+     * stream with nothing left to drive it, and a closed box turns that into a
+     * slab of recirculation that takes about six seconds to die.
+     *
+     * Pressure goes with it because the solver warm-starts from the previous
+     * frame. Dye is deliberately left alone - it carries no momentum, and
+     * clearing it makes the switch blink.
+     *
+     * @private
+     */
+    _bringToRest() {
+        this._clear(this.velocity);
+        this._clear(this.pressure);
+    }
+
+    /**
+     * Zero a double FBO
+     *
+     * @private
+     * @param {Object} target - Double FBO
+     */
+    _clear(target) {
+        this.programs.clear.bind();
+        this.gl.uniform1i(this.programs.clear.uniforms.uTexture, target.read.attach(0));
+        this.gl.uniform1f(this.programs.clear.uniforms.value, 0);
+        this.fboManager.blit(target.write);
+        target.swap();
     }
 
     /**

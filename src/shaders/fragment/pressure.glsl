@@ -34,11 +34,16 @@ float samplePressure(vec2 coords, float fallback) {
 }
 
 void main () {
-#ifdef CHANNEL_BC
+#ifdef OUTLET_BC
     // A reference pressure at the outlet. Without one, every wall is Neumann,
     // the Poisson problem is singular, and no net through-flow is admissible:
     // the projection converts an inlet into recirculation. vR leaves the domain
     // only on the last column, so this needs no extra uniform.
+    //
+    // Both boundary modes need this. Without it the outflow edge is a
+    // zero-gradient pressure boundary, which cannot act as a sink: the solve
+    // has nowhere to send the flux, and what survives is whatever the sweeps
+    // happen to leave behind rather than a solution.
     if (vR.x > 1.0) {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;

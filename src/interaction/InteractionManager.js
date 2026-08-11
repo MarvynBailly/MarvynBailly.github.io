@@ -42,7 +42,11 @@ export class InteractionManager {
                 const dx = pointer.dx * (aspectRatio < 1 ? aspectRatio : 1);
                 const dy = pointer.dy * (aspectRatio > 1 ? 1 / aspectRatio : 1);
 
-                // Apply velocity splat
+                // Both splats are swept from where the pointer was when its
+                // movement was last consumed to where it is now, so a drag
+                // lays down a stroke rather than one blob per frame. A pointer
+                // that has barely moved sweeps a segment shorter than a texel,
+                // which is the disc this always drew.
                 this.forcesModule.applySplat(
                     velocity,
                     pointer.x,
@@ -50,17 +54,20 @@ export class InteractionManager {
                     dx * this.config.SPLAT_FORCE,
                     dy * this.config.SPLAT_FORCE,
                     this.config.SPLAT_RADIUS / 100.0,
-                    aspectRatio
+                    aspectRatio,
+                    pointer.ax,
+                    pointer.ay
                 );
 
-                // Apply dye splat
                 this.forcesModule.applyColorSplat(
                     dye,
                     pointer.x,
                     pointer.y,
                     pointer.color,
                     this.config.SPLAT_RADIUS / 100.0,
-                    aspectRatio
+                    aspectRatio,
+                    pointer.ax,
+                    pointer.ay
                 );
             }
 

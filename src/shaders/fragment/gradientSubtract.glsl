@@ -58,21 +58,25 @@ void main () {
         gl_FragColor = vec4(uInletSpeed, 0.0, 0.0, 1.0);
         return;
     }
+#endif
 
-    // The outlet column keeps whatever it has and leaves
+#ifdef OUTLET_BC
+    // The outlet column keeps whatever it has and leaves.
+    //
+    // vR leaves the domain on exactly the column the divergence stencil calls
+    // the outlet, which is the point: a plain `vUv.x >= 0.99` covers five
+    // columns on a 1920x1080 sim grid and nine at twice the device pixel
+    // ratio, so the width of the unprojected strip - and with it the boundary
+    // condition - depended on the size of the window.
+    //
+    // One way only, matching the divergence stencil: this column is the last
+    // thing that touches the velocity, so without the clamp here the pressure
+    // correction upstream can put the inflow straight back.
     if (vR.x > 1.0) {
-        gl_FragColor = vec4(texture2D(uVelocity, vUv).xy, 0.0, 1.0);
+        vec2 outlet = texture2D(uVelocity, vUv).xy;
+        gl_FragColor = vec4(max(outlet.x, 0.0), outlet.y, 0.0, 1.0);
         return;
     }
-#else
-    #ifdef OUTFLOW_BOUNDARY
-        // At right edge with outflow boundary, preserve velocity (don't apply pressure correction)
-        if (vUv.x >= 0.99) {
-            vec2 velocity = texture2D(uVelocity, vUv).xy;
-            gl_FragColor = vec4(velocity, 0.0, 1.0);
-            return;
-        }
-    #endif
 #endif
 
     // Sample current cell pressure (for Neumann BC fallback)

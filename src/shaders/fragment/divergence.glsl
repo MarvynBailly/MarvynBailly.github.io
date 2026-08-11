@@ -34,27 +34,30 @@ float sampleVelocity(vec2 coords, float currentComponent, float normalSample) {
     if (coords.x < 0.0) {
         return 2.0 * uInletSpeed - currentComponent;
     }
-
-    // Outlet: zero gradient, so fluid leaves instead of reflecting
-    if (coords.x > 1.0) {
-        return currentComponent;
-    }
 #else
     if (coords.x < 0.0) {
         return -currentComponent;  // No-slip on the left
     }
+#endif
 
-    #ifdef OUTFLOW_BOUNDARY
-        // Outflow on right edge: allow flow to exit
-        if (coords.x > 1.0) {
-            return currentComponent;  // Non-reflecting outflow
-        }
-    #else
-        // No-slip on right edge (default)
-        if (coords.x > 1.0) {
-            return -currentComponent;
-        }
-    #endif
+#ifdef OUTLET_BC
+    // Outlet: zero gradient, so fluid leaves instead of reflecting - but one
+    // way only.
+    //
+    // Nothing feeds this domain but the scene's own emitters, which add
+    // momentum rather than mass. An outlet that admits inflow is therefore a
+    // mass source with nothing to balance it, and the projection will use it as
+    // one: starting from a dead still field, a two-way outlet built a
+    // right-to-left jet of around 700 cells/s within thirty seconds and kept it.
+    // Clamping is a no-op wherever the flow is already leaving.
+    if (coords.x > 1.0) {
+        return max(currentComponent, 0.0);
+    }
+#else
+    // No-slip on right edge (default)
+    if (coords.x > 1.0) {
+        return -currentComponent;
+    }
 #endif
 
     // Top and bottom. Only the wall-normal component reaches this stencil, so

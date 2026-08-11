@@ -33,9 +33,11 @@ export class ForcesModule {
      * @param {number} dy - Y velocity to add
      * @param {number} radius - Splat radius
      * @param {number} aspectRatio - Canvas aspect ratio
+     * @param {number} [fromX] - Where the source was last frame; defaults to x
+     * @param {number} [fromY] - Where the source was last frame; defaults to y
      */
-    applySplat(target, x, y, dx, dy, radius, aspectRatio) {
-        this._splat(target, x, y, dx, dy, 0.0, radius, aspectRatio);
+    applySplat(target, x, y, dx, dy, radius, aspectRatio, fromX = x, fromY = y) {
+        this._splat(target, x, y, dx, dy, 0.0, radius, aspectRatio, fromX, fromY);
     }
 
     /**
@@ -47,9 +49,11 @@ export class ForcesModule {
      * @param {Object} color - RGB color {r, g, b}
      * @param {number} radius - Splat radius
      * @param {number} aspectRatio - Canvas aspect ratio
+     * @param {number} [fromX] - Where the source was last frame; defaults to x
+     * @param {number} [fromY] - Where the source was last frame; defaults to y
      */
-    applyColorSplat(target, x, y, color, radius, aspectRatio) {
-        this._splat(target, x, y, color.r, color.g, color.b, radius, aspectRatio);
+    applyColorSplat(target, x, y, color, radius, aspectRatio, fromX = x, fromY = y) {
+        this._splat(target, x, y, color.r, color.g, color.b, radius, aspectRatio, fromX, fromY);
     }
 
     /**
@@ -119,8 +123,10 @@ export class ForcesModule {
      * @param {number} b - Third component (unused for velocity, or blue)
      * @param {number} radius - Splat radius
      * @param {number} aspectRatio - Canvas aspect ratio
+     * @param {number} fromX - Start of the segment to sweep the splat along
+     * @param {number} fromY - Start of the segment to sweep the splat along
      */
-    _splat(target, x, y, r, g, b, radius, aspectRatio) {
+    _splat(target, x, y, r, g, b, radius, aspectRatio, fromX = x, fromY = y) {
         const gl = this.gl;
         const uniforms = this.splatProgram.uniforms;
 
@@ -130,6 +136,7 @@ export class ForcesModule {
         gl.uniform1i(uniforms.uObstacles, this.obstacleField.attach(1));
         gl.uniform1f(uniforms.aspectRatio, aspectRatio);
         gl.uniform2f(uniforms.point, x, y);
+        gl.uniform2f(uniforms.origin, fromX, fromY);
         gl.uniform3f(uniforms.color, r, g, b);
         gl.uniform1f(uniforms.radius, radius);
 
