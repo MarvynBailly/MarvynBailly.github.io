@@ -50,7 +50,7 @@ export const SCENES = [
     probeTraverse, vortexWell, latticeArray
 ];
 
-export const DEFAULT_SCENE = 'monogram';
+export const DEFAULT_SCENE = 'colour-field';
 
 /**
  * Look a scene up by id

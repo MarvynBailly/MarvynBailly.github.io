@@ -83,11 +83,18 @@ export class Config {
         this.PALETTE_RAMP = false;      // Map density through a palette in the display shader
         // Ramp stops at density 0, 0.35, 0.7 and 1. Empty water is the exact
         // page background, so an empty canvas is indistinguishable from no canvas.
+        //
+        // The three stops above it follow how water actually absorbs light:
+        // red goes first, then orange and yellow, and blue-green travels
+        // furthest. So thin fluid reads deep and blue, and the more of it there
+        // is the further it climbs toward the pale green-cyan of a shallow
+        // sunlit surface. An earlier ramp ended on amber, which is the one hue
+        // a water column cannot produce - it read as rust on marbled paper.
         this.PALETTE_RAMP_COLORS = [
-            { r: 0.063, g: 0.075, b: 0.102 },   // #10131a
-            { r: 0.176, g: 0.231, b: 0.322 },   // #2d3b52
-            { r: 0.309, g: 0.428, b: 0.489 },   // primary at 62%
-            { r: 0.433, g: 0.332, b: 0.196 }    // secondary at 55%
+            { r: 0.063, g: 0.075, b: 0.102 },   // #10131a  page background
+            { r: 0.055, g: 0.157, b: 0.212 },   // #0e2836  deep water
+            { r: 0.149, g: 0.416, b: 0.463 },   // #266a76  mid column
+            { r: 0.545, g: 0.784, b: 0.769 }    // #8bc8c4  sunlit shallows
         ];
         this.VORTEX_RATE = 0;           // Rotational body force, radians/second
         this.VORTEX_FALLOFF = 0.55;     // Radius at which the swirl dies out
