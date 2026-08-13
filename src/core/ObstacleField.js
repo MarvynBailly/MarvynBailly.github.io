@@ -76,6 +76,69 @@ export class ObstacleField {
     }
 
     /**
+     * Upload one rectangle of a field, leaving the rest of the texture alone
+     *
+     * A moving body rewrites a few thousand texels a frame out of a few
+     * hundred thousand. Sending the whole field for that is most of a megabyte
+     * of bus traffic per frame to deliver a hull, so the caller reports the
+     * region it touched and only that region is sent.
+     *
+     * The rows have to be packed tight either way - WebGL1 has no
+     * UNPACK_ROW_LENGTH to stride over the full field with - so the scratch
+     * buffer that does it is kept and regrown rather than reallocated.
+     *
+     * @param {{x: number, y: number, width: number, height: number}} rect - Region in texels
+     * @param {Uint8Array} data - The full field the region is read out of
+     * @param {number} fieldWidth - Row stride of `data`, in texels
+     */
+    uploadRect(rect, data, fieldWidth) {
+        const gl = this.gl;
+        const { x, y, width, height } = rect;
+
+        if (width <= 0 || height <= 0) return;
+
+        // A region outside the allocated texture would be an INVALID_VALUE and
+        // is a sign the field was resized without the texture following.
+        if (this.width === 0 || x < 0 || y < 0 ||
+            x + width > this.width || y + height > this.height) {
+            return;
+        }
+
+        const channels = this.isWebGL2 ? 1 : 4;
+        const needed = width * height * channels;
+
+        if (!this.scratch || this.scratch.length < needed) {
+            this.scratch = new Uint8Array(needed);
+        }
+        const scratch = this.scratch;
+
+        if (this.isWebGL2) {
+            for (let j = 0; j < height; j++) {
+                const start = (y + j) * fieldWidth + x;
+                scratch.set(data.subarray(start, start + width), j * width);
+            }
+        } else {
+            for (let j = 0; j < height; j++) {
+                const start = (y + j) * fieldWidth + x;
+                let out = j * width * 4;
+                for (let i = 0; i < width; i++) {
+                    scratch[out] = data[start + i];
+                    scratch[out + 3] = 255;
+                    out += 4;
+                }
+            }
+        }
+
+        const format = this.isWebGL2 ? gl.RED : gl.RGBA;
+
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, width, height,
+            format, gl.UNSIGNED_BYTE, scratch.subarray(0, needed));
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+    }
+
+    /**
      * Bind to a texture unit
      *
      * @param {number} unit - Texture unit index

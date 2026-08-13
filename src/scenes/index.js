@@ -15,6 +15,7 @@ import stillWater from './library/still-water.js';
 import twoPigments from './library/two-pigments.js';
 import chromatography from './library/chromatography.js';
 import colourField from './library/colour-field.js';
+import littleBoat from './library/little-boat.js';
 
 import frontalPassage from './library/frontal-passage.js';
 import stackPlume from './library/stack-plume.js';
@@ -44,7 +45,7 @@ export const FEATURES = {
 
 export const SCENES = [
     MONOGRAM, CURSIVE, CIRCLE, EMPTY,
-    stillWater, twoPigments, chromatography, colourField,
+    stillWater, twoPigments, chromatography, colourField, littleBoat,
     frontalPassage, stackPlume, radiationFog, virga,
     tunnelSection, karmanStreet, dyeRake, venturi,
     probeTraverse, vortexWell, latticeArray

@@ -1271,6 +1271,40 @@ h4 {
     color: var(--color-text);
 }
 
+/* Entry header: title left, date column right. The date box is a fixed 14ch —
+   the width of the longest form, "2024 – Present" — with its text aligned to
+   the box's left edge, so in the mono face the start years and the en-dashes
+   stack into a true column instead of ragging off the right margin. */
+.experience-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.experience-head h3 {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.experience-date {
+    flex: 0 0 14ch;
+    font-family: var(--font-mono);
+    color: var(--color-primary);
+    white-space: nowrap;
+}
+
+/* Narrower than this the longest title and the date column collide. */
+@media (max-width: 580px) {
+    .experience-head {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .experience-date {
+        flex: 0 0 auto;
+    }
+}
+
 .experience-item p {
     margin-bottom: 6px;
     font-size: 0.9375rem;

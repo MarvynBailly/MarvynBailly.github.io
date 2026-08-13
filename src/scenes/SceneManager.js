@@ -109,9 +109,13 @@ export class SceneManager {
              * @param {number} dx - Horizontal velocity, simulation cells/second
              * @param {number} dy - Vertical velocity
              * @param {number} radius - Raw splat radius; the Gaussian is exp(-r^2/radius)
+             * @param {number} [fromX] - Where the source was last frame; splat sweeps from there
+             * @param {number} [fromY] - Where the source was last frame
              */
-            velocity(x, y, dx, dy, radius) {
-                sim.forcesModule.applySplat(sim.velocity, x, y, dx, dy, radius, sim.aspectRatio);
+            velocity(x, y, dx, dy, radius, fromX, fromY) {
+                sim.forcesModule.applySplat(
+                    sim.velocity, x, y, dx, dy, radius, sim.aspectRatio, fromX, fromY
+                );
             },
 
             /**
@@ -125,8 +129,30 @@ export class SceneManager {
              * @param {Object} color - {r, g, b}
              * @param {number} radius - Raw splat radius
              */
-            dye(x, y, color, radius) {
-                sim.forcesModule.applyColorSplat(sim.dye, x, y, color, radius, sim.aspectRatio);
+            dye(x, y, color, radius, fromX, fromY) {
+                sim.forcesModule.applyColorSplat(
+                    sim.dye, x, y, color, radius, sim.aspectRatio, fromX, fromY
+                );
+            },
+
+            /**
+             * Place or move a solid body in the flow
+             *
+             * The body becomes part of the obstacle field, so the fluid sees a
+             * real wall: it flows around the hull, dye cannot enter it, and the
+             * pressure solve responds to it. Moving it is all this call does -
+             * pushing water is the scene's job, because only the scene knows
+             * where the bow and the propeller are. See scenes/library/little-boat.js.
+             *
+             * Position is screen-normalised like the splats above; `length` is
+             * a fraction of the shorter screen axis, so the body keeps its size
+             * and proportions on any window.
+             *
+             * @param {string} id - Identifier, so the same body moves each frame
+             * @param {Object} spec - { vertices, x, y, angle, length }
+             */
+            body(id, spec) {
+                if (sim.obstacleManager) sim.obstacleManager.setBody(id, spec);
             }
         };
     }

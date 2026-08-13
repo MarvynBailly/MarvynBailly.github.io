@@ -512,6 +512,11 @@ export class SimulationManager {
      * @param {Array} obstacles - Array of obstacle definitions
      */
     loadObstaclePreset(obstacles) {
+        if (this.obstacleManager) {
+            // A scene's boat must not still be under way in the next scene
+            this.obstacleManager.clearBodies();
+        }
+
         if (!this.obstacleManager) {
             console.warn('Obstacles not initialized');
             return;
@@ -545,6 +550,25 @@ export class SimulationManager {
                 texelsPerCell: this.config.OBSTACLE_SUPERSAMPLE
             }
         );
+    }
+
+    /**
+     * Restamp moving bodies and send only the texels that changed
+     *
+     * @private
+     */
+    _updateBodies() {
+        const manager = this.obstacleManager;
+        if (!manager) return;
+
+        // Nothing moving and nothing left behind: skip the call entirely rather
+        // than pay for it on every frame of the nineteen scenes with no bodies.
+        if (manager.bodies.length === 0 && !manager.bodyRect) return;
+
+        const rect = manager.updateBodies();
+        if (rect) {
+            this.obstacleField.uploadRect(rect, manager.field, manager.width);
+        }
     }
 
     /**
@@ -688,6 +712,11 @@ export class SimulationManager {
 
         // 2b. Run the active scene's emitters
         this.sceneManager.update(dt);
+
+        // 2c. Move any bodies the scene repositioned into the obstacle field,
+        // before anything reads it, so this step's advection and projection see
+        // the hull where the scene just put it rather than where it was.
+        this._updateBodies();
 
         // 3. Advect velocity
         this.advectionModule.advect(
