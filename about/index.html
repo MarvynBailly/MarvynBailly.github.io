@@ -140,15 +140,6 @@
 
             <!-- Downloads -->
             <div class="download-section">
-                <a href="BaillyMarvyn_cv.pdf" download class="download-btn">
-                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download CV
-                </a>
                 <a href="BaillyMarvyn_resume.pdf" download class="download-btn">
                     <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
@@ -166,15 +157,22 @@
         <!-- Use blog-post class to inherit text styles -->
         <article class="blog-post" style="padding: 0; max-width: none; margin: 0;">
 
+            <section id="summary">
+                <h2>Summary</h2>
+                <p>Applied Mathematics Ph.D. candidate specializing in mesh generation, numerical optimization,
+                    numerical methods for PDEs, and computational fluid dynamics. Experienced in taking methods from
+                    first principles to documented, user-facing software in Julia, Python, and C++.</p>
+            </section>
+
             <section id="education">
                 <h2>Education</h2>
 
                 <div class="experience-item">
                     <div class="experience-head">
-                        <h3>University of Maryland, College Park</h3>
+                        <h3>University of Maryland</h3>
                         <span class="experience-date">2023 – Present</span>
                     </div>
-                    <p><em>PhD, Applied Mathematics and Scientific Computation (AMSC) (GPA: 3.892)</em></p>
+                    <p><em>PhD, Applied Mathematics &amp; Scientific Computation (GPA 3.89)</em></p>
                 </div>
 
                 <div class="experience-item">
@@ -182,7 +180,7 @@
                         <h3>University of Washington</h3>
                         <span class="experience-date">2022 – 2023</span>
                     </div>
-                    <p><em>M.S., Applied Mathematics (Concentration in Numerical Methods) (GPA: 3.84)</em></p>
+                    <p><em>MS, Applied Mathematics, Numerical Methods (GPA 3.84)</em></p>
                 </div>
 
                 <div class="experience-item">
@@ -190,20 +188,12 @@
                         <h3>University of Oregon</h3>
                         <span class="experience-date">2020 – 2022</span>
                     </div>
-                    <p><em>B.S., Mathematics (Concentration in Applied and Computational) (GPA: 3.96)</em></p>
-                </div>
-
-                <div class="experience-item">
-                    <div class="experience-head">
-                        <h3>Central Oregon Community College</h3>
-                        <span class="experience-date">2017 – 2020</span>
-                    </div>
-                    <p><em>A.A., Baker Early College Program (GPA: 4.0)</em></p>
+                    <p><em>BS, Mathematics, Applied &amp; Computational (GPA 3.96)</em></p>
                 </div>
 
                 <div class="note">
-                    <strong>Relevant Coursework:</strong> Computational Fluid Dynamics, Natural Language Processing,
-                    Parallel Computing, Scientific Computing, Applied Numerical Optimization, Numerical Analysis
+                    <strong>Relevant Coursework:</strong> Numerical Methods for Partial Differential Equations,
+                    Numerical Optimization, High-Performance Computing, Natural Language Processing
                 </div>
             </section>
 
@@ -212,51 +202,60 @@
 
                 <div class="experience-item">
                     <div class="experience-head">
-                        <h3>Research Assistant</h3>
+                        <h3>Graduate Research Assistant</h3>
                         <span class="experience-date">2024 – Present</span>
                     </div>
-                    <h4>Computational Turbulence Laboratory,
-                        Dept. of Mechanical Engineering, UMD</h4>
-                    <p><em>Advisor: Johan Larsson</em></p>
+                    <h4>Computational Turbulence Lab, University of Maryland</h4>
+                    <p><em>Advisor: Prof. Johan Larsson</em></p>
                     <ul>
-                        <li>Worked with a multidisciplinary team to study grid adaptation for wall-modeled turbulence
-                            at all Mach numbers.</li>
-                        <li>Working on creating an automatic quad/hex mesh framework to produce high quality grids for
-                            finite volume fluid methods.</li>
-                        <li>Implementation in Julia and C++ to be run on a local high performance computing (HPC)
-                            cluster, Zaratan.</li>
+                        <li>Applied numerical optimization, discrete differential geometry, and numerical methods for PDEs to
+                            generate structured meshes with desired properties.</li>
+                        <li>Developed these methods into documented, tested libraries, including a graphical interface for
+                            non-experts, cutting setup from days of manual work to hours.</li>
+                        <li>Presented mathematical methods to a multidisciplinary team, translating simulation requirements
+                            into concrete design choices.</li>
                     </ul>
                 </div>
 
                 <div class="experience-item">
                     <div class="experience-head">
-                        <h3>Research Assistant</h3>
+                        <h3>Graduate Research Assistant</h3>
                         <span class="experience-date">2023 – 2024</span>
                     </div>
-                    <h4>Computational Turbulence Laboratory,
-                        Dept. of Atmospheric & Oceanic Science, UMD</h4>
-                    <p><em>Advisor: Jacob Wenegrat</em></p>
+                    <h4>Atmospheric &amp; Oceanic Science, University of Maryland</h4>
+                    <p><em>Advisor: Prof. Jacob Wenegrat</em></p>
                     <ul>
-                        <li>Worked with a team of Atmospheric and Oceanic scientists to study the effect of the diurnal
-                            cycle on internal ocean dynamics.</li>
-                        <li>Implemented large eddy simulations (LES) in Julia and performed computations on Zaratan.
-                        </li>
+                        <li>Extended a published ocean-convection study to a more realistic model built in Julia, running large
+                            eddy simulations on an HPC cluster.</li>
                     </ul>
                 </div>
+
             </section>
 
-            <section id="other-experience">
-                <h2>Other Experience</h2>
+            <section id="teaching-leadership">
+                <h2>Teaching &amp; Leadership</h2>
 
                 <div class="experience-item">
                     <div class="experience-head">
                         <h3>Teaching Assistant</h3>
                         <span class="experience-date">2022 – Present</span>
                     </div>
-                    <p><em>University of Maryland & University of Washington</em></p>
+                    <p><em>University of Maryland &amp; University of Washington</em></p>
                     <ul>
-                        <li>Led biweekly problem-solving sessions and provided feedback for undergraduate courses in
-                            probability and calculus and graduate courses in data science.</li>
+                        <li>Led weekly discussion sections in graduate and undergraduate courses in data science, probability,
+                            and calculus.</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div class="experience-head">
+                        <h3>Summer Camp Director</h3>
+                        <span class="experience-date">2023 – 2025</span>
+                    </div>
+                    <p><em>Girls Talk Math, University of Maryland</em></p>
+                    <ul>
+                        <li>Co-directed the camp: ran program operations, hired undergraduate leaders, and coordinated
+                            industry outreach.</li>
                     </ul>
                 </div>
 
@@ -267,31 +266,39 @@
                     </div>
                     <p><em>University of Maryland</em></p>
                     <ul>
-                        <li>Co-organized and led the Joint AMSC, Math & Stat Student Seminar (JAMS).</li>
+                        <li>Co-organized and led the weekly Joint AMSC, Math &amp; Stat Student Seminar (JAMS).</li>
                     </ul>
                 </div>
 
-                <div class="experience-item">
-                    <div class="experience-head">
-                        <h3>Summer Camp Director</h3>
-                        <span class="experience-date">2023 – 2025</span>
-                    </div>
-                    <p><em>University of Maryland - Girls Talk Math</em></p>
-                    <ul>
-                        <li>Co-directed summer program operations, managed hiring of undergraduate leaders, and
-                            coordinated
-                            industry out-reach.</li>
-                    </ul>
-                </div>
+            </section>
+
+            <section id="projects">
+                <h2>Selected Projects</h2>
+                <ul>
+                    <li><a href="https://github.com/MarvynBailly/GridGeneration.jl" target="_blank"><strong>GridGeneration.jl</strong></a>
+                        (Julia) — semi-automatic multi-block grid generator using algebraic and PDE-driven methods;
+                        ships generated API documentation and worked airfoil examples.</li>
+                    <li><a href="https://github.com/yichg/UmdAgentChallenge" target="_blank"><strong>Smart Shelf Auditor</strong></a>
+                        (Python) — team-built AI agent that audits retail shelves with object detection and a
+                        vision-language model;
+                        <a href="https://www.rhsmith.umd.edu/news/330-students-across-campus-sign-smiths-agentic-ai-challenge" target="_blank">Finalist,
+                            UMD Agentic AI Challenge</a> (top 5 of 67 teams, Apr 2026).</li>
+                    <li><a href="https://marvyn.com/Quantum-Circuit-Builder/" target="_blank"><strong>Quantum Circuit Builder</strong></a>
+                        (JavaScript) — browser tool converting superconducting circuit diagrams into Hamiltonian
+                        parameters for lattice field theory; live demo.</li>
+                    <li><a href="https://github.com/MarvynBailly/Mechanistic-Interpretability-of-Grammatical-Structures" target="_blank"><strong>Mechanistic
+                                Interpretability of Grammatical Structures</strong></a> (Python, PyTorch) — path patching
+                        across GPT-2 small's 12 layers and 144 attention heads to locate a name-resolution circuit.</li>
+                </ul>
             </section>
 
             <section id="skills">
-                <h2>Skills</h2>
+                <h2>Technical Skills</h2>
                 <div class="algorithm-box">
-                    <p style="margin: 0;">
-                        <strong>Experience with:</strong> Julia, Python (pandas, numpy, matplotlib, transformers),
-                        Linux, MATLAB, bash, Excel, Java, Javascript, C++, LaTeX, git, HPC (SLURM)
-                    </p>
+                    <p style="margin: 0 0 6px;"><strong>Programming:</strong> Julia, Python, C++, MATLAB, JavaScript, Bash</p>
+                    <p style="margin: 0 0 6px;"><strong>Numerics &amp; CFD:</strong> finite volume/element methods, PDE solvers,
+                        large eddy simulation, numerical optimization</p>
+                    <p style="margin: 0;"><strong>Tools:</strong> Linux, Git, Make, SLURM, MPI, OpenMP, PyTorch, LaTeX</p>
                 </div>
             </section>
 
