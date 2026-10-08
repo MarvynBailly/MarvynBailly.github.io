@@ -20,9 +20,12 @@ import { AdvectionModule } from '../physics/AdvectionModule.js';
 import { PressureSolverModule } from '../physics/PressureSolverModule.js';
 import { VorticityModule } from '../physics/VorticityModule.js';
 import { ForcesModule } from '../physics/ForcesModule.js';
+import { WaterModule } from '../physics/WaterModule.js';
+import { ForestFire } from '../physics/ForestFire.js';
 import { BloomModule } from '../rendering/BloomModule.js';
 import { SunraysModule } from '../rendering/SunraysModule.js';
 import { DisplayModule } from '../rendering/DisplayModule.js';
+import { Landscape } from '../rendering/Landscape.js';
 import { createDitheringTexture } from '../rendering/DitheringTexture.js';
 import { PointerManager } from '../interaction/PointerManager.js';
 import { InteractionManager } from '../interaction/InteractionManager.js';
@@ -129,11 +132,17 @@ export class SimulationManager {
         this.pressureModule = new PressureSolverModule(this.gl, this.programs, this.fboManager, this.obstacleField, this.config);
         this.vorticityModule = new VorticityModule(this.gl, this.programs, this.fboManager, this.obstacleField, this.config);
         this.forcesModule = new ForcesModule(this.gl, this.programs, this.fboManager, this.obstacleField);
+        this.waterModule = new WaterModule(
+            this.gl, this.programs, this.fboManager, this.textureManager,
+            this.webglManager.supportsLinearFiltering()
+        );
 
         // Initialize rendering modules
         this.bloomModule = new BloomModule(this.gl, this.programs, this.fboManager, this.textureManager, this.config);
         this.sunraysModule = new SunraysModule(this.gl, this.programs, this.fboManager, this.textureManager, this.config);
         this.displayModule = new DisplayModule(this.gl, this.displayMaterial, this.fboManager);
+        this.landscape = new Landscape(this.gl);
+        this.forestFire = new ForestFire(this);
 
         // Create dithering texture
         this.ditheringTexture = createDitheringTexture(this.gl);
@@ -146,7 +155,11 @@ export class SimulationManager {
         this.sceneManager = new SceneManager(this);
 
         // Initial splats for visual interest
-        this.interactionManager.generateRandomSplats(this.velocity, this.dye, 5, this.aspectRatio);
+        if (this.config.INITIAL_SPLATS > 0) {
+            this.interactionManager.generateRandomSplats(
+                this.velocity, this.dye, this.config.INITIAL_SPLATS, this.aspectRatio
+            );
+        }
         onProgress(1);
 
         this.initialized = true;
@@ -173,6 +186,12 @@ export class SimulationManager {
             curl: '/src/shaders/fragment/curl.glsl',
             vorticity: '/src/shaders/fragment/vorticity.glsl',
             splat: '/src/shaders/fragment/splat.glsl',
+            inkStamp: '/src/shaders/fragment/inkStamp.glsl',
+            source: '/src/shaders/fragment/source.glsl',
+            waveStep: '/src/shaders/fragment/waveStep.glsl',
+            waveDrop: '/src/shaders/fragment/waveDrop.glsl',
+            treeSway: '/src/shaders/fragment/treeSway.glsl',
+            heatSample: '/src/shaders/fragment/heatSample.glsl',
             buoyancy: '/src/shaders/fragment/buoyancy.glsl',
             vortexForce: '/src/shaders/fragment/vortexForce.glsl',
             display: '/src/shaders/fragment/display.glsl',
@@ -241,6 +260,36 @@ export class SimulationManager {
                 this.gl,
                 baseVertexShader,
                 this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, splatFrag)
+            ),
+            inkStamp: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.inkStamp)
+            ),
+            source: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.source)
+            ),
+            waveStep: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.waveStep)
+            ),
+            waveDrop: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.waveDrop)
+            ),
+            treeSway: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.treeSway)
+            ),
+            heatSample: new Program(
+                this.gl,
+                baseVertexShader,
+                this.shaderManager.compileShader(this.gl.FRAGMENT_SHADER, sources.heatSample)
             ),
             buoyancy: new Program(
                 this.gl,
@@ -392,10 +441,15 @@ export class SimulationManager {
      * Activate a scene: its config, its geometry, and its emitters
      *
      * @param {Object} scene - Scene module from scenes/index.js
+     * @param {Object} [options] - { obstacles }
+     * @param {boolean} [options.obstacles] - Take the scene's geometry too.
+     *        A page that derives its obstacles from its own layout passes
+     *        false: the scene supplies the physics, the DOM supplies the walls.
      * @returns {Promise<void>}
      */
-    async loadScene(scene) {
+    async loadScene(scene, options = {}) {
         if (!scene) return;
+        const { obstacles = true } = options;
 
         const before = this._boundaryKeywords().join();
 
@@ -406,7 +460,9 @@ export class SimulationManager {
             this.updateBoundaryShaders();
         }
 
-        this.loadObstaclePreset(await this._resolveObstacles(scene.obstacles));
+        if (obstacles) {
+            this.loadObstaclePreset(await this._resolveObstacles(scene.obstacles));
+        }
         this._bringToRest();
         this.sceneManager.setScene(scene);
         this.activeScene = scene;
@@ -530,6 +586,22 @@ export class SimulationManager {
             }
         }
 
+        this._uploadObstacleField();
+    }
+
+    /**
+     * Replace the obstacle geometry and push it to the GPU
+     *
+     * Unlike loadObstaclePreset this leaves moving bodies alone, because it is
+     * called whenever a layout moves rather than when a scene changes: a page
+     * built out of obstacles rewrites them on every resize, scroll and
+     * transition frame, and none of those should sink the boat.
+     *
+     * @param {Array<Object>} definitions - Obstacle definitions
+     */
+    setObstacles(definitions) {
+        if (!this.obstacleManager) return;
+        this.obstacleManager.setObstacles(definitions);
         this._uploadObstacleField();
     }
 
@@ -693,8 +765,22 @@ export class SimulationManager {
     update(dt) {
         if (!this.initialized || this.config.PAUSED) return;
 
-        // 1. Apply user interaction
-        this.interactionManager.applyPointerForces(this.velocity, this.dye, this.aspectRatio);
+        // Simulated seconds, for anything drawn that moves on its own
+        this.time = (this.time || 0) + dt;
+
+        // 0. The lake's surface, when the scene has one. Fitted every frame -
+        // a no-op unless the window or waterline changed - because both the
+        // pointer below and the scene's emitters may drop things into it.
+        const lake = this._lake();
+        if (lake) {
+            this.waterModule.fit(this.canvas.width, this.canvas.height, lake.waterline);
+            this.waterModule.ambient(dt, this.config.AMBIENT_RIPPLES);
+            this.waterModule.step();
+        }
+
+        // 1. Apply user interaction. Over the water the pointer disturbs the
+        // surface instead of the fluid.
+        this.interactionManager.applyPointerForces(this.velocity, this.dye, this.aspectRatio, lake);
 
         // 2. Apply wind tunnel force (if enabled)
         if (this.config.WIND_TUNNEL_MODE) {
@@ -774,12 +860,55 @@ export class SimulationManager {
             this.config.PRESSURE_ITERATIONS
         );
         this.velocity.swap();
+
+        // 8. The trees on the shore lean in this step's wind, and catch and
+        // burn in its heat
+        if (this.config.LANDSCAPE) {
+            this._swayTrees(dt);
+            if (this.config.TREES_BURN) this.forestFire.update(dt);
+        }
+    }
+
+    /**
+     * Advance the trees' lean by one step, as damped springs in the wind
+     *
+     * @private
+     * @param {number} dt - Step, seconds
+     */
+    _swayTrees(dt) {
+        const gl = this.gl;
+        const shore = this._waterline();
+        this.landscape.fit(this.canvas.width, this.canvas.height, shore);
+
+        if (!this.treeSway) {
+            const tm = this.textureManager;
+            const rg = tm.supportedFormats.formatRG;
+            const filter = this.webglManager.supportsLinearFiltering() ? gl.LINEAR : gl.NEAREST;
+            this.treeSway = tm.createDoubleFBO(256, 1, rg.internalFormat, rg.format, tm.halfFloatTexType, filter);
+        }
+
+        const program = this.programs.treeSway;
+        const u = program.uniforms;
+        program.bind();
+        gl.uniform1i(u.uState, this.treeSway.read.attach(0));
+        gl.uniform1i(u.uVelocity, this.velocity.read.attach(1));
+        gl.uniform1f(u.uShore, shore + this.landscape.landHeight * 0.8);
+        gl.uniform1f(u.uTreeHeight, this.landscape.treeHeight);
+        gl.uniform1f(u.uBend, this.config.TREE_BEND);
+        gl.uniform1f(u.uStiffness, this.config.TREE_STIFFNESS);
+        gl.uniform1f(u.uDamping, this.config.TREE_DAMPING);
+        gl.uniform1f(u.dt, dt);
+        this.fboManager.blit(this.treeSway.write);
+        this.treeSway.swap();
     }
 
     /**
      * Render current state to screen
+     *
+     * @param {Object} [target] - FBO to draw into instead; the ASCII renderer
+     *        uses this to read the finished picture back at cell resolution
      */
-    render() {
+    render(target = null) {
         if (!this.initialized) return;
 
         // Apply bloom effect
@@ -794,8 +923,26 @@ export class SimulationManager {
             sunraysTexture = this.sunraysModule.apply(this.dye.read);
         }
 
+        // The painted landscape, fitted to the window and the shore. Painting
+        // only happens when either changes; most frames this is a comparison.
+        let landscape = null;
+        if (this.config.LANDSCAPE) {
+            this.landscape.fit(this.canvas.width, this.canvas.height, this._waterline());
+            landscape = {
+                texture: this.landscape.texture,
+                trees: this.landscape.treeTexture,
+                treeBand: this.landscape.treeBand,
+                // Trees bend from their roots, on the far shore above the water
+                shore: this._waterline() + this.landscape.landHeight * 0.8,
+                treeHeight: this.landscape.treeHeight,
+                // How far each stretch of shore is leaning, from _swayTrees
+                sway: this.treeSway ? this.treeSway.read : null
+            };
+        }
+
         // Final composite render to screen
         this.displayModule.render(this.dye.read, {
+            landscape,
             shading: this.config.SHADING,
             bloom: this.config.BLOOM,
             bloomTexture: bloomTexture,
@@ -803,12 +950,53 @@ export class SimulationManager {
             sunraysTexture: sunraysTexture,
             ditheringTexture: this.ditheringTexture,
             paletteRamp: this.config.PALETTE_RAMP,
+            smoke: this.config.SMOKE,
             rampColors: this.config.PALETTE_RAMP_COLORS,
             showObstacles: this.config.SHOW_OBSTACLES,
             obstacleField: this.obstacleField,
             obstacleFill: this.config.OBSTACLE_FILL,
-            obstacleEdge: this.config.OBSTACLE_EDGE
+            obstacleEdge: this.config.OBSTACLE_EDGE,
+            reflection: this.config.REFLECTION ? {
+                waterline: this._waterline(),
+                color: this.config.WATER_COLOR,
+                reflectivity: this.config.REFLECTIVITY,
+                ripple: this.config.RIPPLE,
+                time: this.time || 0,
+                waves: this.config.WAVES ? this.waterModule.field : null,
+                waveStrength: this.config.WAVE_STRENGTH,
+                firelight: this.config.FIRELIGHT,
+                swell: this.config.SWELL
+            } : null,
+            target
         });
+    }
+
+    /**
+     * Screen height of the water's surface, 0 to 1
+     *
+     * The waterline is set in design space, like the solid that usually sits
+     * under it, so the two meet on any window shape.
+     *
+     * @private
+     * @returns {number} Waterline in screen units
+     */
+    _waterline() {
+        return 0.5 + (this.config.WATERLINE - 0.5) * Math.min(1, this.aspectRatio);
+    }
+
+    /**
+     * The lake, if the scene has waves on its water
+     *
+     * @private
+     * @returns {Object|null} { waterline, drop(x, depth, amount, radius) }
+     */
+    _lake() {
+        if (!this.config.REFLECTION || !this.config.WAVES) return null;
+        const waterline = this._waterline();
+        return {
+            waterline,
+            drop: (x, depth, amount, radius) => this.waterModule.drop(x, depth, amount, radius)
+        };
     }
 
     /**

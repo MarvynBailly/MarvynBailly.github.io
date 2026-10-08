@@ -23,7 +23,7 @@
  * - utils/sdf.js - the primitive distance functions
  */
 
-import { sdCircle, sdBox, sdPolygon } from '../utils/sdf.js';
+import { sdCircle, sdBox, sdRoundBox, sdPolygon } from '../utils/sdf.js';
 
 /** Distance stored either side of a surface, in grid texels */
 export const DEFAULT_SDF_RANGE = 12;
@@ -98,6 +98,10 @@ export class ObstacleManager {
             case 'rectangle':
                 this.addRectangle(definition.x, definition.y, definition.width, definition.height);
                 break;
+            case 'roundrect':
+                this.addRoundedRect(definition.x, definition.y, definition.width,
+                    definition.height, definition.radius);
+                break;
             case 'triangle':
                 this.addTriangle(definition.v0, definition.v1, definition.v2);
                 break;
@@ -153,6 +157,54 @@ export class ObstacleManager {
             width: Math.max(0.005, width),
             height: Math.max(0.005, height)
         });
+        this.dirty = true;
+    }
+
+    /**
+     * Add a rectangular obstacle with rounded corners
+     *
+     * This is what a page element rasterises to: a card is a box with a border
+     * radius, and squaring off its corners is visible both on screen and in the
+     * flow, where a sharp corner sheds where a rounded one does not.
+     *
+     * @param {number} x - Left edge in design coordinates
+     * @param {number} y - Bottom edge in design coordinates
+     * @param {number} width - Width in design units
+     * @param {number} height - Height in design units
+     * @param {number} radius - Corner radius in design units
+     */
+    addRoundedRect(x, y, width, height, radius) {
+        if (!isFiniteNumber(x) || !isFiniteNumber(y) ||
+            !isFiniteNumber(width) || !isFiniteNumber(height)) {
+            console.warn('Invalid rounded rectangle obstacle');
+            return;
+        }
+
+        this.obstacles.push({
+            type: 'roundrect',
+            x,
+            y,
+            width: Math.max(0.005, width),
+            height: Math.max(0.005, height),
+            radius: isFiniteNumber(radius) ? Math.max(0, radius) : 0
+        });
+        this.dirty = true;
+    }
+
+    /**
+     * Replace every obstacle in one pass
+     *
+     * A page whose layout *is* the geometry rewrites the whole set whenever it
+     * moves, and doing that as clear() plus a loop of addObstacle() marks the
+     * field dirty once per shape for no reason.
+     *
+     * @param {Array<Object>} definitions - Obstacle definitions
+     */
+    setObstacles(definitions) {
+        this.obstacles = [];
+        if (Array.isArray(definitions)) {
+            for (const definition of definitions) this.addObstacle(definition);
+        }
         this.dirty = true;
     }
 
@@ -397,18 +449,7 @@ export class ObstacleManager {
 
         for (const definition of this.obstacles) {
             const primitive = this._toGrid(definition);
-            if (!primitive) continue;
-
-            const bounds = this._boundsOf(primitive);
-
-            for (let j = bounds.j0; j <= bounds.j1; j++) {
-                const row = j * width;
-                const py = j + 0.5;
-                for (let i = bounds.i0; i <= bounds.i1; i++) {
-                    const d = primitive.sd(i + 0.5, py);
-                    if (d < distance[row + i]) distance[row + i] = d;
-                }
-            }
+            if (primitive) this._rasterize(primitive, distance);
         }
 
         // Encode: 0.5 is the surface, above it is solid, below it is fluid.
@@ -423,6 +464,70 @@ export class ObstacleManager {
         // having already painted a footprint this rebuild just erased.
         this.bodyRect = null;
         this.dirty = false;
+    }
+
+    /**
+     * Rasterise one primitive into the distance buffer
+     *
+     * Cells further inside the shape than the stored range all encode to the
+     * same solid byte, so a primitive that declares an `interior` gets that
+     * region filled instead of measured. On a page whose obstacles are its own
+     * layout that is most of the work: a card is mostly interior, and the only
+     * cells whose exact distance is ever read are the band along its edge.
+     *
+     * @private
+     * @param {Object} primitive - Grid-space primitive
+     * @param {Float32Array} distance - Distance buffer to min into
+     */
+    _rasterize(primitive, distance) {
+        const { width, range } = this;
+        const bounds = this._boundsOf(primitive);
+        const inner = this._interiorOf(primitive, bounds);
+
+        for (let j = bounds.j0; j <= bounds.j1; j++) {
+            const row = j * width;
+            const py = j + 0.5;
+            const filled = inner !== null && j >= inner.j0 && j <= inner.j1;
+
+            for (let i = bounds.i0; i <= bounds.i1; i++) {
+                if (filled && i === inner.i0) {
+                    for (let k = row + inner.i0, end = row + inner.i1; k <= end; k++) {
+                        if (distance[k] > -range) distance[k] = -range;
+                    }
+                    i = inner.i1;
+                    continue;
+                }
+                const d = primitive.sd(i + 0.5, py);
+                if (d < distance[row + i]) distance[row + i] = d;
+            }
+        }
+    }
+
+    /**
+     * Cells whose centres fall inside a primitive's declared interior box
+     *
+     * The box itself already carries the safety margin - a primitive only
+     * declares one over the region where it knows the distance is past the
+     * stored range - so this is a pure conversion from grid units to cells.
+     *
+     * @private
+     * @param {Object} primitive - Grid-space primitive, possibly with `interior`
+     * @param {Object} bounds - The primitive's cell bounds
+     * @returns {{i0: number, i1: number, j0: number, j1: number}|null} Region, or null
+     */
+    _interiorOf(primitive, bounds) {
+        const box = primitive.interior;
+        if (!box) return null;
+
+        const i0 = Math.max(bounds.i0, Math.ceil(box.minX - 0.5));
+        const i1 = Math.min(bounds.i1, Math.floor(box.maxX - 0.5));
+        const j0 = Math.max(bounds.j0, Math.ceil(box.minY - 0.5));
+        const j1 = Math.min(bounds.j1, Math.floor(box.maxY - 0.5));
+
+        // A shape thinner than twice the stored range has no such region
+        if (i0 > i1 || j0 > j1) return null;
+
+        return { i0, i1, j0, j1 };
     }
 
     /**
@@ -545,17 +650,35 @@ export class ObstacleManager {
             };
         }
 
-        if (definition.type === 'rectangle') {
+        if (definition.type === 'rectangle' || definition.type === 'roundrect') {
             const x0 = gx(definition.x);
             const y0 = gy(definition.y);
             const hx = definition.width * scale / 2;
             const hy = definition.height * scale / 2;
             const cx = x0 + hx;
             const cy = y0 + hy;
+
+            const round = definition.type === 'roundrect';
+            const radius = round
+                ? Math.max(0, Math.min(definition.radius * scale, Math.min(hx, hy)))
+                : 0;
+
+            // Everything this far in from an edge is past the stored range, so
+            // it need not be measured. Insetting by the corner radius as well
+            // keeps the region clear of the corner arcs, where an inset of only
+            // the range would overstate how deep a cell is.
+            const inset = Math.max(this.range, radius);
+
             return {
                 minX: cx - hx, maxX: cx + hx,
                 minY: cy - hy, maxY: cy + hy,
-                sd: (px, py) => sdBox(px, py, cx, cy, hx, hy)
+                interior: {
+                    minX: cx - hx + inset, maxX: cx + hx - inset,
+                    minY: cy - hy + inset, maxY: cy + hy - inset
+                },
+                sd: round
+                    ? (px, py) => sdRoundBox(px, py, cx, cy, hx, hy, radius)
+                    : (px, py) => sdBox(px, py, cx, cy, hx, hy)
             };
         }
 

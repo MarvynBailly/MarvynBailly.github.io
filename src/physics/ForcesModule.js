@@ -57,6 +57,67 @@ export class ForcesModule {
     }
 
     /**
+     * Write a set of rounded rectangles into the dye field
+     *
+     * Used to turn a layout into fluid: the boxes are where the page's panels
+     * are, and once they are in the dye the solver can carry them off. Boxes
+     * beyond what the shader holds are stamped in a second pass rather than
+     * dropped, because a page losing three of its cards at the moment it
+     * dissolves is worse than one extra full-screen pass.
+     *
+     * @param {Object} target - Target DoubleFBO (dye)
+     * @param {Array<{x: number, y: number, halfWidth: number, halfHeight: number}>} boxes
+     *        Boxes in screen-normalised coordinates, y up
+     * @param {Object} color - Ink colour {r, g, b}
+     * @param {number} aspectRatio - Canvas aspect ratio
+     * @param {Object} [options] - { radius, edge, rim, rimGain }
+     */
+    applyInkStamp(target, boxes, color, aspectRatio, options = {}) {
+        if (!boxes || boxes.length === 0) return;
+
+        const gl = this.gl;
+        const program = this.programs.inkStamp;
+        const uniforms = program.uniforms;
+
+        const {
+            radius = 0.008,
+            edge = 0.002,
+            rim = 0.004,
+            rimGain = 1.8
+        } = options;
+
+        // Matches MAX_BOXES in the shader
+        const capacity = 24;
+
+        for (let start = 0; start < boxes.length; start += capacity) {
+            const batch = boxes.slice(start, start + capacity);
+            const packed = new Float32Array(capacity * 4);
+
+            for (let i = 0; i < batch.length; i++) {
+                const box = batch[i];
+                packed[i * 4] = box.x;
+                packed[i * 4 + 1] = box.y;
+                packed[i * 4 + 2] = box.halfWidth;
+                packed[i * 4 + 3] = box.halfHeight;
+            }
+
+            program.bind();
+            gl.uniform1i(uniforms.uTarget, target.read.attach(0));
+            gl.uniform1f(uniforms.aspectRatio, aspectRatio);
+            gl.uniform4fv(uniforms.uBoxes, packed);
+            gl.uniform1i(uniforms.uCount, batch.length);
+            gl.uniform3f(uniforms.uColor, color.r, color.g, color.b);
+            gl.uniform1f(uniforms.uRadius, radius);
+            gl.uniform1f(uniforms.uEdge, edge);
+            gl.uniform1f(uniforms.uRim, rim);
+            gl.uniform1f(uniforms.uRimGain, rimGain);
+
+            this.fboManager.blit(target.write);
+            target.swap();
+        }
+    }
+
+    /**
      * Lift fluid in proportion to the dye it carries
      *
      * @param {Object} velocity - Velocity DoubleFBO
@@ -109,6 +170,45 @@ export class ForcesModule {
 
         this.fboManager.blit(velocity.write);
         velocity.swap();
+    }
+
+    /**
+     * Add a value wherever a mask texture says to, in one pass
+     *
+     * The shape-sized counterpart of a splat: dye or momentum fed along a
+     * whole outline every frame, rather than splatted onto it point by point.
+     *
+     * @param {Object} target - Target DoubleFBO (dye or velocity)
+     * @param {WebGLTexture} source - Mask; its red channel is the weight, in
+     *        screen space, bottom row first
+     * @param {Object} amount - {r, g, b} added at full weight; for velocity,
+     *        r and g are the x and y components
+     * @param {number} aspectRatio - Canvas aspect ratio
+     * @param {Object} [options]
+     * @param {number} [options.time] - Seconds, to move the flicker
+     * @param {number} [options.flicker] - 0 for steady, 1 for full flicker
+     * @param {number} [options.grain] - Flicker noise cells across the height
+     */
+    applySource(target, source, amount, aspectRatio, options = {}) {
+        const { time = 0, flicker = 0, grain = 24 } = options;
+        const gl = this.gl;
+        const program = this.programs.source;
+        const uniforms = program.uniforms;
+
+        program.bind();
+        gl.uniform1i(uniforms.uTarget, target.read.attach(0));
+        gl.uniform1i(uniforms.uObstacles, this.obstacleField.attach(1));
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, source);
+        gl.uniform1i(uniforms.uSource, 2);
+        gl.uniform3f(uniforms.amount, amount.r, amount.g, amount.b || 0);
+        gl.uniform1f(uniforms.aspectRatio, aspectRatio);
+        gl.uniform1f(uniforms.time, time);
+        gl.uniform1f(uniforms.flicker, flicker);
+        gl.uniform1f(uniforms.grain, grain);
+
+        this.fboManager.blit(target.write);
+        target.swap();
     }
 
     /**

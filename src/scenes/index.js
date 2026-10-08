@@ -22,6 +22,16 @@ import stackPlume from './library/stack-plume.js';
 import radiationFog from './library/radiation-fog.js';
 import virga from './library/virga.js';
 
+import { MB_ABLAZE, MB_SILHOUETTE, MB_BURNING, MB_ALIGHT, MB_LAKE, MB_LAKE_STILL, MB_NIGHT_LAKE, MB_SMOULDER, MB_BLAZE, MB_FIRESTORM } from './library/mb-fires.js';
+import writtenInFire from './library/written-in-fire.js';
+import campfire from './library/campfire.js';
+import candle from './library/candle.js';
+import bonfire from './library/bonfire.js';
+import braziers from './library/braziers.js';
+import embers from './library/embers.js';
+import gasRing from './library/gas-ring.js';
+import windswept from './library/windswept.js';
+
 import tunnelSection from './library/tunnel-section.js';
 import karmanStreet from './library/karman-street.js';
 import dyeRake from './library/dye-rake.js';
@@ -47,11 +57,13 @@ export const SCENES = [
     MONOGRAM, CURSIVE, CIRCLE, EMPTY,
     stillWater, twoPigments, chromatography, colourField, littleBoat,
     frontalPassage, stackPlume, radiationFog, virga,
+    MB_ABLAZE, MB_SILHOUETTE, MB_BURNING, MB_ALIGHT, MB_LAKE, MB_LAKE_STILL, MB_NIGHT_LAKE, MB_SMOULDER, MB_BLAZE, MB_FIRESTORM, writtenInFire,
+    campfire, candle, bonfire, braziers, embers, gasRing, windswept,
     tunnelSection, karmanStreet, dyeRake, venturi,
     probeTraverse, vortexWell, latticeArray
 ];
 
-export const DEFAULT_SCENE = 'colour-field';
+export const DEFAULT_SCENE = 'mb-night-lake';
 
 /**
  * Look a scene up by id

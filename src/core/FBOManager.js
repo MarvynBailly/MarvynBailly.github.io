@@ -55,13 +55,19 @@ export class FBOManager {
      * 
      * @param {Object|null} target - Target FBO (null for screen)
      * @param {boolean} clear - Whether to clear before rendering
+     * @param {Object} [viewport] - {x, y, width, height}: draw into part of
+     *        the screen only, in device pixels from the bottom left
      */
-    blit(target = null, clear = false) {
+    blit(target = null, clear = false, viewport = null) {
         const gl = this.gl;
 
         if (target === null) {
             // Render to screen
-            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+            if (viewport) {
+                gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            } else {
+                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+            }
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         } else {
             // Render to FBO

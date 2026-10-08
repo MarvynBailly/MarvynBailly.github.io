@@ -136,6 +136,77 @@ export class SceneManager {
             },
 
             /**
+             * Turn a drawing into a source mask
+             *
+             * The canvas covers the whole screen, top row first as canvases
+             * are; white is full weight. Pass the mask back in to redraw it,
+             * after a resize say, without making a new texture.
+             *
+             * @param {HTMLCanvasElement} canvas - Drawing of where the source is
+             * @param {WebGLTexture} [existing] - Mask to overwrite
+             * @returns {WebGLTexture} Mask for dyeSource / velocitySource
+             */
+            mask(canvas, existing) {
+                const gl = sim.gl;
+                const texture = existing || gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+                return texture;
+            },
+
+            /**
+             * Add dye wherever a mask says to, in one pass
+             *
+             * For a source that is a shape rather than a point. Unlike a run of
+             * splats it feeds the whole shape every frame, so nothing about the
+             * feeding shows.
+             *
+             * @param {WebGLTexture} mask - From mask()
+             * @param {Object} color - {r, g, b} at full weight, per frame
+             * @param {Object} [options] - { flicker, grain }, see ForcesModule.applySource
+             */
+            dyeSource(mask, color, options = {}) {
+                sim.forcesModule.applySource(sim.dye, mask, color, sim.aspectRatio, {
+                    time: this.time, ...options
+                });
+            },
+
+            /**
+             * Add velocity wherever a mask says to, in one pass
+             *
+             * @param {WebGLTexture} mask - From mask()
+             * @param {number} dx - Horizontal velocity at full weight, per frame
+             * @param {number} dy - Vertical velocity at full weight, per frame
+             * @param {Object} [options] - { flicker, grain }, see ForcesModule.applySource
+             */
+            velocitySource(mask, dx, dy, options = {}) {
+                sim.forcesModule.applySource(sim.velocity, mask, { r: dx, g: dy, b: 0 }, sim.aspectRatio, {
+                    time: this.time, ...options
+                });
+            },
+
+            /**
+             * Drop something into the lake, if the scene has waves on its water
+             *
+             * @param {number} x - Across the screen, 0 to 1
+             * @param {number} depth - Down from the waterline to the bottom of
+             *        the screen, 0 to 1; small is far away
+             * @param {number} amount - Size of the splash
+             * @param {number} [radius] - Size of the dent, in wave grid cells
+             */
+            ripple(x, depth, amount, radius) {
+                if (sim.config.REFLECTION && sim.config.WAVES) {
+                    sim.waterModule.drop(x, depth, amount, radius);
+                }
+            },
+
+            /**
              * Place or move a solid body in the flow
              *
              * The body becomes part of the obstacle field, so the fluid sees a

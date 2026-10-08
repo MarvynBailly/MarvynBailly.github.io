@@ -9,11 +9,14 @@
 
 import { SimulationManager } from './core/SimulationManager.js';
 import { LoadingScreen } from './ui/LoadingScreen.js';
+import { AsciiRenderer } from './rendering/AsciiRenderer.js';
+import { ASCII_SCHEMES } from './rendering/asciiSchemes.js';
 import { Config } from './config.js';
 import { groupedScenes, findScene, isAvailable, DEFAULT_SCENE } from './scenes/index.js';
 
 // Global state
 let simulation = null;
+let ascii = null;
 let lastTime = 0;
 let frameCount = 0;
 let fpsDisplay = null;
@@ -44,8 +47,27 @@ async function init() {
         // Expose for debugging once there is something to expose
         window.simulation = simulation;
 
+        // Off until the settings panel turns it on, or a link does
+        ascii = new AsciiRenderer(simulation);
+        await ascii.init();
+        window.ascii = ascii;
+
+        // A link can open the page in a given state, so a scene can be shared
+        // as it was seen: ?scene=campfire&ascii=inferno&cell=3. Read before the
+        // settings panel is built, so the panel shows what the link asked for.
+        const params = new URLSearchParams(location.search);
+        const linked = params.get('scene') && findScene(params.get('scene'));
+        // ASCII is the default look; ?ascii=off shows the fluid as it is
+        const asciiParam = params.get('ascii');
+        if (asciiParam !== 'off' && (config.ASCII_DEFAULT || params.has('ascii'))) {
+            ascii.setScheme(asciiParam || config.ASCII_SCHEME);
+            const cell = parseFloat(params.get('cell'));
+            if (cell > 0) ascii.setCellSize(cell);
+            ascii.start();
+        }
+
         // Load the opening scene before the first frame is drawn
-        await simulation.loadScene(findScene(DEFAULT_SCENE));
+        await simulation.loadScene(linked && isAvailable(linked) ? linked : findScene(DEFAULT_SCENE));
 
         // Setup UI
         setupUI();
@@ -59,6 +81,7 @@ async function init() {
                 resizePending = false;
                 resizeCanvas(canvas);
                 simulation.resize();
+                ascii.refresh();
             });
         });
 
@@ -93,8 +116,9 @@ function render(currentTime) {
     // Update simulation
     simulation.update(dt);
 
-    // Render to screen
-    simulation.render();
+    // Render to screen, as text in ASCII mode
+    if (ascii.active) ascii.render();
+    else simulation.render();
 
     // Update performance stats
     frameCount++;
@@ -217,6 +241,46 @@ function setupSettingsControls() {
     if (shading) { shading.checked = config.SHADING; shading.addEventListener('change', (e) => config.SHADING = e.target.checked); }
     if (obstacles) { obstacles.checked = config.SHOW_OBSTACLES; obstacles.addEventListener('change', (e) => config.SHOW_OBSTACLES = e.target.checked); }
 
+    // Lake: the extras a scene with water can have. Each is the scene's to set
+    // and the visitor's to switch off; a scene switch puts them back.
+    for (const [id, key] of [['landscape-toggle', 'LANDSCAPE'], ['waves-toggle', 'WAVES'], ['sparks-toggle', 'FALLING_SPARKS'], ['trees-burn-toggle', 'TREES_BURN']]) {
+        const el = document.getElementById(id);
+        if (el) { el.checked = config[key]; el.addEventListener('change', (e) => config[key] = e.target.checked); }
+    }
+    const firelight = document.getElementById('firelight-toggle');
+    if (firelight) {
+        firelight.checked = config.FIRELIGHT > 0;
+        firelight.addEventListener('change', (e) => {
+            const scene = simulation.activeScene && simulation.activeScene.config;
+            config.FIRELIGHT = e.target.checked ? ((scene && scene.FIRELIGHT) || 0.7) : 0;
+        });
+    }
+
+    const asciiToggle = document.getElementById('ascii-toggle');
+    if (asciiToggle) {
+        asciiToggle.checked = ascii.active;
+        asciiToggle.addEventListener('change', (e) => e.target.checked ? ascii.start() : ascii.stop());
+    }
+    setupSlider('ascii-cell-size', 'ascii-cell-value', ascii.cellSize, (v) => ascii.setCellSize(parseFloat(v)));
+
+    const asciiScheme = document.getElementById('ascii-scheme');
+    if (asciiScheme) {
+        for (const scheme of ASCII_SCHEMES) {
+            let group = [...asciiScheme.children].find((g) => g.label === scheme.group);
+            if (!group) {
+                group = document.createElement('optgroup');
+                group.label = scheme.group;
+                asciiScheme.appendChild(group);
+            }
+            const option = document.createElement('option');
+            option.value = scheme.id;
+            option.textContent = scheme.label;
+            group.appendChild(option);
+        }
+        asciiScheme.value = ascii.scheme.id;
+        asciiScheme.addEventListener('change', (e) => ascii.setScheme(e.target.value));
+    }
+
     // Interaction options
     const splatOnMove = document.getElementById('splat-on-move-toggle');
     const continuousColor = document.getElementById('continuous-color-toggle');
@@ -277,12 +341,14 @@ function setupSceneMenu() {
         selector.appendChild(optgroup);
     }
 
-    selector.value = DEFAULT_SCENE;
+    selector.value = simulation.activeScene ? simulation.activeScene.id : DEFAULT_SCENE;
 
     selector.addEventListener('change', async (e) => {
         const scene = findScene(e.target.value);
         if (!scene) return;
         await simulation.loadScene(scene);
+        // A palette scene changes the colour the text is drawn on
+        ascii.refresh();
         syncSettingsControls();
     });
 }
@@ -305,12 +371,20 @@ function syncSettingsControls() {
         'splat-on-move-toggle': 'SPLAT_ON_MOVE',
         'continuous-color-toggle': 'CONTINUOUS_COLOR_CHANGE',
         'wind-tunnel-toggle': 'WIND_TUNNEL_MODE',
-        'outflow-boundary-toggle': 'OUTFLOW_BOUNDARY'
+        'outflow-boundary-toggle': 'OUTFLOW_BOUNDARY',
+        'landscape-toggle': 'LANDSCAPE',
+        'waves-toggle': 'WAVES',
+        'sparks-toggle': 'FALLING_SPARKS',
+        'trees-burn-toggle': 'TREES_BURN'
     };
     for (const [id, key] of Object.entries(checkboxes)) {
         const el = document.getElementById(id);
         if (el) el.checked = config[key];
     }
+
+    // Firelight is a strength, not a switch: on means the scene's own amount
+    const firelight = document.getElementById('firelight-toggle');
+    if (firelight) firelight.checked = config.FIRELIGHT > 0;
 
     const sliders = {
         'wind-tunnel-force': ['wind-force-value', 'WIND_TUNNEL_FORCE', 'ms'],

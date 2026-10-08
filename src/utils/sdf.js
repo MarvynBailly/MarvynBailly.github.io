@@ -46,6 +46,32 @@ export function sdBox(px, py, cx, cy, hx, hy) {
 }
 
 /**
+ * Signed distance to an axis-aligned box with rounded corners
+ *
+ * The corner radius is subtracted from the half-extents and added back to the
+ * distance, which is the standard trick: a rounded box is the set of points
+ * within `r` of a smaller sharp box. The radius is clamped to the smaller
+ * half-extent, so a pill-shaped element cannot invert its own corners.
+ *
+ * @param {number} px - Point x
+ * @param {number} py - Point y
+ * @param {number} cx - Centre x
+ * @param {number} cy - Centre y
+ * @param {number} hx - Half width
+ * @param {number} hy - Half height
+ * @param {number} r - Corner radius
+ * @returns {number} Signed distance
+ */
+export function sdRoundBox(px, py, cx, cy, hx, hy, r) {
+    const radius = Math.max(0, Math.min(r, Math.min(hx, hy)));
+    const dx = Math.abs(px - cx) - hx + radius;
+    const dy = Math.abs(py - cy) - hy + radius;
+    const outside = Math.hypot(Math.max(dx, 0), Math.max(dy, 0));
+    const inside = Math.min(Math.max(dx, dy), 0);
+    return outside + inside - radius;
+}
+
+/**
  * Signed distance to a simple polygon
  *
  * Handles concave outlines - the sign comes from a crossing-number test rather

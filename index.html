@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Real-time WebGL Navier-Stokes fluid simulation - interactive fluid dynamics in your browser">
+        content="Marvyn Bailly - PhD candidate in applied mathematics. A live Navier-Stokes fire simulation, burning over a night lake, drawn in ASCII on your GPU.">
     <meta name="keywords"
-        content="fluid simulation, Navier-Stokes, WebGL, GPU, computational fluid dynamics, Marvyn Bailly, MarvynBailly">
+        content="fluid simulation, Navier-Stokes, fire simulation, wave equation, ASCII art, WebGL, GPU, computational fluid dynamics, applied mathematics, Marvyn Bailly, MarvynBailly">
     <title>Marvyn Bailly</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,20 +98,27 @@
         <button id="close-info" class="close-btn" aria-label="Close info panel">&times;</button>
         <h2>About This Simulation</h2>
         <p>
-            This is a real-time implementation of the <strong>Navier-Stokes equations</strong>
-            for incompressible fluid dynamics, running entirely on your GPU using WebGL.
+            The burning <strong>MB</strong> is a live solution of the <strong>Navier-Stokes equations</strong>
+            for incompressible flow, running entirely on your GPU with WebGL. The flames are heat carried
+            and lifted by the air around the letters; the lake below is a separate solver for the
+            <strong>wave equation</strong>, and everything is drawn as ASCII as it is computed.
         </p>
         <h3>How to Interact</h3>
         <ul>
-            <li><strong>Mouse/Touch Drag:</strong> Add velocity and color to the fluid</li>
-            <li><strong>Multiple Fingers:</strong> Create multiple disturbances simultaneously</li>
+            <li><strong>Move the mouse:</strong> Blow wind through the flames and the trees</li>
+            <li><strong>Click and hold:</strong> Set the air on fire; drag to draw with flame</li>
+            <li><strong>Over the water:</strong> Trail ripples across the lake</li>
+            <li><strong>Hold fire at the trees:</strong> They catch, burn down, and grow back in time</li>
+            <li><strong>Settings:</strong> Switch the ASCII off, change its colours, or try other scenes</li>
         </ul>
         <h3>Techniques Used</h3>
         <ul>
             <li>Semi-Lagrangian advection for unconditional stability</li>
             <li>Pressure projection via Jacobi iteration</li>
-            <li>Vorticity confinement to preserve detailed motion</li>
-            <li>Bloom and sunrays for visual enhancement</li>
+            <li>Vorticity confinement to keep the flames turbulent</li>
+            <li>Buoyancy, so heat rises and the fire draws its own shape</li>
+            <li>A leapfrog wave-equation solver for the lake, with reflections bent by its slope</li>
+            <li>A GPU ASCII renderer that picks each glyph from the flow, edges and all</li>
         </ul>
         <h3>Acknowledgments</h3>
         <p>
@@ -119,6 +126,12 @@
             <a href="https://github.com/PavelDoGreat/WebGL-Fluid-Simulation" target="_blank" rel="noopener noreferrer">
                 WebGL Fluid Simulation
             </a>. Big thanks to Pavel for his outstanding work!
+        </p>
+        <p>
+            The ASCII rendering was inspired by <strong>bas3line's</strong>
+            <a href="https://github.com/bas3line/ascii" target="_blank" rel="noopener noreferrer">
+                ascii.rest
+            </a>, a lovely library of animated ASCII art for the web.
         </p>
         <p class="info-footer">
             <a href="blog/fluid-simulation.html">Read the full technical explanation →</a>
@@ -142,6 +155,17 @@
                     <span>Shading</span></label>
                 <label class='checkbox-label'><input type='checkbox' id='obstacles-toggle' checked>
                     <span>Show Obstacles</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='ascii-toggle' checked>
+                    <span>ASCII</span></label>
+                <div class='slider-control'><label>ASCII Cell Size: <span
+                            id='ascii-cell-value'>2.5</span>px</label><input type='range' id='ascii-cell-size' min='1'
+                        max='12' value='2.5' step='0.5'></div>
+                <div class='slider-control'>
+                    <label>ASCII Colours:
+                        <!-- Populated from src/rendering/asciiSchemes.js -->
+                        <select id='ascii-scheme'></select>
+                    </label>
+                </div>
             </div>
             <div class='settings-section'>
                 <h3>Scene</h3>
@@ -151,6 +175,19 @@
                         <select id='scene-preset'></select>
                     </label>
                 </div>
+            </div>
+            <div class='settings-section'>
+                <h3>Lake</h3>
+                <label class='checkbox-label'><input type='checkbox' id='landscape-toggle'>
+                    <span>Landscape</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='waves-toggle'>
+                    <span>Waves</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='firelight-toggle'>
+                    <span>Firelight</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='sparks-toggle'>
+                    <span>Falling Sparks</span></label>
+                <label class='checkbox-label'><input type='checkbox' id='trees-burn-toggle'>
+                    <span>Trees Can Burn</span></label>
             </div>
             <div class='settings-section'>
                 <h3>Physics</h3>

@@ -230,7 +230,17 @@ function getUniforms(gl, program) {
     for (let i = 0; i < uniformCount; i++) {
         const uniformInfo = gl.getActiveUniform(program, i);
         const uniformName = uniformInfo.name;
-        uniforms[uniformName] = gl.getUniformLocation(program, uniformName);
+        const location = gl.getUniformLocation(program, uniformName);
+
+        uniforms[uniformName] = location;
+
+        // An array uniform is reported as "name[0]", and the location of its
+        // first element is what uniform4fv wants for the whole array. Register
+        // it under the bare name too, so a caller can write uniforms.uBoxes and
+        // not have to know which of its uniforms happen to be arrays.
+        if (uniformName.endsWith('[0]')) {
+            uniforms[uniformName.slice(0, -3)] = location;
+        }
     }
 
     return uniforms;

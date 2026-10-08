@@ -29,6 +29,11 @@ export class Config {
         this.SPLAT_RADIUS = 0.25;       // Size of user input splat
         this.SPLAT_FORCE = 2000;        // Magnitude of velocity added by splat
 
+        // Random splats thrown in at startup so the canvas is never empty on
+        // arrival. They are drawn from the full colour wheel, which a page
+        // working in the site palette does not want; such a page sets this to 0.
+        this.INITIAL_SPLATS = 5;
+
         // Visual Effects
         this.SHADING = true;            // Normal-based lighting
         this.COLORFUL = true;           // Random colors for splats
@@ -51,6 +56,12 @@ export class Config {
         this.BACK_COLOR = { r: 0, g: 0, b: 0 };
         this.TRANSPARENT = false;
         this.PAUSED = false;
+
+        // ASCII rendering (rendering/AsciiRenderer.js). Whether it is on is
+        // held by the renderer, not here: a scene switch resets the config.
+        this.ASCII_DEFAULT = true;      // Open in ASCII; a link with ?ascii=off opens without
+        this.ASCII_SCHEME = 'scene';    // Colours it opens in: see rendering/asciiSchemes.js
+        this.ASCII_CELL_SIZE = 2.5;       // Default cell width in CSS pixels; cells are twice as tall
 
         // Performance
         this.FPS_LIMIT = 60;            // Maximum FPS
@@ -96,6 +107,43 @@ export class Config {
             { r: 0.149, g: 0.416, b: 0.463 },   // #266a76  mid column
             { r: 0.545, g: 0.784, b: 0.769 }    // #8bc8c4  sunlit shallows
         ];
+        // Water below a waterline, reflecting the scene above it. Rendering
+        // only: a scene that wants the fluid to stop at the surface also puts
+        // a solid there.
+        this.REFLECTION = false;
+        this.WATERLINE = 0.3;           // Height of the surface, design space
+        this.WATER_COLOR = { r: 0.035, g: 0.051, b: 0.082 };   // #090d15, a shade under the page
+        this.REFLECTIVITY = 0.75;       // How much of the scene the water gives back
+        this.RIPPLE = 1;                // 0: a mirror, 1: a light breeze on the water
+        this.WAVES = false;             // Solve real waves on the water (physics/WaterModule.js)
+        this.WAVE_STRENGTH = 0.05;      // How far a wave's slope bends the reflection
+        this.FIRELIGHT = 0;             // Bright things stretched into streaks on the water
+        this.SWELL = 0;                 // Wind waves rolling across the whole lake, 0 to 1
+        this.AMBIENT_RIPPLES = 0;       // Small rings appearing on the water by themselves, per second
+        this.FALLING_SPARKS = false;    // Embers that arc off a fire and land in the water
+
+        // A painted night landscape behind the fluid (rendering/Landscape.js),
+        // standing on the waterline so its reflection meets it there
+        this.LANDSCAPE = false;
+        this.TREE_BEND = 0.00008;       // Treetop lean per unit of wind, screen widths
+        this.TREE_STIFFNESS = 14;       // How hard a tree springs back upright
+        this.TREE_DAMPING = 3.2;        // How quickly its swaying dies away
+        this.SMOKE = false;             // Grey dye draws as smoke, not fire, in a palette scene
+        this.TREES_BURN = false;        // Trees catch fire in hot air, burn down, and grow back (physics/ForestFire.js)
+
+        // The pointer as wind: moving it pushes air without painting dye, so
+        // it bends flames and trees rather than adding to them
+        this.POINTER_WIND = false;
+        this.POINTER_WIND_FORCE = 1200;
+        this.POINTER_WIND_RADIUS = 0.012;   // a broad gust, not a fingertip
+
+        // Holding the pointer down pours out fire: heat, with a little lift,
+        // every frame it is held, swept along the pointer's path as it moves
+        this.POINTER_FIRE = false;
+        this.POINTER_FIRE_HEAT = 0.55;
+        this.POINTER_FIRE_RISE = 18;
+        this.POINTER_FIRE_RADIUS = 0.0005;
+        this.POINTER_FIRE_COLOR = { r: 1.0, g: 0.52, b: 0.16 };   // a palette ramp only reads its amount
         this.VORTEX_RATE = 0;           // Rotational body force, radians/second
         this.VORTEX_FALLOFF = 0.55;     // Radius at which the swirl dies out
 
