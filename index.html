@@ -73,6 +73,20 @@
         </nav>
     </div>
 
+    <!-- Page arrows: flip between the featured pages (src/main.js, PAGES) -->
+    <button id="page-prev" class="page-arrow page-arrow-left" aria-label="Previous page">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+        </svg>
+    </button>
+    <button id="page-next" class="page-arrow page-arrow-right" aria-label="Next page">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+        </svg>
+    </button>
+
     <!-- Simulation controls (separate from main navigation) -->
     <div class="simulation-controls">
         <button id="info-btn" class="control-btn" aria-label="Show information">
@@ -109,6 +123,7 @@
             <li><strong>Click and hold:</strong> Set the air on fire; drag to draw with flame</li>
             <li><strong>Over the water:</strong> Trail ripples across the lake</li>
             <li><strong>Hold fire at the trees:</strong> They catch, burn down, and grow back in time</li>
+            <li><strong>Arrows at the sides:</strong> Switch between the colour field and the night lake</li>
             <li><strong>Settings:</strong> Switch the ASCII off, change its colours, or try other scenes</li>
         </ul>
         <h3>Techniques Used</h3>

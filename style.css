@@ -476,6 +476,92 @@ code {
 }
 
 /* Simulation controls (separate cluster, bottom-right) */
+/* Arrows at the screen's edges that flip between the featured pages */
+.page-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    background: var(--color-surface);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 1.5px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    border-radius: 50%;
+    color: var(--color-text);
+    cursor: pointer;
+    opacity: 0.9;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 10%, transparent), 0 4px 18px rgba(0, 0, 0, 0.45);
+    transition: all var(--transition-fast);
+}
+
+.page-arrow .icon {
+    width: 26px;
+    height: 26px;
+    stroke-width: 2.5;
+}
+
+.page-arrow:hover,
+.page-arrow:focus-visible {
+    opacity: 1;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-primary) 18%, transparent), var(--shadow-glow);
+}
+
+.page-arrow-left {
+    left: 22px;
+    animation: page-arrow-nudge-left 1.2s ease-in-out 1.2s 2;
+}
+
+.page-arrow-right {
+    right: 22px;
+    animation: page-arrow-nudge-right 1.2s ease-in-out 1.2s 2;
+}
+
+/* A brief nudge outward when the page opens, so the arrows are noticed */
+@keyframes page-arrow-nudge-left {
+    0%, 100% { transform: translate(0, -50%); }
+    50% { transform: translate(-6px, -50%); }
+}
+
+@keyframes page-arrow-nudge-right {
+    0%, 100% { transform: translate(0, -50%); }
+    50% { transform: translate(6px, -50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-arrow-left,
+    .page-arrow-right {
+        animation: none;
+    }
+}
+
+@media (max-width: 580px) {
+    .page-arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+    .page-arrow .icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .page-arrow-left {
+        left: 8px;
+    }
+
+    .page-arrow-right {
+        right: 8px;
+    }
+}
+
 .simulation-controls {
     position: fixed;
     bottom: 30px;

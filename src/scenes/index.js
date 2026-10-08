@@ -63,7 +63,7 @@ export const SCENES = [
     probeTraverse, vortexWell, latticeArray
 ];
 
-export const DEFAULT_SCENE = 'mb-night-lake';
+export const DEFAULT_SCENE = 'colour-field';
 
 /**
  * Look a scene up by id

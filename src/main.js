@@ -16,6 +16,16 @@ import { groupedScenes, findScene, isAvailable, DEFAULT_SCENE } from './scenes/i
 
 // Global state
 let simulation = null;
+
+/**
+ * The pages the edge arrows flip between, each with the way it is shown: the
+ * colour field as it always looked, and the night lake as ASCII. A page's
+ * look also applies when the site opens on it.
+ */
+const PAGES = [
+    { scene: 'colour-field', ascii: false },
+    { scene: 'mb-night-lake', ascii: true }
+];
 let ascii = null;
 let lastTime = 0;
 let frameCount = 0;
@@ -57,9 +67,15 @@ async function init() {
         // settings panel is built, so the panel shows what the link asked for.
         const params = new URLSearchParams(location.search);
         const linked = params.get('scene') && findScene(params.get('scene'));
-        // ASCII is the default look; ?ascii=off shows the fluid as it is
+        const opening = linked && isAvailable(linked) ? linked : findScene(DEFAULT_SCENE);
+
+        // Whether to open in ASCII: what the link says if it says, else how
+        // the opening page is meant to be seen, else the config's default.
+        // ?ascii=off shows the fluid as it is.
         const asciiParam = params.get('ascii');
-        if (asciiParam !== 'off' && (config.ASCII_DEFAULT || params.has('ascii'))) {
+        const page = PAGES.find((p) => p.scene === opening.id);
+        const wantAscii = params.has('ascii') ? asciiParam !== 'off' : (page ? page.ascii : config.ASCII_DEFAULT);
+        if (wantAscii) {
             ascii.setScheme(asciiParam || config.ASCII_SCHEME);
             const cell = parseFloat(params.get('cell'));
             if (cell > 0) ascii.setCellSize(cell);
@@ -67,7 +83,7 @@ async function init() {
         }
 
         // Load the opening scene before the first frame is drawn
-        await simulation.loadScene(linked && isAvailable(linked) ? linked : findScene(DEFAULT_SCENE));
+        await simulation.loadScene(opening);
 
         // Setup UI
         setupUI();
@@ -308,6 +324,7 @@ function setupSettingsControls() {
     setupSlider('splat-radius', 'radius-value', config.SPLAT_RADIUS, (v) => config.SPLAT_RADIUS = parseFloat(v));
 
     setupSceneMenu();
+    setupPageArrows();
 
     const reset = document.getElementById('reset-settings');
     if (reset) reset.addEventListener('click', () => location.reload());
@@ -351,6 +368,48 @@ function setupSceneMenu() {
         ascii.refresh();
         syncSettingsControls();
     });
+}
+
+/**
+ * Wire the arrows at the screen's edges, and the arrow keys, to flip pages
+ */
+function setupPageArrows() {
+    const go = (step) => {
+        const current = PAGES.findIndex((page) => page.scene === simulation.activeScene?.id);
+        // From a scene that is not one of the pages, either arrow goes to the first
+        const next = current < 0 ? 0 : (current + step + PAGES.length) % PAGES.length;
+        showPage(PAGES[next]);
+    };
+
+    document.getElementById('page-prev')?.addEventListener('click', () => go(-1));
+    document.getElementById('page-next')?.addEventListener('click', () => go(1));
+
+    document.addEventListener('keydown', (e) => {
+        // Not while typing or using a control: the arrow keys work those
+        if (e.target.closest('input, select, textarea')) return;
+        if (e.key === 'ArrowLeft') go(-1);
+        if (e.key === 'ArrowRight') go(1);
+    });
+}
+
+/**
+ * Show one of the pages: its scene, and ASCII on or off as it is meant to be
+ *
+ * @param {{scene: string, ascii: boolean}} page - From PAGES
+ */
+async function showPage(page) {
+    const scene = findScene(page.scene);
+    if (!scene || !isAvailable(scene)) return;
+
+    await simulation.loadScene(scene);
+    if (page.ascii) ascii.start(); else ascii.stop();
+    ascii.refresh();
+
+    const selector = document.getElementById('scene-preset');
+    if (selector) selector.value = scene.id;
+    const toggle = document.getElementById('ascii-toggle');
+    if (toggle) toggle.checked = ascii.active;
+    syncSettingsControls();
 }
 
 /**
